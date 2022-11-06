@@ -13,8 +13,17 @@ set(OPENSSL_CONFIGURE_OPTIONS
     no-ui-console
     no-comp
     no-deprecated
-    CACHE STRING "Set OpenSSL configure options" FORCE
+    CACHE STRING "Set OpenSSL configure options"
 )
+
+if(OPENSSL_PARALLEL_BUILD)
+    include(ProcessorCount)
+    ProcessorCount(NUMBER_OF_THREADS)
+
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+        list(APPEND OPENSSL_CONFIGURE_OPTIONS "/FS")
+    endif()
+endif()
 
 if(OPENSSL_TARGET_PLATFORM STREQUAL "")
     message(FATAL_ERROR "Set OPENSSL_TARGET_PLATFORM")
@@ -40,6 +49,67 @@ FetchContent_Declare(
     OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(openssl)
+
+# Find vcvarsall.bat
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+    cmake_path(GET CMAKE_C_COMPILER PARENT_PATH VS_PATH)
+
+    while(TRUE)
+        cmake_path(GET VS_PATH PARENT_PATH VS_PATH)
+        cmake_path(GET VS_PATH FILENAME VS_PATH_LAST)
+
+        if(VS_PATH_LAST STREQUAL "VC")
+            break()
+        elseif(VS_PATH_LAST STREQUAL "")
+            message(FATAL_ERROR "Couldn't find path of vcvarsall.bat")
+        endif()
+    endwhile()
+
+    cmake_path(APPEND VS_PATH Auxiliary Build OUTPUT_VARIABLE VS_PATH)
+    find_program(
+        VCVARSALL
+        NAMES vcvarsall.bat
+        PATHS ${VS_PATH}
+        REQUIRED
+        NO_DEFAULT_PATH
+    )
+
+    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "AMD64")
+        if(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN64A")
+            set(VCVARSALL_ARCH "x64")
+        elseif(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN32")
+            set(VCVARSALL_ARCH "x64_x86")
+        elseif(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN64-ARM")
+            set(VCVARSALL_ARCH "x64_arm64")
+        elseif(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN32-ARM")
+            set(VCVARSALL_ARCH "x64_arm")
+        endif()
+    elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86")
+        if(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN64A")
+            set(VCVARSALL_ARCH "x86_x64")
+        elseif(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN32")
+            set(VCVARSALL_ARCH "x86")
+        elseif(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN64-ARM")
+            set(VCVARSALL_ARCH "x86_arm64")
+        elseif(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN32-ARM")
+            set(VCVARSALL_ARCH "x86_arm")
+        endif()
+    elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "ARM64")
+        if(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN64A")
+            set(VCVARSALL_ARCH "arm64_x64")
+        elseif(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN32")
+            set(VCVARSALL_ARCH "arm64_x86")
+        elseif(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN64-ARM")
+            set(VCVARSALL_ARCH "arm64")
+        elseif(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN32-ARM")
+            set(VCVARSALL_ARCH "arm64_arm")
+        endif()
+    endif()
+
+    if(NOT DEFINED VCVARSALL_ARCH)
+        message(FATAL_ERROR "Couldn't select appropriate vcvarsall.bat argument")
+    endif()
+endif()
 
 # Configure OpenSSL
 function(configure_openssl)
@@ -80,6 +150,17 @@ function(configure_openssl)
         if(NOT RECONFIGURE)
             return()
         endif()
+
+        if(DEFINED CACHE{BUILD_TOOL})
+            message(STATUS "Clean all build results")
+            execute_process(
+                COMMAND ${BUILD_TOOL} clean
+                WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+                OUTPUT_QUIET
+                ERROR_QUIET
+                COMMAND_ERROR_IS_FATAL ANY
+            )
+        endif()
     endif()
 
     execute_process(
@@ -95,8 +176,14 @@ function(configure_openssl)
         message(FATAL_ERROR "${OPENSSL_TARGET_PLATFORM} isn't supported")
     endif()
 
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+        set(OPENSSL_CONFIGURE_COMMAND ${VCVARSALL} ${VCVARSALL_ARCH} && ${CONFIGURE_TOOL} Configure ${OPENSSL_TARGET_PLATFORM} ${OPENSSL_CONFIGURE_OPTIONS})
+    else()
+        set(OPENSSL_CONFIGURE_COMMAND ${CONFIGURE_TOOL} Configure ${OPENSSL_TARGET_PLATFORM} ${OPENSSL_CONFIGURE_OPTIONS})
+    endif()
+
     execute_process(
-        COMMAND ${CONFIGURE_TOOL} Configure ${OPENSSL_TARGET_PLATFORM} ${OPENSSL_CONFIGURE_OPTIONS}
+        COMMAND ${OPENSSL_CONFIGURE_COMMAND}
         WORKING_DIRECTORY ${openssl_SOURCE_DIR}
         ECHO_ERROR_VARIABLE
         COMMAND_ERROR_IS_FATAL ANY
@@ -104,6 +191,40 @@ function(configure_openssl)
 endfunction()
 
 configure_openssl()
+
+# Add custom command/target for parallel build
+if(NUMBER_OF_THREADS GREATER 1)
+    set(PARALLEL_OPTION "-j${NUMBER_OF_THREADS}")
+endif()
+
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+    if(DEFINED PARALLEL_OPTION)
+        find_program(BUILD_TOOL jom REQUIRED)
+    else()
+        cmake_path(GET CMAKE_C_COMPILER PARENT_PATH NMAKE_PATH)
+        find_program(
+            BUILD_TOOL
+            NAMES nmake
+            PATHS ${NMAKE_PATH}
+            REQUIRED
+            NO_CACHE
+            NO_DEFAULT_PATH
+        )
+    endif()
+
+    find_program(ASSEMBLER nasm REQUIRED)
+    set(OPENSSL_BUILD_COMMAND ${VCVARSALL} ${VCVARSALL_ARCH} && ${BUILD_TOOL} ${PARALLEL_OPTION})
+else()
+    find_program(BUILD_TOOL make REQUIRED)
+    set(OPENSSL_BUILD_COMMAND ${BUILD_TOOL} ${PARALLEL_OPTION})
+endif()
+
+execute_process(
+    COMMAND ${OPENSSL_BUILD_COMMAND}
+    WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+    ECHO_ERROR_VARIABLE
+    COMMAND_ERROR_IS_FATAL ANY
+)
 
 if(PROJECT_IS_TOP_LEVEL)
     # add_subdirectory(apps)
