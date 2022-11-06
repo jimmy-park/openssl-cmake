@@ -2,6 +2,10 @@
 
 Build OpenSSL in parallel within CMake
 
+## Requirements
+
+- CMake 3.24 or above
+
 ## Usage
 
 ```CMake
@@ -18,6 +22,7 @@ set(OPENSSL_TARGET_VERSION "3.0.7")
 set(OPENSSL_TARGET_PLATFORM "VC-WIN64A")
 set(OPENSSL_CONFIGURE_OPTIONS no-shared no-tests)
 
+# find_package(OpenSSL REQUIRED) does nothing after this line
 FetchContent_MakeAvailable(openssl-cmake)
 
 # Use same targets as FindOpenSSL module
