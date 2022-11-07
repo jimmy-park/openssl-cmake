@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(openssl-cmake)
+project(
+    openssl-cmake
+    VERSION 0.2.0
+    DESCRIPTION "Build OpenSSL in parallel within CMake"
+    HOMEPAGE_URL "https://github.com/jimmy-park/openssl-cmake"
+)
 
 # Custom options
 option(OPENSSL_PARALLEL_BUILD "Set to ON to enable parallel build" ON)
