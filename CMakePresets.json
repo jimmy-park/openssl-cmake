@@ -1,0 +1,10 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24
+    },
+    "include": [
+        "cmake/preset/windows.json"
+    ]
+}

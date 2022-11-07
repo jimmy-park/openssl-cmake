@@ -1,0 +1,196 @@
+{
+    "version": 5,
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "installDir": "${sourceDir}/install/${presetName}",
+            "cmakeExecutable": "cmake",
+            "cacheVariables": {
+                "CMAKE_MODULE_PATH": "${sourceDir}/cmake"
+            }
+        },
+        {
+            "name": "openssl-latest",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_VERSION": "3.0.7"
+            }
+        },
+        {
+            "name": "host-windows",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "host-linux",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "host-macos",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "visual-studio",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "toolset": {
+                "value": "host=x64",
+                "strategy": "set"
+            }
+        },
+        {
+            "name": "ninja",
+            "hidden": true,
+            "generator": "Ninja Multi-Config"
+        },
+        {
+            "name": "xcode",
+            "hidden": true,
+            "generator": "Xcode"
+        },
+        {
+            "name": "target-windows-x86",
+            "hidden": true,
+            "architecture": {
+                "value": "Win32",
+                "strategy": "set"
+            },
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "VC-WIN32"
+            }
+        },
+        {
+            "name": "target-windows-x64",
+            "hidden": true,
+            "architecture": {
+                "value": "x64",
+                "strategy": "set"
+            },
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "VC-WIN64A"
+            }
+        },
+        {
+            "name": "target-windows-arm",
+            "hidden": true,
+            "architecture": {
+                "value": "ARM",
+                "strategy": "set"
+            },
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "VC-WIN32-ARM"
+            }
+        },
+        {
+            "name": "target-windows-arm64",
+            "hidden": true,
+            "architecture": {
+                "value": "ARM64",
+                "strategy": "set"
+            },
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "VC-WIN64-ARM"
+            }
+        },
+        {
+            "name": "target-linux-x86_64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "linux-x86_64"
+            }
+        },
+        {
+            "name": "target-macos-x86_64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "darwin64-x86_64-cc"
+            }
+        },
+        {
+            "name": "target-ios",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "ios64-xcrun"
+            }
+        },
+        {
+            "name": "target-android-arm",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "android-arm"
+            }
+        },
+        {
+            "name": "target-android-arm64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "android-arm64"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "host-windows",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "host-linux",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "host-macos",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "debug",
+            "hidden": true,
+            "configuration": "Debug"
+        },
+        {
+            "name": "release",
+            "hidden": true,
+            "configuration": "Release"
+        },
+        {
+            "name": "clean",
+            "hidden": true,
+            "targets": "clean"
+        },
+        {
+            "name": "install",
+            "hidden": true,
+            "targets": "install"
+        }
+    ]
+}

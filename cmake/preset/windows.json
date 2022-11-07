@@ -1,0 +1,154 @@
+{
+    "version": 5,
+    "include": [
+        "base.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "windows-x86",
+            "inherits": [
+                "base",
+                "openssl-latest",
+                "host-windows",
+                "visual-studio",
+                "target-windows-x86"
+            ]
+        },
+        {
+            "name": "windows-x64",
+            "inherits": [
+                "base",
+                "openssl-latest",
+                "host-windows",
+                "visual-studio",
+                "target-windows-x64"
+            ]
+        },
+        {
+            "name": "windows-arm",
+            "inherits": [
+                "base",
+                "openssl-latest",
+                "host-windows",
+                "visual-studio",
+                "target-windows-arm"
+            ]
+        },
+        {
+            "name": "windows-arm64",
+            "inherits": [
+                "base",
+                "openssl-latest",
+                "host-windows",
+                "visual-studio",
+                "target-windows-arm64"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "windows-x86",
+            "inherits": [
+                "host-windows",
+                "release"
+            ],
+            "configurePreset": "windows-x86"
+        },
+        {
+            "name": "windows-x86-clean",
+            "inherits": [
+                "host-windows",
+                "release",
+                "clean"
+            ],
+            "configurePreset": "windows-x86"
+        },
+        {
+            "name": "windows-x86-install",
+            "inherits": [
+                "host-windows",
+                "release",
+                "install"
+            ],
+            "configurePreset": "windows-x86"
+        },
+        {
+            "name": "windows-x64",
+            "inherits": [
+                "host-windows",
+                "release"
+            ],
+            "configurePreset": "windows-x64"
+        },
+        {
+            "name": "windows-x64-clean",
+            "inherits": [
+                "host-windows",
+                "release",
+                "clean"
+            ],
+            "configurePreset": "windows-x64"
+        },
+        {
+            "name": "windows-x64-install",
+            "inherits": [
+                "host-windows",
+                "release",
+                "install"
+            ],
+            "configurePreset": "windows-x64"
+        },
+        {
+            "name": "windows-arm",
+            "inherits": [
+                "host-windows",
+                "release"
+            ],
+            "configurePreset": "windows-arm"
+        },
+        {
+            "name": "windows-arm-clean",
+            "inherits": [
+                "host-windows",
+                "release",
+                "clean"
+            ],
+            "configurePreset": "windows-arm"
+        },
+        {
+            "name": "windows-arm-install",
+            "inherits": [
+                "host-windows",
+                "release",
+                "install"
+            ],
+            "configurePreset": "windows-arm"
+        },
+        {
+            "name": "windows-arm64",
+            "inherits": [
+                "host-windows",
+                "release"
+            ],
+            "configurePreset": "windows-arm64"
+        },
+        {
+            "name": "windows-arm64-clean",
+            "inherits": [
+                "host-windows",
+                "release",
+                "clean"
+            ],
+            "configurePreset": "windows-arm64"
+        },
+        {
+            "name": "windows-arm64-install",
+            "inherits": [
+                "host-windows",
+                "release",
+                "install"
+            ],
+            "configurePreset": "windows-arm64"
+        }
+    ]
+}
