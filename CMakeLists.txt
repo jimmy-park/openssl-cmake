@@ -5,12 +5,13 @@ project(
     VERSION 0.2.0
     DESCRIPTION "Build OpenSSL in parallel within CMake"
     HOMEPAGE_URL "https://github.com/jimmy-park/openssl-cmake"
+    LANGUAGES C
 )
 
 # Custom options
-option(OPENSSL_PARALLEL_BUILD "Set to ON to enable parallel build" ON)
-set(OPENSSL_TARGET_VERSION "3.0.7" CACHE STRING "Set OpenSSL version to download")
-set(OPENSSL_TARGET_PLATFORM "" CACHE STRING "Set OpenSSL target platform")
+option(OPENSSL_PARALLEL_BUILD "Enable parallel build" ON)
+set(OPENSSL_TARGET_VERSION "3.0.7" CACHE STRING "OpenSSL version to download")
+set(OPENSSL_TARGET_PLATFORM "" CACHE STRING "OpenSSL target platform")
 set(OPENSSL_CONFIGURE_OPTIONS
     no-shared
     no-stdio
@@ -18,17 +19,8 @@ set(OPENSSL_CONFIGURE_OPTIONS
     no-ui-console
     no-comp
     no-deprecated
-    CACHE STRING "Set OpenSSL configure options except target platform and prefix"
+    CACHE STRING "OpenSSL configure options except target platform and prefix"
 )
-
-if(OPENSSL_PARALLEL_BUILD)
-    include(ProcessorCount)
-    ProcessorCount(NUMBER_OF_THREADS)
-
-    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-        list(APPEND OPENSSL_CONFIGURE_OPTIONS "/FS")
-    endif()
-endif()
 
 if(OPENSSL_TARGET_PLATFORM STREQUAL "")
     message(FATAL_ERROR "Set OPENSSL_TARGET_PLATFORM")
@@ -55,7 +47,10 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(openssl)
 
-# Find vcvarsall.bat using OPENSSL_TARGET_PLATFORM
+# Install build results inside build directory
+set(OPENSSL_INSTALL_DIR ${openssl_BINARY_DIR}/install)
+
+# Find vcvarsall.bat using CMAKE_C_COMPILER
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     if(NOT CMAKE_C_COMPILER_ID STREQUAL "MSVC")
         message(FATAL_ERROR "Use MSVC compiler in Windows")
@@ -122,24 +117,34 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set(VCVARSALL_COMMAND ${VCVARSALL} ${VCVARSALL_ARCH} &&)
 endif()
 
+# Modify some configure options
+list(FILTER OPENSSL_CONFIGURE_OPTIONS EXCLUDE REGEX "--prefix")
+list(APPEND OPENSSL_CONFIGURE_OPTIONS "--prefix=${OPENSSL_INSTALL_DIR}")
+
+if(OPENSSL_PARALLEL_BUILD)
+    include(ProcessorCount)
+    ProcessorCount(NUMBER_OF_THREADS)
+
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+        list(APPEND OPENSSL_CONFIGURE_OPTIONS "/FS")
+    endif()
+endif()
+
 # Configure OpenSSL
 function(configure_openssl)
     find_program(OPENSSL_CONFIGURE_TOOL perl REQUIRED)
     find_file(
         OPENSSL_CONFIGDATA
         NAMES configdata.pm
-        PATHS ${openssl_SOURCE_DIR}
+        PATHS ${openssl_BINARY_DIR}
         NO_CACHE
         NO_DEFAULT_PATH
     )
 
-    # Set install path
-    set(OPENSSL_INSTALL_OPTION "--prefix=${CMAKE_INSTALL_PREFIX}/OpenSSL-${OPENSSL_TARGET_PLATFORM}")
-
     if(NOT OPENSSL_CONFIGDATA STREQUAL "OPENSSL_CONFIGDATA-NOTFOUND")
         execute_process(
             COMMAND ${OPENSSL_CONFIGURE_TOOL} ${OPENSSL_CONFIGDATA} --command-line
-            WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+            WORKING_DIRECTORY ${openssl_BINARY_DIR}
             OUTPUT_VARIABLE OPENSSL_PREV_COMMAND
             ECHO_ERROR_VARIABLE
             COMMAND_ERROR_IS_FATAL ANY
@@ -148,11 +153,11 @@ function(configure_openssl)
         string(REPLACE "\n" ";" OPENSSL_PREV_COMMAND ${OPENSSL_PREV_COMMAND})
         list(FILTER OPENSSL_PREV_COMMAND INCLUDE REGEX "Configure")
         string(STRIP ${OPENSSL_PREV_COMMAND} OPENSSL_PREV_COMMAND)
-        string(REPLACE " " ";" OPENSSL_PREV_COMMAND ${OPENSSL_PREV_COMMAND})
-        list(SUBLIST OPENSSL_PREV_COMMAND 2 -1 OPENSSL_PREV_OPTIONS)
+        string(REPLACE " " ";" OPENSSL_PREV_OPTIONS ${OPENSSL_PREV_COMMAND})
+        list(FILTER OPENSSL_PREV_OPTIONS EXCLUDE REGEX "Configure|perl")
         message(STATUS "Found previous configure options : ${OPENSSL_PREV_OPTIONS}")
 
-        set(OPENSSL_CURR_OPTIONS ${OPENSSL_TARGET_PLATFORM} ${OPENSSL_CONFIGURE_OPTIONS} ${OPENSSL_INSTALL_OPTION})
+        set(OPENSSL_CURR_OPTIONS ${OPENSSL_TARGET_PLATFORM} ${OPENSSL_CONFIGURE_OPTIONS})
 
         foreach(PREV CURR IN ZIP_LISTS OPENSSL_PREV_OPTIONS OPENSSL_CURR_OPTIONS)
             if(NOT PREV STREQUAL CURR)
@@ -169,7 +174,7 @@ function(configure_openssl)
             message(STATUS "Clean all build results")
             execute_process(
                 COMMAND ${OPENSSL_BUILD_TOOL} clean
-                WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+                WORKING_DIRECTORY ${openssl_BINARY_DIR}
                 OUTPUT_QUIET
                 ERROR_QUIET
                 COMMAND_ERROR_IS_FATAL ANY
@@ -178,8 +183,8 @@ function(configure_openssl)
     endif()
 
     execute_process(
-        COMMAND ${OPENSSL_CONFIGURE_TOOL} Configure LIST
-        WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+        COMMAND ${OPENSSL_CONFIGURE_TOOL} ${openssl_SOURCE_DIR}/Configure LIST
+        WORKING_DIRECTORY ${openssl_BINARY_DIR}
         OUTPUT_VARIABLE OPENSSL_PLATFORM_LIST
         ECHO_ERROR_VARIABLE
         COMMAND_ERROR_IS_FATAL ANY
@@ -194,10 +199,17 @@ function(configure_openssl)
         set(ENV{RANLIB} "ranlib -c -no_warning_for_no_symbols")
     endif()
 
-    set(OPENSSL_CONFIGURE_COMMAND ${VCVARSALL_COMMAND} ${OPENSSL_CONFIGURE_TOOL} Configure ${OPENSSL_TARGET_PLATFORM} ${OPENSSL_CONFIGURE_OPTIONS} ${OPENSSL_INSTALL_OPTION})
+    message(STATUS "Configure OpenSSL")
+    set(OPENSSL_CONFIGURE_COMMAND
+        ${VCVARSALL_COMMAND}
+        ${OPENSSL_CONFIGURE_TOOL}
+        ${openssl_SOURCE_DIR}/Configure
+        ${OPENSSL_TARGET_PLATFORM}
+        ${OPENSSL_CONFIGURE_OPTIONS}
+    )
     execute_process(
         COMMAND ${OPENSSL_CONFIGURE_COMMAND}
-        WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+        WORKING_DIRECTORY ${openssl_BINARY_DIR}
         ECHO_ERROR_VARIABLE
         COMMAND_ERROR_IS_FATAL ANY
     )
@@ -233,7 +245,7 @@ endif()
 set(OPENSSL_BUILD_COMMAND ${VCVARSALL_COMMAND} ${OPENSSL_BUILD_TOOL} ${PARALLEL_OPTION})
 execute_process(
     COMMAND ${OPENSSL_BUILD_COMMAND}
-    WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+    WORKING_DIRECTORY ${openssl_BINARY_DIR}
     ECHO_ERROR_VARIABLE
     COMMAND_ERROR_IS_FATAL ANY
 )
