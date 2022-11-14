@@ -82,16 +82,18 @@ endif()
 
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     if(NUMBER_OF_THREADS GREATER 1)
-        find_program(OPENSSL_BUILD_TOOL jom REQUIRED)
+        find_program(JOM jom REQUIRED)
+        set(OPENSSL_BUILD_TOOL ${JOM})
     else()
         cmake_path(GET CMAKE_C_COMPILER PARENT_PATH NMAKE_PATH)
         find_program(
-            OPENSSL_BUILD_TOOL
+            NMAKE
             NAMES nmake
             PATHS ${NMAKE_PATH}
             REQUIRED
             NO_DEFAULT_PATH
         )
+        set(OPENSSL_BUILD_TOOL ${NMAKE})
     endif()
 
     set(OPENSSL_HAS_ASM ON)
