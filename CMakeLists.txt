@@ -284,6 +284,7 @@ set(OPENSSL_BUILD_COMMAND ${VCVARSALL_COMMAND} ${OPENSSL_BUILD_TOOL} ${OPENSSL_B
 set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} install_sw)
 set(OPENSSL_UNINSTALL_COMMAND ${CMAKE_COMMAND} -E rm -rf ${OPENSSL_INSTALL_DIR})
 set(SLEEP_COMMAND ${CMAKE_COMMAND} -E sleep 1)
+set(TRY_INSTALL_COUNT 10)
 
 if(OPENSSL_VERBOSE)
     execute_process(
@@ -293,9 +294,10 @@ if(OPENSSL_VERBOSE)
     )
     execute_process(
         COMMAND ${OPENSSL_UNINSTALL_COMMAND}
-        WORKING_DIRECTORY ${openssl_BINARY_DIR}
         COMMAND_ERROR_IS_FATAL ANY
     )
+
+    set(INSTALL_COUNT 0)
 
     while(TRUE)
         execute_process(
@@ -304,16 +306,16 @@ if(OPENSSL_VERBOSE)
             RESULT_VARIABLE INSTALL_RESULT
         )
 
-        if(INSTALL_RESULT EQUAL 0)
+        if(INSTALL_RESULT EQUAL 0 OR INSTALL_COUNT EQUAL TRY_INSTALL_COUNT)
             break()
-        else()
-            message(STATUS "Failed to install because build process doesn't finish. Try install again...")
         endif()
 
         execute_process(
             COMMAND ${SLEEP_COMMAND}
             COMMAND_ERROR_IS_FATAL ANY
         )
+        math(EXPR INSTALL_COUNT "${INSTALL_COUNT} + 1")
+        message(STATUS "Failed to install. Try install again... (${INSTALL_COUNT} / ${TRY_INSTALL_COUNT})")
     endwhile()
 else()
     message(STATUS "Build OpenSSL")
@@ -327,12 +329,11 @@ else()
     message(STATUS "Uninstall OpenSSL")
     execute_process(
         COMMAND ${OPENSSL_UNINSTALL_COMMAND}
-        COMMAND ${SLEEP_COMMAND}
-        WORKING_DIRECTORY ${openssl_BINARY_DIR}
         OUTPUT_QUIET
         COMMAND_ERROR_IS_FATAL ANY
     )
     message(STATUS "Install OpenSSL")
+    set(INSTALL_COUNT 0)
 
     # Installation may fail due to permission denial
     while(TRUE)
@@ -344,7 +345,7 @@ else()
             ERROR_QUIET
         )
 
-        if(INSTALL_RESULT EQUAL 0)
+        if(INSTALL_RESULT EQUAL 0 OR INSTALL_COUNT EQUAL TRY_INSTALL_COUNT)
             break()
         endif()
 
@@ -352,6 +353,7 @@ else()
             COMMAND ${SLEEP_COMMAND}
             COMMAND_ERROR_IS_FATAL ANY
         )
+        math(EXPR INSTALL_COUNT "${INSTALL_COUNT} + 1")
     endwhile()
 endif()
 
