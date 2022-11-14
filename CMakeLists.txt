@@ -11,32 +11,33 @@ project(
 # Custom options
 option(OPENSSL_PARALLEL_BUILD "Enable parallel build" ON)
 option(OPENSSL_VERBOSE "Print configure/build message to the standard output" OFF)
-set(OPENSSL_TARGET_VERSION "3.0.7" CACHE STRING "OpenSSL version to download")
-set(OPENSSL_TARGET_PLATFORM "" CACHE STRING "OpenSSL target platform")
-set(OPENSSL_CONFIGURE_OPTIONS
-    no-shared
-    no-stdio
-    no-tests
-    no-ui-console
-    no-comp
-    no-deprecated
-    CACHE STRING "OpenSSL configure options except target platform and prefix"
-)
 
-if(OPENSSL_TARGET_PLATFORM STREQUAL "")
+if(NOT DEFINED OPENSSL_TARGET_VERSION)
+    set(OPENSSL_TARGET_VERSION "3.0.7" CACHE INTERNAL "Set OpenSSL version to latest release")
+elseif(OPENSSL_TARGET_VERSION STRLESS "1.1.0h")
+    message(FATAL_ERROR "OpenSSL versions below 1.1.0h aren't supported")
+endif()
+
+if(NOT DEFINED OPENSSL_TARGET_PLATFORM)
     message(FATAL_ERROR "Set OPENSSL_TARGET_PLATFORM")
 endif()
 
-if(OPENSSL_PARALLEL_BUILD)
-    include(ProcessorCount)
-    ProcessorCount(NUMBER_OF_THREADS)
+if(NOT DEFINED OPENSSL_CONFIGURE_OPTIONS)
+    set(OPENSSL_CONFIGURE_OPTIONS
+        no-shared
+        no-stdio
+        no-tests
+        no-ui-console
+        no-comp
+        no-deprecated
+        CACHE INTERNAL "OpenSSL configure options except target platform and prefix"
+    )
 endif()
 
 # Validate OpenSSL version format
 if(OPENSSL_TARGET_VERSION MATCHES "^3\.[0-9]\.+[0-9]$")
     set(OPENSSL_VERSION_TAG "openssl-${OPENSSL_TARGET_VERSION}")
-elseif(OPENSSL_TARGET_VERSION MATCHES "^1\.1\.[0-1][a-z]$"
-    OR OPENSSL_TARGET_VERSION MATCHES "^1\.0\.[0-2][a-z]$")
+elseif(OPENSSL_TARGET_VERSION MATCHES "^1\.1\.[0-1][a-z]$")
     set(OPENSSL_VERSION_TAG "OpenSSL_${OPENSSL_TARGET_VERSION}")
     string(REPLACE "." "_" OPENSSL_VERSION_TAG ${OPENSSL_VERSION_TAG})
 else()
@@ -74,6 +75,11 @@ set(OPENSSL_TARGET_VERSION_OLD ${OPENSSL_TARGET_VERSION} CACHE INTERNAL "")
 # Find configure/build tool
 find_program(OPENSSL_CONFIGURE_TOOL perl REQUIRED)
 
+if(OPENSSL_PARALLEL_BUILD)
+    include(ProcessorCount)
+    ProcessorCount(NUMBER_OF_THREADS)
+endif()
+
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     if(NUMBER_OF_THREADS GREATER 1)
         find_program(OPENSSL_BUILD_TOOL jom REQUIRED)
@@ -84,7 +90,6 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
             NAMES nmake
             PATHS ${NMAKE_PATH}
             REQUIRED
-            NO_CACHE
             NO_DEFAULT_PATH
         )
     endif()
@@ -180,17 +185,16 @@ list(PREPEND OPENSSL_CONFIGURE_OPTIONS ${OPENSSL_TARGET_PLATFORM})
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     if(NUMBER_OF_THREADS GREATER 1)
-        list(APPEND OPENSSL_CONFIGURE_OPTIONS "/FS")
-        list(APPEND OPENSSL_BUILD_OPTIONS "/J${NUMBER_OF_THREADS}")
+        list(APPEND OPENSSL_CONFIGURE_OPTIONS "-FS")
     endif()
 
     if(NOT OPENSSL_VERBOSE)
         list(APPEND OPENSSL_BUILD_OPTIONS "/NOLOGO")
     endif()
-else()
-    if(NUMBER_OF_THREADS GREATER 1)
-        list(APPEND OPENSSL_BUILD_OPTIONS "-j${NUMBER_OF_THREADS}")
-    endif()
+endif()
+
+if(NUMBER_OF_THREADS GREATER 1)
+    list(APPEND OPENSSL_BUILD_OPTIONS "-j${NUMBER_OF_THREADS}")
 endif()
 
 # Configure OpenSSL
