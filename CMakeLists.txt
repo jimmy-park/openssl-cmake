@@ -19,8 +19,6 @@ option(OPENSSL_VERBOSE "Print configure/build message to the standard output" OF
 
 if(NOT DEFINED OPENSSL_TARGET_VERSION)
     set(OPENSSL_TARGET_VERSION "3.0.7" CACHE INTERNAL "Set OpenSSL version to latest release")
-elseif(OPENSSL_TARGET_VERSION STRLESS "1.1.0h")
-    message(FATAL_ERROR "OpenSSL versions below 1.1.0h aren't supported")
 endif()
 
 if(NOT DEFINED OPENSSL_TARGET_PLATFORM)
@@ -43,21 +41,21 @@ if(OPENSSL_PARALLEL_BUILD)
     ProcessorCount(NUMBER_OF_THREADS)
 endif()
 
-# Validate OpenSSL version format
-if(OPENSSL_TARGET_VERSION MATCHES "^3\.[0-9]\.+[0-9]$")
-    set(OPENSSL_VERSION_TAG "openssl-${OPENSSL_TARGET_VERSION}")
-elseif(OPENSSL_TARGET_VERSION MATCHES "^1\.1\.[0-1][a-z]$")
-    set(OPENSSL_VERSION_TAG "OpenSSL_${OPENSSL_TARGET_VERSION}")
-    string(REPLACE "." "_" OPENSSL_VERSION_TAG ${OPENSSL_VERSION_TAG})
+# Validate OpenSSL version
+if(OPENSSL_TARGET_VERSION MATCHES "^3\.[0-9]\.[0-9]+$"
+    OR OPENSSL_TARGET_VERSION MATCHES "^1\.1\.[0-1][a-z]$")
+    if(OPENSSL_TARGET_VERSION STRLESS "1.1.0h")
+        message(FATAL_ERROR "OpenSSL versions below 1.1.0h aren't supported")
+    endif()
 else()
-    message(FATAL_ERROR "Invalid OpenSSL version")
+    message(FATAL_ERROR "Invalid OpenSSL version format")
 endif()
 
 # Download OpenSSL source
 message(STATUS "Fetching OpenSSL ${OPENSSL_TARGET_VERSION}")
 FetchContent_Declare(
     openssl
-    URL https://github.com/openssl/openssl/archive/${OPENSSL_VERSION_TAG}.zip
+    URL https://www.openssl.org/source/openssl-${OPENSSL_TARGET_VERSION}.tar.gz
     OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(openssl)
