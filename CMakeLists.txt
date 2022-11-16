@@ -8,9 +8,10 @@ project(
     LANGUAGES C
 )
 
+include(FetchContent)
+include(ProcessorCount)
 include(cmake/ConfigureOpenSSL.cmake)
 include(cmake/FindVcvarsall.cmake)
-include(cmake/Utils.cmake)
 
 # Custom options
 option(OPENSSL_PARALLEL_BUILD "Enable parallel build" ON)
@@ -39,7 +40,6 @@ if(NOT DEFINED OPENSSL_CONFIGURE_OPTIONS)
 endif()
 
 if(OPENSSL_PARALLEL_BUILD)
-    include(ProcessorCount)
     ProcessorCount(NUMBER_OF_THREADS)
 endif()
 
@@ -55,7 +55,6 @@ endif()
 
 # Download OpenSSL source
 message(STATUS "Fetching OpenSSL ${OPENSSL_TARGET_VERSION}")
-include(FetchContent)
 FetchContent_Declare(
     openssl
     URL https://github.com/openssl/openssl/archive/${OPENSSL_VERSION_TAG}.zip
@@ -63,10 +62,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(openssl)
 
-# clean build directory if version is different
+# Clean build directory if version is different
 if(NOT OPENSSL_TARGET_VERSION STREQUAL OPENSSL_TARGET_VERSION_OLD)
-    clean_directory(${openssl_BINARY_DIR})
-    set(OPENSSL_TARGET_VERSION_OLD ${OPENSSL_TARGET_VERSION} CACHE INTERNAL "")
+    set(OPENSSL_TARGET_VERSION_OLD ${OPENSSL_TARGET_VERSION} CACHE INTERNAL "Previously fetched OpenSSL version")
+    file(REMOVE_RECURSE ${openssl_BINARY_DIR})
+    file(MAKE_DIRECTORY ${openssl_BINARY_DIR})
 endif()
 
 # Find configure tool

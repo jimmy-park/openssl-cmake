@@ -47,8 +47,9 @@ function(configure_openssl)
             return()
         endif()
 
-        message(STATUS "Configure options are changed. Clean all build results")
-        clean_directory(${CONFIGURE_BUILD_DIR})
+        message(STATUS "Configure options are changed. Clean build directory")
+        file(REMOVE_RECURSE ${CONFIGURE_BUILD_DIR})
+        file(MAKE_DIRECTORY ${CONFIGURE_BUILD_DIR})
     endif()
 
     execute_process(
