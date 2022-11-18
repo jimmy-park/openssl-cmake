@@ -264,7 +264,7 @@ set_target_properties(OpenSSL::SSL PROPERTIES
 add_dependencies(OpenSSL::Crypto openssl-build)
 add_dependencies(OpenSSL::SSL openssl-build)
 
-add_library(OpenSSL::applink INTERFACE IMPORTED)
+add_library(OpenSSL::applink INTERFACE IMPORTED GLOBAL)
 set_target_properties(OpenSSL::applink PROPERTIES
     INTERFACE_SOURCES ${openssl_SOURCE_DIR}/ms/applink.c
 )
