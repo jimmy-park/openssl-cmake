@@ -27,12 +27,7 @@ endif()
 
 if(NOT DEFINED OPENSSL_CONFIGURE_OPTIONS)
     set(OPENSSL_CONFIGURE_OPTIONS
-        no-shared
-        no-stdio
         no-tests
-        no-ui-console
-        no-comp
-        no-deprecated
         CACHE INTERNAL "OpenSSL configure options except target platform and prefix"
     )
 endif()

@@ -2,9 +2,34 @@
 
 Build OpenSSL in parallel within CMake
 
-## Requirements
+Support OpenSSL versions from `1.1.0h` to the latest `3.0` series
 
-- CMake 3.24 or above
+## Prerequisites
+
+
+### Requirements
+
+- CMake 3.24+ (due to `FetchContent_Declare(OVERRIDE_FIND_PACKAGE)`)
+- Some OpenSSL build tools [Link](https://github.com/openssl/openssl/blob/master/INSTALL.md#prerequisites)
+  - Make implementation
+  - Perl 5
+  - ANSI C compiler
+  - NASM (Windows only)
+
+### Windows
+
+You need to use Visual Studio to build OpenSSL in Windows
+
+[Chocolatey](https://chocolatey.org/install) is recommended to install required packages
+
+```sh
+# Powershell (run as administrator)
+choco install -y cmake jom strawberryperl nasm --installargs 'ADD_CMAKE_TO_PATH=System'
+
+# Append "C:\Program Files\NASM" to the PATH environment variable
+# or run this code
+[Environment]::SetEnvironmentVariable("PATH", "$ENV:PATH;C:\Program Files\NASM", "USER")
+```
 
 ## Usage
 
@@ -20,11 +45,17 @@ cmake --list-presets all
 # Use a configure preset
 cmake --preset windows-x64
 
-# TODO
 # Use a build preset
 # <configure-preset>-[clean|install]
 cmake --build --preset windows-x64
 ```
+
+#### Configure options
+
+- `-DOPENSSL_PARALLEL_BUILD=<bool>` (default : ON)
+- `-DOPENSSL_TARGET_VERSION=<string>` (default : latest 3.0 series)
+- `-DOPENSSL_TARGET_PLATFORM=<string>` (default : empty)
+- `-DOPENSSL_CONFIGURE_OPTIONS=<semicolon-separated-list>` (default : no-tests)
 
 ### Integration
 
@@ -45,7 +76,6 @@ FetchContent_Declare(
 # This line must be preceeded find_package(OpenSSL REQUIRED)
 FetchContent_MakeAvailable(openssl-cmake)
 
-# TODO
 # Use same targets as FindOpenSSL module
 add_executable(main main.cpp)
 target_link_libraries(main PRIVATE
@@ -54,3 +84,9 @@ target_link_libraries(main PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:OpenSSL::applink>
 )
 ```
+
+### Caveats
+
+- `--prefix` option in `OPENSSL_CONFIGURE_OPTIONS` will be ignored and used internally
+  - `--prefix` is set to `${CMAKE_INSTALL_PREFIX}/OpenSSL-${OPENSSL_TARGET_VERSION}`
+  - `cmake --build --target install` or `cmake --build --preset <preset>-install` will use this path
