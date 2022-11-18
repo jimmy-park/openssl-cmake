@@ -25,6 +25,27 @@ function(parse_configdata FILE KEY VALUES)
     endif()
 endfunction()
 
+function(parse_makefile FILE KEY VALUES)
+    if(NOT EXISTS ${FILE})
+        return()
+    endif()
+
+    if(KEY STREQUAL "static")
+        file(STRINGS ${FILE} LIBRARIES REGEX "INSTALL_LIBS=")
+    elseif(KEY STREQUAL "shared")
+        file(STRINGS ${FILE} LIBRARIES REGEX "INSTALL_SHLIBS=")
+    else()
+        return()
+    endif()
+
+    string(FIND ${LIBRARIES} "=" BEGIN_POS)
+    math(EXPR BEGIN_POS "${BEGIN_POS} + 1")
+    string(SUBSTRING ${LIBRARIES} ${BEGIN_POS} -1 LIBRARIES)
+    string(REGEX REPLACE "[\"]" "" LIBRARIES "${LIBRARIES}")
+    string(REPLACE " " ";" LIBRARIES "${LIBRARIES}")
+    set(${VALUES} ${LIBRARIES} PARENT_SCOPE)
+endfunction()
+
 function(configure_openssl)
     cmake_parse_arguments(
         CONFIGURE
@@ -47,9 +68,11 @@ function(configure_openssl)
             return()
         endif()
 
-        message(STATUS "Configure options are changed. Clean build directory")
-        file(REMOVE_RECURSE ${CONFIGURE_BUILD_DIR})
-        file(MAKE_DIRECTORY ${CONFIGURE_BUILD_DIR})
+        if(IS_DIRECTORY ${CONFIGURE_BUILD_DIR})
+            message(STATUS "Configure options are changed. Clean build directory")
+            file(REMOVE_RECURSE ${CONFIGURE_BUILD_DIR})
+            file(MAKE_DIRECTORY ${CONFIGURE_BUILD_DIR})
+        endif()
     endif()
 
     execute_process(

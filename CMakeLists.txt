@@ -15,7 +15,7 @@ include(cmake/FindVcvarsall.cmake)
 
 # Custom options
 option(OPENSSL_PARALLEL_BUILD "Enable parallel build" ON)
-option(OPENSSL_VERBOSE "Print configure/build message to the standard output" OFF)
+option(OPENSSL_CONFIGURE_VERBOSE "Print configure message to the standard output" OFF)
 
 if(NOT DEFINED OPENSSL_TARGET_VERSION)
     set(OPENSSL_TARGET_VERSION "3.0.7" CACHE INTERNAL "Set OpenSSL version to latest release")
@@ -63,17 +63,17 @@ FetchContent_MakeAvailable(openssl)
 # Clean build directory if version is different
 if(NOT OPENSSL_TARGET_VERSION STREQUAL OPENSSL_TARGET_VERSION_OLD)
     set(OPENSSL_TARGET_VERSION_OLD ${OPENSSL_TARGET_VERSION} CACHE INTERNAL "Previously fetched OpenSSL version")
-    file(REMOVE_RECURSE ${openssl_BINARY_DIR})
-    file(MAKE_DIRECTORY ${openssl_BINARY_DIR})
-endif()
 
-# Find configure tool
-find_program(OPENSSL_CONFIGURE_TOOL perl REQUIRED)
+    if(IS_DIRECTORY ${openssl_BINARY_DIR})
+        file(REMOVE_RECURSE ${openssl_BINARY_DIR})
+        file(MAKE_DIRECTORY ${openssl_BINARY_DIR})
+    endif()
+endif()
 
 # Run vcvarsall.bat with target architecture
 find_vcvarsall(VCVARSALL)
 
-if(NOT VCVARSALL STREQUAL "")
+if(NOT "${VCVARSALL}" STREQUAL "")
     if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86")
         if(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN32")
             set(VCVARSALL_ARCH "x86")
@@ -119,21 +119,16 @@ list(FILTER OPENSSL_CONFIGURE_OPTIONS EXCLUDE REGEX "--prefix")
 list(APPEND OPENSSL_CONFIGURE_OPTIONS "--prefix=${OPENSSL_INSTALL_DIR}")
 list(PREPEND OPENSSL_CONFIGURE_OPTIONS ${OPENSSL_TARGET_PLATFORM})
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    if(NUMBER_OF_THREADS GREATER 1)
+if(NUMBER_OF_THREADS GREATER 1)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         list(APPEND OPENSSL_CONFIGURE_OPTIONS "-FS")
     endif()
 
-    if(NOT OPENSSL_VERBOSE)
-        list(APPEND OPENSSL_BUILD_OPTIONS "/NOLOGO")
-    endif()
-endif()
-
-if(NUMBER_OF_THREADS GREATER 1)
     list(APPEND OPENSSL_BUILD_OPTIONS "-j${NUMBER_OF_THREADS}")
 endif()
 
 # Configure OpenSSL
+find_program(OPENSSL_CONFIGURE_TOOL perl REQUIRED)
 set(OPENSSL_CONFIGURE_OUTPUT ${openssl_BINARY_DIR}/configdata.pm)
 configure_openssl(
     COMMAND ${VCVARSALL_COMMAND}
@@ -142,7 +137,47 @@ configure_openssl(
     BUILD_DIR ${openssl_BINARY_DIR}
     OPTIONS ${OPENSSL_CONFIGURE_OPTIONS}
     OUTPUT ${OPENSSL_CONFIGURE_OUTPUT}
-    VERBOSE ${OPENSSL_VERBOSE}
+    VERBOSE ${OPENSSL_CONFIGURE_VERBOSE}
+)
+
+# Parse configdata.pm
+parse_configdata(${OPENSSL_CONFIGURE_OUTPUT} options FULL_CONFIGURE_OPTIONS)
+
+if(NOT "no-shared" IN_LIST FULL_CONFIGURE_OPTIONS)
+    set(OPENSSL_BUILD_SHARED_LIBS ON)
+endif()
+
+# Parse makefile
+find_file(
+    OPENSSL_MAKEFILE
+    NAMES makefile
+    PATHS ${openssl_BINARY_DIR}
+    REQUIRED
+)
+parse_makefile(${OPENSSL_MAKEFILE} static OPENSSL_STATIC_LIBS)
+parse_makefile(${OPENSSL_MAKEFILE} shared OPENSSL_SHARED_LIBS)
+
+foreach(LIBRARY IN LISTS OPENSSL_STATIC_LIBS)
+    if(LIBRARY MATCHES "crypto")
+        set(OPENSSL_STATIC_CRYPTO_LIBRARY "${openssl_BINARY_DIR}/${LIBRARY}")
+    elseif(LIBRARY MATCHES "ssl")
+        set(OPENSSL_STATIC_SSL_LIBRARY "${openssl_BINARY_DIR}/${LIBRARY}")
+    endif()
+endforeach()
+
+foreach(LIBRARY IN LISTS OPENSSL_SHARED_LIBS)
+    if(LIBRARY MATCHES "crypto")
+        set(OPENSSL_SHARED_CRYPTO_LIBRARY "${openssl_BINARY_DIR}/${LIBRARY}")
+    elseif(LIBRARY MATCHES "ssl")
+        set(OPENSSL_SHARED_SSL_LIBRARY "${openssl_BINARY_DIR}/${LIBRARY}")
+    endif()
+endforeach()
+
+set(OPENSSL_LIBRARIES
+    ${OPENSSL_STATIC_CRYPTO_LIBRARY}
+    ${OPENSSL_STATIC_SSL_LIBRARY}
+    ${OPENSSL_SHARED_CRYPTO_LIBRARY}
+    ${OPENSSL_SHARED_SSL_LIBRARY}
 )
 
 # Find build tool
@@ -162,95 +197,93 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
         set(OPENSSL_BUILD_TOOL ${NMAKE})
     endif()
 
-    parse_configdata(${OPENSSL_CONFIGURE_OUTPUT} "options" FULL_OPTIONS)
-
-    if(NOT "no-asm" IN_LIST FULL_OPTIONS)
+    if(NOT "no-asm" IN_LIST FULL_CONFIGURE_OPTIONS)
         find_program(OPENSSL_ASSEMBLER nasm REQUIRED)
-        message(STATUS "${OPENSSL_ASSEMBLER}")
     endif()
 else()
     find_program(OPENSSL_BUILD_TOOL make REQUIRED)
 endif()
 
+# Add a custom target to build OpenSSL
+set(OPENSSL_BUILD_COMMAND ${VCVARSALL_COMMAND} ${OPENSSL_BUILD_TOOL} ${OPENSSL_BUILD_OPTIONS} build_libs)
+add_custom_target(
+    openssl-build
+    COMMAND ${OPENSSL_BUILD_COMMAND}
+    BYPRODUCTS ${OPENSSL_LIBRARIES}
+    WORKING_DIRECTORY ${openssl_BINARY_DIR}
+)
 
-# Build OpenSSL
-set(OPENSSL_BUILD_COMMAND ${VCVARSALL_COMMAND} ${OPENSSL_BUILD_TOOL} ${OPENSSL_BUILD_OPTIONS})
-set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} install_sw)
-set(OPENSSL_UNINSTALL_COMMAND ${CMAKE_COMMAND} -E rm -rf ${OPENSSL_INSTALL_DIR})
-set(SLEEP_COMMAND ${CMAKE_COMMAND} -E sleep 1)
-set(TRY_INSTALL_COUNT 10)
-
-if(OPENSSL_VERBOSE)
-    execute_process(
-        COMMAND ${OPENSSL_BUILD_COMMAND}
-        WORKING_DIRECTORY ${openssl_BINARY_DIR}
-        COMMAND_ERROR_IS_FATAL ANY
-    )
-    execute_process(
-        COMMAND ${OPENSSL_UNINSTALL_COMMAND}
-        COMMAND_ERROR_IS_FATAL ANY
-    )
-
-    set(INSTALL_COUNT 0)
-
-    while(TRUE)
-        execute_process(
-            COMMAND ${OPENSSL_INSTALL_COMMAND}
-            WORKING_DIRECTORY ${openssl_BINARY_DIR}
-            RESULT_VARIABLE INSTALL_RESULT
-        )
-
-        if(INSTALL_RESULT EQUAL 0 OR INSTALL_COUNT EQUAL TRY_INSTALL_COUNT)
-            break()
-        endif()
-
-        execute_process(
-            COMMAND ${SLEEP_COMMAND}
-            COMMAND_ERROR_IS_FATAL ANY
-        )
-        math(EXPR INSTALL_COUNT "${INSTALL_COUNT} + 1")
-        message(STATUS "Failed to install. Try install again... (${INSTALL_COUNT} / ${TRY_INSTALL_COUNT})")
-    endwhile()
+# Create same targets as FindOpenSSL module
+if(OPENSSL_BUILD_SHARED_LIBS)
+    add_library(OpenSSL::Crypto SHARED IMPORTED GLOBAL)
+    add_library(OpenSSL::SSL SHARED IMPORTED GLOBAL)
 else()
-    message(STATUS "Build OpenSSL")
-    execute_process(
-        COMMAND ${OPENSSL_BUILD_COMMAND}
-        WORKING_DIRECTORY ${openssl_BINARY_DIR}
-        OUTPUT_QUIET
-        ERROR_QUIET # Suppress perl warnings
-        COMMAND_ERROR_IS_FATAL ANY
-    )
-    message(STATUS "Uninstall OpenSSL")
-    execute_process(
-        COMMAND ${OPENSSL_UNINSTALL_COMMAND}
-        OUTPUT_QUIET
-        COMMAND_ERROR_IS_FATAL ANY
-    )
-    message(STATUS "Install OpenSSL")
-    set(INSTALL_COUNT 0)
+    add_library(OpenSSL::Crypto STATIC IMPORTED GLOBAL)
+    add_library(OpenSSL::SSL STATIC IMPORTED GLOBAL)
 
-    # Installation may fail due to permission denial
-    while(TRUE)
-        execute_process(
-            COMMAND ${OPENSSL_INSTALL_COMMAND}
-            WORKING_DIRECTORY ${openssl_BINARY_DIR}
-            RESULT_VARIABLE INSTALL_RESULT
-            OUTPUT_QUIET
-            ERROR_QUIET
-        )
-
-        if(INSTALL_RESULT EQUAL 0 OR INSTALL_COUNT EQUAL TRY_INSTALL_COUNT)
-            break()
-        endif()
-
-        execute_process(
-            COMMAND ${SLEEP_COMMAND}
-            COMMAND_ERROR_IS_FATAL ANY
-        )
-        math(EXPR INSTALL_COUNT "${INSTALL_COUNT} + 1")
-    endwhile()
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        set(OPENSSL_DEPENDENCIES ws2_32 crypt32)
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        find_package(Threads)
+        set(OPENSSL_DEPENDENCIES Threads::Threads ${CMAKE_DL_LIBS})
+    endif()
 endif()
 
+if(OPENSSL_BUILD_SHARED_LIBS)
+    set_target_properties(OpenSSL::Crypto PROPERTIES
+        IMPORTED_LOCATION ${OPENSSL_SHARED_CRYPTO_LIBRARY}
+    )
+    set_target_properties(OpenSSL::SSL PROPERTIES
+        IMPORTED_LOCATION ${OPENSSL_SHARED_SSL_LIBRARY}
+    )
+
+    if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+        set_target_properties(OpenSSL::Crypto PROPERTIES
+            IMPORTED_IMPLIB ${OPENSSL_STATIC_CRYPTO_LIBRARY}
+        )
+        set_target_properties(OpenSSL::SSL PROPERTIES
+            IMPORTED_IMPLIB ${OPENSSL_STATIC_SSL_LIBRARY}
+        )
+    endif()
+else()
+    set_target_properties(OpenSSL::Crypto PROPERTIES
+        IMPORTED_LOCATION ${OPENSSL_STATIC_CRYPTO_LIBRARY}
+    )
+    set_target_properties(OpenSSL::SSL PROPERTIES
+        IMPORTED_LOCATION ${OPENSSL_STATIC_SSL_LIBRARY}
+    )
+endif()
+
+set(OPENSSL_INCLUDE_DIR ${openssl_SOURCE_DIR}/include ${openssl_BINARY_DIR}/include)
+set_target_properties(OpenSSL::Crypto PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES C
+    INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "${OPENSSL_DEPENDENCIES}"
+)
+set_target_properties(OpenSSL::SSL PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES C
+    INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "${OPENSSL_DEPENDENCIES};OpenSSL::Crypto"
+)
+
+add_dependencies(OpenSSL::Crypto openssl-build)
+add_dependencies(OpenSSL::SSL openssl-build)
+
+add_library(OpenSSL::applink INTERFACE IMPORTED)
+set_target_properties(OpenSSL::applink PROPERTIES
+    INTERFACE_SOURCES ${openssl_SOURCE_DIR}/ms/applink.c
+)
+
+# Install OpenSSL
+set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} install_dev $<$<PLATFORM_ID:Windows>:/NOLOGO>)
+install(
+    CODE "execute_process(
+            COMMAND ${OPENSSL_INSTALL_COMMAND}
+            WORKING_DIRECTORY ${openssl_BINARY_DIR}
+            OUTPUT_QUIET
+        )"
+)
+
 if(PROJECT_IS_TOP_LEVEL)
-    # add_subdirectory(apps)
+    add_subdirectory(apps)
 endif()
