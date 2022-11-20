@@ -175,6 +175,60 @@ set(OPENSSL_LIBRARIES
     ${OPENSSL_SHARED_SSL_LIBRARY}
 )
 
+# Create same targets as FindOpenSSL module
+add_library(OpenSSL::applink INTERFACE IMPORTED GLOBAL)
+
+if(OPENSSL_BUILD_SHARED_LIBS)
+    add_library(OpenSSL::Crypto SHARED IMPORTED GLOBAL)
+    add_library(OpenSSL::SSL SHARED IMPORTED GLOBAL)
+    set_target_properties(OpenSSL::Crypto PROPERTIES
+        IMPORTED_LOCATION ${OPENSSL_SHARED_CRYPTO_LIBRARY}
+    )
+    set_target_properties(OpenSSL::SSL PROPERTIES
+        IMPORTED_LOCATION ${OPENSSL_SHARED_SSL_LIBRARY}
+    )
+
+    if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+        set_target_properties(OpenSSL::Crypto PROPERTIES
+            IMPORTED_IMPLIB ${OPENSSL_STATIC_CRYPTO_LIBRARY}
+        )
+        set_target_properties(OpenSSL::SSL PROPERTIES
+            IMPORTED_IMPLIB ${OPENSSL_STATIC_SSL_LIBRARY}
+        )
+        set_target_properties(OpenSSL::applink PROPERTIES
+            INTERFACE_SOURCES ${openssl_SOURCE_DIR}/ms/applink.c
+        )
+    endif()
+else()
+    add_library(OpenSSL::Crypto STATIC IMPORTED GLOBAL)
+    add_library(OpenSSL::SSL STATIC IMPORTED GLOBAL)
+    set_target_properties(OpenSSL::Crypto PROPERTIES
+        IMPORTED_LOCATION ${OPENSSL_STATIC_CRYPTO_LIBRARY}
+    )
+    set_target_properties(OpenSSL::SSL PROPERTIES
+        IMPORTED_LOCATION ${OPENSSL_STATIC_SSL_LIBRARY}
+    )
+
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        set(OPENSSL_DEPENDENCIES ws2_32 crypt32)
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        find_package(Threads)
+        set(OPENSSL_DEPENDENCIES Threads::Threads ${CMAKE_DL_LIBS})
+    endif()
+endif()
+
+set(OPENSSL_INCLUDE_DIR ${openssl_SOURCE_DIR}/include ${openssl_BINARY_DIR}/include)
+set_target_properties(OpenSSL::Crypto PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES C
+    INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "${OPENSSL_DEPENDENCIES}"
+)
+set_target_properties(OpenSSL::SSL PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES C
+    INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "${OPENSSL_DEPENDENCIES};OpenSSL::Crypto"
+)
+
 # Find build tool
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     if(NUMBER_OF_THREADS GREATER 1)
@@ -201,76 +255,22 @@ endif()
 
 # Add a custom target to build OpenSSL
 set(OPENSSL_BUILD_COMMAND ${VCVARSALL_COMMAND} ${OPENSSL_BUILD_TOOL} ${OPENSSL_BUILD_OPTIONS} build_libs)
-add_custom_target(
-    openssl-build
+add_custom_command(
+    OUTPUT ${OPENSSL_LIBRARIES}
     COMMAND ${OPENSSL_BUILD_COMMAND}
-    BYPRODUCTS ${OPENSSL_LIBRARIES}
     WORKING_DIRECTORY ${openssl_BINARY_DIR}
 )
-
-# Create same targets as FindOpenSSL module
-if(OPENSSL_BUILD_SHARED_LIBS)
-    add_library(OpenSSL::Crypto SHARED IMPORTED GLOBAL)
-    add_library(OpenSSL::SSL SHARED IMPORTED GLOBAL)
-else()
-    add_library(OpenSSL::Crypto STATIC IMPORTED GLOBAL)
-    add_library(OpenSSL::SSL STATIC IMPORTED GLOBAL)
-
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        set(OPENSSL_DEPENDENCIES ws2_32 crypt32)
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        find_package(Threads)
-        set(OPENSSL_DEPENDENCIES Threads::Threads ${CMAKE_DL_LIBS})
-    endif()
-endif()
-
-if(OPENSSL_BUILD_SHARED_LIBS)
-    set_target_properties(OpenSSL::Crypto PROPERTIES
-        IMPORTED_LOCATION ${OPENSSL_SHARED_CRYPTO_LIBRARY}
-    )
-    set_target_properties(OpenSSL::SSL PROPERTIES
-        IMPORTED_LOCATION ${OPENSSL_SHARED_SSL_LIBRARY}
-    )
-
-    if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-        set_target_properties(OpenSSL::Crypto PROPERTIES
-            IMPORTED_IMPLIB ${OPENSSL_STATIC_CRYPTO_LIBRARY}
-        )
-        set_target_properties(OpenSSL::SSL PROPERTIES
-            IMPORTED_IMPLIB ${OPENSSL_STATIC_SSL_LIBRARY}
-        )
-    endif()
-else()
-    set_target_properties(OpenSSL::Crypto PROPERTIES
-        IMPORTED_LOCATION ${OPENSSL_STATIC_CRYPTO_LIBRARY}
-    )
-    set_target_properties(OpenSSL::SSL PROPERTIES
-        IMPORTED_LOCATION ${OPENSSL_STATIC_SSL_LIBRARY}
-    )
-endif()
-
-set(OPENSSL_INCLUDE_DIR ${openssl_SOURCE_DIR}/include ${openssl_BINARY_DIR}/include)
-set_target_properties(OpenSSL::Crypto PROPERTIES
-    IMPORTED_LINK_INTERFACE_LANGUAGES C
-    INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIR}"
-    INTERFACE_LINK_LIBRARIES "${OPENSSL_DEPENDENCIES}"
-)
-set_target_properties(OpenSSL::SSL PROPERTIES
-    IMPORTED_LINK_INTERFACE_LANGUAGES C
-    INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIR}"
-    INTERFACE_LINK_LIBRARIES "${OPENSSL_DEPENDENCIES};OpenSSL::Crypto"
-)
-
+add_custom_target(openssl-build DEPENDS ${OPENSSL_LIBRARIES})
 add_dependencies(OpenSSL::Crypto openssl-build)
 add_dependencies(OpenSSL::SSL openssl-build)
 
-add_library(OpenSSL::applink INTERFACE IMPORTED GLOBAL)
-set_target_properties(OpenSSL::applink PROPERTIES
-    INTERFACE_SOURCES ${openssl_SOURCE_DIR}/ms/applink.c
-)
-
 # Install OpenSSL
-set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} install_dev $<$<PLATFORM_ID:Windows>:/NOLOGO>)
+set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} install_dev)
+
+if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    list(APPEND OPENSSL_INSTALL_COMMAND /NOLOGO)
+endif()
+
 install(
     CODE "execute_process(
             COMMAND ${OPENSSL_INSTALL_COMMAND}
