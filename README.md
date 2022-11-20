@@ -31,6 +31,16 @@ choco install -y cmake jom strawberryperl nasm --installargs 'ADD_CMAKE_TO_PATH=
 [Environment]::SetEnvironmentVariable("PATH", "$ENV:PATH;C:\Program Files\NASM", "USER")
 ```
 
+## Configure Options
+
+| Option                        | Type      | Default           | Mandatory?    |
+| ---                           | :---:     | :---:             | :---:         |
+| `OPENSSL_CONFIGURE_OPTIONS`   | list      | no-tests          | no            |
+| `OPENSSL_CONFIGURE_VERBOSE`   | bool      | OFF               | no            |
+| `OPENSSL_PARALLEL_BUILD`      | bool      | ON                | no            |
+| `OPENSSL_TARGET_PLATFORM`     | string    | (undefined)       | yes           |
+| `OPENSSL_TARGET_VERSION`      | string    | latest 3.0 series | no            |
+
 ## Usage
 
 ### Build
@@ -50,20 +60,12 @@ cmake --preset windows-x64
 cmake --build --preset windows-x64
 ```
 
-#### Configure options
-
-- `-DOPENSSL_PARALLEL_BUILD=<bool>` (default : ON)
-- `-DOPENSSL_TARGET_VERSION=<string>` (default : latest 3.0 series)
-- `-DOPENSSL_TARGET_PLATFORM=<string>` (default : empty)
-- `-DOPENSSL_CONFIGURE_OPTIONS=<semicolon-separated-list>` (default : no-tests)
-
 ### Integration
 
 ```CMake
 include(FetchContent)
 
 # Set options before FetchContent_MakeAvailable()
-set(OPENSSL_PARALLEL_BUILD ON)
 set(OPENSSL_TARGET_VERSION "3.0.7")
 set(OPENSSL_TARGET_PLATFORM "VC-WIN64A")
 set(OPENSSL_CONFIGURE_OPTIONS no-shared no-tests)
@@ -73,7 +75,7 @@ FetchContent_Declare(
     URL https://github.com/jimmy-park/openssl-cmake/archive/main.zip
 )
 
-# This line must be preceeded find_package(OpenSSL REQUIRED)
+# This line must be preceded before find_package(OpenSSL REQUIRED)
 FetchContent_MakeAvailable(openssl-cmake)
 
 # Use same targets as FindOpenSSL module
