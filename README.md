@@ -6,7 +6,6 @@ Support OpenSSL versions from `1.1.0h` to the latest `3.0` series
 
 ## Prerequisites
 
-
 ### Requirements
 
 - CMake 3.24+ (due to `FetchContent_Declare(OVERRIDE_FIND_PACKAGE)`)
@@ -33,13 +32,13 @@ choco install -y cmake jom strawberryperl nasm --installargs 'ADD_CMAKE_TO_PATH=
 
 ## Configure Options
 
-| Option                        | Type      | Default           | Mandatory?    |
-| ---                           | :---:     | :---:             | :---:         |
-| `OPENSSL_CONFIGURE_OPTIONS`   | list      | no-tests          | no            |
-| `OPENSSL_CONFIGURE_VERBOSE`   | bool      | OFF               | no            |
-| `OPENSSL_PARALLEL_BUILD`      | bool      | ON                | no            |
-| `OPENSSL_TARGET_PLATFORM`     | string    | (undefined)       | yes           |
-| `OPENSSL_TARGET_VERSION`      | string    | latest 3.0 series | no            |
+| Option                        | Type      | Default value or behavior | Mandatory?                                  |
+| ---                           | ---       | ---                       | ---                                         |
+| `OPENSSL_CONFIGURE_OPTIONS`   | list      | no-tests                  | maybe (1.1.0 series don't support no-tests) |
+| `OPENSSL_CONFIGURE_VERBOSE`   | bool      | OFF                       | no                                          |
+| `OPENSSL_PARALLEL_BUILD`      | bool      | ON                        | no                                          |
+| `OPENSSL_TARGET_PLATFORM`     | string    | detect target platform    | maybe (detection may fail)                  |
+| `OPENSSL_TARGET_VERSION`      | string    | latest 3.0 series         | no                                          |
 
 ## Usage
 

@@ -70,9 +70,6 @@
             "architecture": {
                 "value": "Win32",
                 "strategy": "set"
-            },
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "VC-WIN32"
             }
         },
         {
@@ -81,9 +78,6 @@
             "architecture": {
                 "value": "x64",
                 "strategy": "set"
-            },
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "VC-WIN64A"
             }
         },
         {
@@ -92,9 +86,6 @@
             "architecture": {
                 "value": "ARM",
                 "strategy": "set"
-            },
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "VC-WIN32-ARM"
             }
         },
         {
@@ -103,9 +94,6 @@
             "architecture": {
                 "value": "ARM64",
                 "strategy": "set"
-            },
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "VC-WIN64-ARM"
             }
         },
         {

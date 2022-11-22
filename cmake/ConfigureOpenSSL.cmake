@@ -1,5 +1,29 @@
 include(CMakeParseArguments)
 
+function(detect_target_platform RESULT)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        if(CMAKE_GENERATOR_PLATFORM STREQUAL "")
+            set(CMAKE_GENERATOR_PLATFORM ${CMAKE_VS_PLATFORM_NAME_DEFAULT})
+        endif()
+
+        if(CMAKE_GENERATOR_PLATFORM STREQUAL "Win32")
+            set(TARGET_PLATFORM VC-WIN32)
+        elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "x64")
+            set(TARGET_PLATFORM VC-WIN64A)
+        elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM")
+            set(TARGET_PLATFORM VC-WIN32-ARM)
+        elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")
+            set(TARGET_PLATFORM VC-WIN64-ARM)
+        endif()
+    endif()
+
+    if(NOT DEFINED TARGET_PLATFORM)
+        message(FATAL_ERROR "Failed to detect the OpenSSL target platform")
+    endif()
+
+    set(${RESULT} ${TARGET_PLATFORM} PARENT_SCOPE)
+endfunction()
+
 function(parse_configdata FILE KEY VALUES)
     if(NOT EXISTS ${FILE})
         return()
