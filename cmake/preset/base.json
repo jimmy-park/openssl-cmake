@@ -111,6 +111,13 @@
             }
         },
         {
+            "name": "target-macos-arm64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "darwin64-arm64-cc"
+            }
+        },
+        {
             "name": "target-ios",
             "hidden": true,
             "cacheVariables": {
