@@ -46,7 +46,7 @@
             }
         },
         {
-            "name": "visual-studio",
+            "name": "vs2022",
             "hidden": true,
             "generator": "Visual Studio 17 2022",
             "toolset": {

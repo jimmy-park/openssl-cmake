@@ -1,8 +1,8 @@
 # Find vcvarsall.bat using CMAKE_C_COMPILER
 function(find_vcvarsall OUTPUT)
-    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         if(NOT CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-            message(FATAL_ERROR "Use MSVC compiler in Windows")
+            message(FATAL_ERROR "Use MSVC compiler to find vcvarsall.bat")
         endif()
 
         cmake_path(GET CMAKE_C_COMPILER PARENT_PATH VS_PATH)

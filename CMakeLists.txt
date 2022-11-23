@@ -123,7 +123,8 @@ if(NUMBER_OF_THREADS GREATER 1)
 endif()
 
 # Configure OpenSSL
-find_program(OPENSSL_CONFIGURE_TOOL perl REQUIRED)
+find_program(PERL perl REQUIRED)
+set(OPENSSL_CONFIGURE_TOOL ${PERL})
 set(OPENSSL_CONFIGURE_OUTPUT ${openssl_BINARY_DIR}/configdata.pm)
 configure_openssl(
     COMMAND ${VCVARSALL_COMMAND}
@@ -136,7 +137,7 @@ configure_openssl(
 )
 
 # Parse configdata.pm
-parse_configdata(${OPENSSL_CONFIGURE_OUTPUT} options FULL_CONFIGURE_OPTIONS)
+parse_configdata(${OPENSSL_CONFIGURE_OUTPUT} "options" FULL_CONFIGURE_OPTIONS)
 
 if(NOT "no-shared" IN_LIST FULL_CONFIGURE_OPTIONS)
     set(OPENSSL_BUILD_SHARED_LIBS ON)
@@ -248,7 +249,7 @@ set_target_properties(OpenSSL::SSL PROPERTIES
 )
 
 # Find build tool
-if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     if(NUMBER_OF_THREADS GREATER 1)
         find_program(JOM jom REQUIRED)
         set(OPENSSL_BUILD_TOOL ${JOM})
@@ -263,12 +264,9 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
         )
         set(OPENSSL_BUILD_TOOL ${NMAKE})
     endif()
-
-    if(NOT "no-asm" IN_LIST FULL_CONFIGURE_OPTIONS)
-        find_program(OPENSSL_ASSEMBLER nasm REQUIRED)
-    endif()
 else()
-    find_program(OPENSSL_BUILD_TOOL make REQUIRED)
+    find_program(MAKE make REQUIRED)
+    set(OPENSSL_BUILD_TOOL ${MAKE})
 endif()
 
 # Add a custom target to build OpenSSL

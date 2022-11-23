@@ -10,7 +10,7 @@
                 "base",
                 "openssl-latest",
                 "host-windows",
-                "visual-studio",
+                "vs2022",
                 "target-windows-x86"
             ]
         },
@@ -20,7 +20,7 @@
                 "base",
                 "openssl-latest",
                 "host-windows",
-                "visual-studio",
+                "vs2022",
                 "target-windows-x64"
             ]
         },
@@ -30,7 +30,7 @@
                 "base",
                 "openssl-latest",
                 "host-windows",
-                "visual-studio",
+                "vs2022",
                 "target-windows-arm"
             ]
         },
@@ -40,7 +40,7 @@
                 "base",
                 "openssl-latest",
                 "host-windows",
-                "visual-studio",
+                "vs2022",
                 "target-windows-arm64"
             ]
         }

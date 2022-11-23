@@ -7,13 +7,13 @@ function(detect_target_platform RESULT)
         endif()
 
         if(CMAKE_GENERATOR_PLATFORM STREQUAL "Win32")
-            set(TARGET_PLATFORM VC-WIN32)
+            set(TARGET_PLATFORM "VC-WIN32")
         elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "x64")
-            set(TARGET_PLATFORM VC-WIN64A)
+            set(TARGET_PLATFORM "VC-WIN64A")
         elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM")
-            set(TARGET_PLATFORM VC-WIN32-ARM)
+            set(TARGET_PLATFORM "VC-WIN32-ARM")
         elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")
-            set(TARGET_PLATFORM VC-WIN64-ARM)
+            set(TARGET_PLATFORM "VC-WIN64-ARM")
         endif()
     endif()
 
@@ -110,13 +110,6 @@ function(configure_openssl)
 
     if(NOT TARGET_PLATFORM IN_LIST PLATFORM_LIST)
         message(FATAL_ERROR "${TARGET_PLATFORM} isn't supported")
-    endif()
-
-    # Set environment variables before configuration
-    set(ENV{PERL} ${CONFIGURE_TOOL})
-
-    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-        set(ENV{RANLIB} "ranlib -c -no_warning_for_no_symbols")
     endif()
 
     message(STATUS "Configure OpenSSL")
