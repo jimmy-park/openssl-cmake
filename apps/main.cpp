@@ -30,8 +30,11 @@ int main()
 
     std::cout << "Expected : ce73931d2b3da6e6bf18af27494c6cd\n"
               << "Generate : ";
+
     for (i = 0; i < md_len; i++)
         std::cout << std::hex << static_cast<int>(md_value[i]);
+
+    std::cout << '\n';
 
     return 0;
 }

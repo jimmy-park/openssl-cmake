@@ -1,0 +1,80 @@
+{
+    "version": 5,
+    "include": [
+        "base.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "linux-x86_64",
+            "inherits": [
+                "base",
+                "host-linux",
+                "ninja",
+                "target-linux-x86_64"
+            ]
+        },
+        {
+            "name": "linux-aarch64",
+            "inherits": [
+                "base",
+                "host-linux",
+                "ninja",
+                "target-linux-aarch64"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "linux-x86_64",
+            "inherits": [
+                "host-linux",
+                "release"
+            ],
+            "configurePreset": "linux-x86_64"
+        },
+        {
+            "name": "linux-x86_64-clean",
+            "inherits": [
+                "host-linux",
+                "release",
+                "clean"
+            ],
+            "configurePreset": "linux-x86_64"
+        },
+        {
+            "name": "linux-x86_64-install",
+            "inherits": [
+                "host-linux",
+                "release",
+                "install"
+            ],
+            "configurePreset": "linux-x86_64"
+        },
+        {
+            "name": "linux-aarch64",
+            "inherits": [
+                "host-linux",
+                "release"
+            ],
+            "configurePreset": "linux-aarch64"
+        },
+        {
+            "name": "linux-aarch64-clean",
+            "inherits": [
+                "host-linux",
+                "release",
+                "clean"
+            ],
+            "configurePreset": "linux-aarch64"
+        },
+        {
+            "name": "linux-aarch64-install",
+            "inherits": [
+                "host-linux",
+                "release",
+                "install"
+            ],
+            "configurePreset": "linux-aarch64"
+        }
+    ]
+}

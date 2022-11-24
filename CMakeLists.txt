@@ -146,7 +146,7 @@ endif()
 # Parse Makefile
 find_file(
     OPENSSL_MAKEFILE
-    NAMES makefile
+    NAMES makefile Makefile
     PATHS ${openssl_BINARY_DIR}
     REQUIRED
 )

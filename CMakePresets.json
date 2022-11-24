@@ -5,6 +5,8 @@
         "minor": 24
     },
     "include": [
+        "cmake/preset/linux.json",
+        "cmake/preset/macos.json",
         "cmake/preset/windows.json"
     ]
 }

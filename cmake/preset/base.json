@@ -12,22 +12,6 @@
             }
         },
         {
-            "name": "openssl-latest",
-            "hidden": true,
-            "cacheVariables": {
-                "OPENSSL_TARGET_VERSION": "3.0.7"
-            }
-        },
-        {
-            "name": "host-windows",
-            "hidden": true,
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
             "name": "host-linux",
             "hidden": true,
             "condition": {
@@ -43,6 +27,15 @@
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "host-windows",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
             }
         },
         {
@@ -63,6 +56,34 @@
             "name": "xcode",
             "hidden": true,
             "generator": "Xcode"
+        },
+        {
+            "name": "target-linux-x86_64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "linux-x86_64"
+            }
+        },
+        {
+            "name": "target-linux-aarch64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "linux-aarch64"
+            }
+        },
+        {
+            "name": "target-macos-x86_64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "darwin64-x86_64-cc"
+            }
+        },
+        {
+            "name": "target-macos-arm64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "darwin64-arm64-cc"
+            }
         },
         {
             "name": "target-windows-x86",
@@ -97,27 +118,6 @@
             }
         },
         {
-            "name": "target-linux-x86_64",
-            "hidden": true,
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "linux-x86_64"
-            }
-        },
-        {
-            "name": "target-macos-x86_64",
-            "hidden": true,
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "darwin64-x86_64-cc"
-            }
-        },
-        {
-            "name": "target-macos-arm64",
-            "hidden": true,
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "darwin64-arm64-cc"
-            }
-        },
-        {
             "name": "target-ios",
             "hidden": true,
             "cacheVariables": {
@@ -141,15 +141,6 @@
     ],
     "buildPresets": [
         {
-            "name": "host-windows",
-            "hidden": true,
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
             "name": "host-linux",
             "hidden": true,
             "condition": {
@@ -165,6 +156,15 @@
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "host-windows",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
             }
         },
         {
