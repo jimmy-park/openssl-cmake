@@ -9,11 +9,29 @@ Support OpenSSL versions from `1.1.0h` to the latest `3.0` series
 ### Requirements
 
 - CMake 3.24+ (due to `FetchContent_Declare(OVERRIDE_FIND_PACKAGE)`)
-- Some OpenSSL build tools [Link](https://github.com/openssl/openssl/blob/master/INSTALL.md#prerequisites)
+- OpenSSL build tools [Link](https://github.com/openssl/openssl/blob/master/INSTALL.md#prerequisites)
   - Make implementation
   - Perl 5
   - ANSI C compiler
   - NASM (Windows only)
+
+### Linux
+
+Install CMake from [official website](https://cmake.org/download/) or [Snapcraft](https://snapcraft.io/docs/installing-snapd)
+
+```sh
+sudo snap install cmake --classic
+sudo apt install -y build-essential perl ninja-build
+```
+
+### macOS
+
+Install packages from [Homebrew](https://brew.sh/)
+
+```sh
+brew install cmake perl
+xcode-select --install
+```
 
 ### Windows
 
