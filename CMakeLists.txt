@@ -123,8 +123,8 @@ if(NUMBER_OF_THREADS GREATER 1)
 endif()
 
 # Configure OpenSSL
-find_program(PERL perl REQUIRED)
-set(OPENSSL_CONFIGURE_TOOL ${PERL})
+find_package(Perl 5 REQUIRED)
+set(OPENSSL_CONFIGURE_TOOL ${PERL_EXECUTABLE})
 set(OPENSSL_CONFIGURE_OUTPUT ${openssl_BINARY_DIR}/configdata.pm)
 configure_openssl(
     COMMAND ${VCVARSALL_COMMAND}
@@ -149,6 +149,7 @@ find_file(
     NAMES makefile Makefile
     PATHS ${openssl_BINARY_DIR}
     REQUIRED
+    NO_DEFAULT_PATH
 )
 parse_makefile(${OPENSSL_MAKEFILE} "INSTALL_LIBS" OPENSSL_STATIC_LIBS)
 parse_makefile(${OPENSSL_MAKEFILE} "INSTALL_SHLIBS" OPENSSL_SHARED_LIBS)
