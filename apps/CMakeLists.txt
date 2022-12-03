@@ -7,11 +7,7 @@ target_link_libraries(main PRIVATE
 )
 
 if(OPENSSL_BUILD_SHARED_LIBS AND CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    add_custom_command(
-        TARGET main
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:main> $<TARGET_FILE_DIR:main>
-        COMMENT "Copy OpenSSL .dll files to binary directory"
-        COMMAND_EXPAND_LISTS
+    set_target_properties(main PROPERTIES
+        VS_DEBUGGER_ENVIRONMENT "PATH=%PATH%;${openssl_BINARY_DIR}"
     )
 endif()
