@@ -17,8 +17,11 @@ include(cmake/FindVcvarsall.cmake)
 option(OPENSSL_PARALLEL_BUILD "Enable parallel build" ON)
 option(OPENSSL_CONFIGURE_VERBOSE "Print configure message to the standard output" OFF)
 
+set(OPENSSL_LATEST_VERSION 3.0.7 CACHE INTERNAL "OpenSSL version of latest release")
+set(OPENSSL_LATEST_SHA256 83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e9ed95c396e CACHE INTERNAL "Hash of archived OpenSSL release")
+
 if(NOT DEFINED OPENSSL_TARGET_VERSION)
-    set(OPENSSL_TARGET_VERSION "3.0.7" CACHE INTERNAL "Set OpenSSL version to latest release")
+    set(OPENSSL_TARGET_VERSION ${OPENSSL_LATEST_VERSION} CACHE INTERNAL "Set OpenSSL version to latest release")
 endif()
 
 if(NOT DEFINED OPENSSL_TARGET_PLATFORM)
@@ -48,11 +51,22 @@ endif()
 
 # Download OpenSSL source
 message(STATUS "Fetching OpenSSL ${OPENSSL_TARGET_VERSION}")
-FetchContent_Declare(
-    openssl
-    URL https://www.openssl.org/source/openssl-${OPENSSL_TARGET_VERSION}.tar.gz
-    OVERRIDE_FIND_PACKAGE
-)
+
+if(OPENSSL_TARGET_VERSION STREQUAL OPENSSL_LATEST_VERSION)
+    FetchContent_Declare(
+        openssl
+        URL https://www.openssl.org/source/openssl-${OPENSSL_LATEST_VERSION}.tar.gz
+        URL_HASH SHA256=${OPENSSL_LATEST_SHA256}
+        OVERRIDE_FIND_PACKAGE
+    )
+else()
+    FetchContent_Declare(
+        openssl
+        URL https://www.openssl.org/source/openssl-${OPENSSL_TARGET_VERSION}.tar.gz
+        OVERRIDE_FIND_PACKAGE
+    )
+endif()
+
 FetchContent_MakeAvailable(openssl)
 
 # Clean build directory if version is different
