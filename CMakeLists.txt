@@ -8,17 +8,18 @@ project(
     LANGUAGES C
 )
 
-include(FetchContent)
 include(ProcessorCount)
 include(cmake/ConfigureOpenSSL.cmake)
 include(cmake/FindVcvarsall.cmake)
+include(cmake/GetCPM.cmake)
+
+# Information of latest OpenSSL release
+set(OPENSSL_LATEST_VERSION 3.0.7 CACHE INTERNAL "OpenSSL version of latest release")
+set(OPENSSL_LATEST_SHA256 83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e9ed95c396e CACHE INTERNAL "Hash of archived OpenSSL release")
 
 # Custom options
 option(OPENSSL_PARALLEL_BUILD "Enable parallel build" ON)
 option(OPENSSL_CONFIGURE_VERBOSE "Print configure message to the standard output" OFF)
-
-set(OPENSSL_LATEST_VERSION 3.0.7 CACHE INTERNAL "OpenSSL version of latest release")
-set(OPENSSL_LATEST_SHA256 83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e9ed95c396e CACHE INTERNAL "Hash of archived OpenSSL release")
 
 if(NOT DEFINED OPENSSL_TARGET_VERSION)
     set(OPENSSL_TARGET_VERSION ${OPENSSL_LATEST_VERSION} CACHE INTERNAL "Set OpenSSL version to latest release")
@@ -35,10 +36,6 @@ if(NOT DEFINED OPENSSL_CONFIGURE_OPTIONS)
     )
 endif()
 
-if(OPENSSL_PARALLEL_BUILD)
-    ProcessorCount(NUMBER_OF_THREADS)
-endif()
-
 # Validate OpenSSL version
 if(OPENSSL_TARGET_VERSION MATCHES "^3\.[0-9]\.[0-9]+$"
     OR OPENSSL_TARGET_VERSION MATCHES "^1\.1\.[0-1][a-z]$")
@@ -49,25 +46,17 @@ else()
     message(FATAL_ERROR "Invalid OpenSSL version format")
 endif()
 
-# Download OpenSSL source
-message(STATUS "Fetching OpenSSL ${OPENSSL_TARGET_VERSION}")
-
 if(OPENSSL_TARGET_VERSION STREQUAL OPENSSL_LATEST_VERSION)
-    FetchContent_Declare(
-        openssl
-        URL https://www.openssl.org/source/openssl-${OPENSSL_LATEST_VERSION}.tar.gz
-        URL_HASH SHA256=${OPENSSL_LATEST_SHA256}
-        OVERRIDE_FIND_PACKAGE
-    )
-else()
-    FetchContent_Declare(
-        openssl
-        URL https://www.openssl.org/source/openssl-${OPENSSL_TARGET_VERSION}.tar.gz
-        OVERRIDE_FIND_PACKAGE
-    )
+    set(CPM_HASH_OPTION URL_HASH SHA256=${OPENSSL_LATEST_SHA256})
 endif()
 
-FetchContent_MakeAvailable(openssl)
+# Download OpenSSL source
+CPMAddPackage(
+    NAME openssl
+    URL https://www.openssl.org/source/openssl-${OPENSSL_TARGET_VERSION}.tar.gz
+    ${CPM_HASH_OPTION}
+    OVERRIDE_FIND_PACKAGE
+)
 
 # Clean build directory if version is different
 if(NOT OPENSSL_TARGET_VERSION STREQUAL OPENSSL_TARGET_VERSION_OLD)
@@ -127,6 +116,10 @@ set(OPENSSL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/OpenSSL-${OPENSSL_TARGET_VERSION
 list(FILTER OPENSSL_CONFIGURE_OPTIONS EXCLUDE REGEX "--prefix")
 list(APPEND OPENSSL_CONFIGURE_OPTIONS "--prefix=${OPENSSL_INSTALL_DIR}")
 list(PREPEND OPENSSL_CONFIGURE_OPTIONS ${OPENSSL_TARGET_PLATFORM})
+
+if(OPENSSL_PARALLEL_BUILD)
+    ProcessorCount(NUMBER_OF_THREADS)
+endif()
 
 if(NUMBER_OF_THREADS GREATER 1)
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")

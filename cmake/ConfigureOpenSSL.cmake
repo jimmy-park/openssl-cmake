@@ -117,8 +117,11 @@ function(configure_openssl)
         if(IS_DIRECTORY ${CONFIGURE_BUILD_DIR})
             message(STATUS "Configure options are changed. Clean build directory")
             file(REMOVE_RECURSE ${CONFIGURE_BUILD_DIR})
-            file(MAKE_DIRECTORY ${CONFIGURE_BUILD_DIR})
         endif()
+    endif()
+
+    if(NOT IS_DIRECTORY ${CONFIGURE_BUILD_DIR})
+        file(MAKE_DIRECTORY ${CONFIGURE_BUILD_DIR})
     endif()
 
     execute_process(
