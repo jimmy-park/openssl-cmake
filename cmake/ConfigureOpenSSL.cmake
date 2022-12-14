@@ -59,8 +59,8 @@ function(parse_configdata FILE KEY VALUES)
 endfunction()
 
 function(lookup_makefile STRING KEY VALUES)
-    string(REGEX MATCH "${KEY}=[^\n]*" OUTPUT "${STRING}")
-    string(REGEX REPLACE "${KEY}=[ ]*" "" OUTPUT "${OUTPUT}")
+    string(REGEX MATCH "\n${KEY}=[^\n]*" OUTPUT "${STRING}")
+    string(REGEX REPLACE "\n${KEY}=[ ]*" "" OUTPUT "${OUTPUT}")
     set(${VALUES} ${OUTPUT} PARENT_SCOPE)
 endfunction()
 
@@ -107,14 +107,13 @@ function(configure_openssl)
     parse_configdata(${CONFIGURE_OUTPUT} "perlargv" CONFIGURE_OPTIONS_OLD)
 
     if(NOT "${CONFIGURE_OPTIONS_OLD}" STREQUAL "")
-        message(STATUS "Previous configure options : ${CONFIGURE_OPTIONS_OLD}")
-
         if(CONFIGURE_OPTIONS STREQUAL CONFIGURE_OPTIONS_OLD)
             message(STATUS "Found previous configure results. Don't perform configuration")
             return()
         endif()
 
         if(IS_DIRECTORY ${CONFIGURE_BUILD_DIR})
+            message(STATUS "Previous configure options : ${CONFIGURE_OPTIONS_OLD}")
             message(STATUS "Configure options are changed. Clean build directory")
             file(REMOVE_RECURSE ${CONFIGURE_BUILD_DIR})
         endif()
