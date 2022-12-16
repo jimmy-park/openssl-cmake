@@ -192,22 +192,24 @@ endif()
 
 # Modify Makefile
 if(OPENSSL_USE_CCACHE)
+    find_program(CCACHE ccache REQUIRED)
+else()
     find_program(CCACHE ccache)
+endif()
 
-    if(CCACHE)
-        file(READ ${OPENSSL_MAKEFILE} MAKEFILE)
+if(CCACHE)
+    file(READ ${OPENSSL_MAKEFILE} MAKEFILE)
 
-        if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-            string(REGEX REPLACE "CC=[^\n]*" "CC=ccache cl" MAKEFILE "${MAKEFILE}")
-            string(REPLACE "/Zi /Fdossl_static.pdb " "" MAKEFILE "${MAKEFILE}")
-        else()
-            parse_makefile(${OPENSSL_MAKEFILE} "CC" OPENSSL_C_COMPILER)
-            string(REPLACE ";" " " OPENSSL_C_COMPILER "${OPENSSL_C_COMPILER}")
-            string(REGEX REPLACE "\nCC=[^\n]*" "\nCC=${CCACHE} ${OPENSSL_C_COMPILER}" MAKEFILE "${MAKEFILE}")
-        endif()
-
-        file(WRITE ${OPENSSL_MAKEFILE} "${MAKEFILE}")
+    if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+        string(REGEX REPLACE "\nCC=[^\n]*" "CC=ccache cl" MAKEFILE "${MAKEFILE}")
+        string(REPLACE "/Zi /Fdossl_static.pdb " "" MAKEFILE "${MAKEFILE}")
+    else()
+        parse_makefile(${OPENSSL_MAKEFILE} "CC" OPENSSL_C_COMPILER)
+        string(REPLACE ";" " " OPENSSL_C_COMPILER "${OPENSSL_C_COMPILER}")
+        string(REGEX REPLACE "\nCC=[^\n]*" "\nCC=${CCACHE} ${OPENSSL_C_COMPILER}" MAKEFILE "${MAKEFILE}")
     endif()
+
+    file(WRITE ${OPENSSL_MAKEFILE} "${MAKEFILE}")
 endif()
 
 # Provide result variables of FindOpenSSL module
