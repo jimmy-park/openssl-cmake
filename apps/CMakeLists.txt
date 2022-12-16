@@ -1,4 +1,9 @@
+if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME)
+    return()
+endif()
+
 project(apps LANGUAGES CXX)
+
 add_executable(main main.cpp)
 target_link_libraries(main PRIVATE
     OpenSSL::SSL
