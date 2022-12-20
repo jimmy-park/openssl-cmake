@@ -121,8 +121,17 @@
         {
             "name": "target-ios",
             "hidden": true,
+            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
             "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "ios64-xcrun"
+                "CMAKE_OSX_SYSROOT": "iphoneos"
+            }
+        },
+        {
+            "name": "target-ios_sim",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": "iphonesimulator"
             }
         },
         {
