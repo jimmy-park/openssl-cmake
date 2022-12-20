@@ -2,7 +2,14 @@
 
 Build OpenSSL in parallel within CMake
 
-Support OpenSSL versions from `1.1.0h` to the latest `3.0` series
+## Features
+
+- Support versions from `1.1.0h` to the latest `3.0` series
+- Detect major platforms
+- Download the source code only once (thanks [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake)!)
+- Don't reconfigure if same options are used
+- Automatically use the maximum number of processors
+- Reduce rebuild time using [ccache](https://github.com/ccache/ccache)
 
 ## Prerequisites
 
@@ -104,6 +111,20 @@ target_link_libraries(main PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
     $<$<CXX_COMPILER_ID:MSVC>:OpenSSL::applink>
+)
+```
+
+#### Using [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake)
+
+```CMake
+CPMAddPackage(
+    NAME openssl-cmake
+    URL https://github.com/jimmy-park/openssl-cmake/archive/main.zip
+    OPTIONS
+    "OPENSSL_TARGET_VERSION 3.0.7"
+    "OPENSSL_TARGET_PLATFORM VC-WIN64A"
+    "OPENSSL_CONFIGURE_OPTIONS no-shared\\\\;no-tests"
+    "OPENSSL_USE_CCACHE ON"
 )
 ```
 
