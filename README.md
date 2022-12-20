@@ -14,6 +14,7 @@ Support OpenSSL versions from `1.1.0h` to the latest `3.0` series
   - Perl 5
   - ANSI C compiler
   - NASM (Windows only)
+- ccache (optional)
 
 ### Linux
 
@@ -21,7 +22,7 @@ Install CMake from [official website](https://cmake.org/download/) or [Snapcraft
 
 ```sh
 sudo snap install cmake --classic
-sudo apt install -y build-essential perl ninja-build
+sudo apt install -y build-essential perl ninja-build ccache
 ```
 
 ### macOS
@@ -29,7 +30,7 @@ sudo apt install -y build-essential perl ninja-build
 Install packages from [Homebrew](https://brew.sh/)
 
 ```sh
-brew install cmake perl
+brew install cmake perl ccache
 xcode-select --install
 ```
 
@@ -41,7 +42,7 @@ You need to use Visual Studio to build OpenSSL in Windows
 
 ```sh
 # Powershell (run as administrator)
-choco install -y cmake jom strawberryperl nasm --installargs 'ADD_CMAKE_TO_PATH=System'
+choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_TO_PATH=System'
 
 # Append "C:\Program Files\NASM" to the PATH environment variable
 # or run this code
@@ -54,6 +55,7 @@ choco install -y cmake jom strawberryperl nasm --installargs 'ADD_CMAKE_TO_PATH=
 | ---                           | ---       | ---                       | ---                                         |
 | `OPENSSL_CONFIGURE_OPTIONS`   | list      | no-tests                  | maybe (1.1.0 series don't support no-tests) |
 | `OPENSSL_CONFIGURE_VERBOSE`   | bool      | OFF                       | no                                          |
+| `OPENSSL_USE_CCACHE`          | bool      | OFF                       | no                                          |
 | `OPENSSL_PARALLEL_BUILD`      | bool      | ON                        | no                                          |
 | `OPENSSL_TARGET_PLATFORM`     | string    | detect target platform    | maybe (detection may fail)                  |
 | `OPENSSL_TARGET_VERSION`      | string    | latest 3.0 series         | no                                          |
@@ -83,9 +85,10 @@ cmake --build --preset windows-x64
 include(FetchContent)
 
 # Set options before FetchContent_MakeAvailable()
-set(OPENSSL_TARGET_VERSION "3.0.7")
-set(OPENSSL_TARGET_PLATFORM "VC-WIN64A")
+set(OPENSSL_TARGET_VERSION 3.0.7)
+set(OPENSSL_TARGET_PLATFORM VC-WIN64A)
 set(OPENSSL_CONFIGURE_OPTIONS no-shared no-tests)
+set(OPENSSL_USE_CCACHE ON)
 
 FetchContent_Declare(
     openssl-cmake
