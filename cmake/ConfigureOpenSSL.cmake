@@ -111,6 +111,33 @@ function(parse_makefile FILE KEY VALUES)
     set(${VALUES} ${OUTPUT} PARENT_SCOPE)
 endfunction()
 
+function(modify_makefile FILE)
+    if(NOT EXISTS ${FILE})
+        message(FATAL_ERROR "Couldn't find Makefile")
+    endif()
+
+    if(OPENSSL_USE_CCACHE)
+        find_program(CCACHE ccache REQUIRED)
+    else()
+        find_program(CCACHE ccache)
+    endif()
+
+    if(CCACHE)
+        file(READ ${FILE} MAKEFILE)
+
+        if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+            string(REGEX REPLACE "\nCC=[^\n]*" "CC=ccache cl" MAKEFILE "${MAKEFILE}")
+            string(REPLACE "/Zi /Fdossl_static.pdb " "" MAKEFILE "${MAKEFILE}")
+        else()
+            parse_makefile(${FILE} "CC" OPENSSL_C_COMPILER)
+            string(REPLACE ";" " " OPENSSL_C_COMPILER "${OPENSSL_C_COMPILER}")
+            string(REGEX REPLACE "\nCC=[^\n]*" "\nCC=${CCACHE} ${OPENSSL_C_COMPILER}" MAKEFILE "${MAKEFILE}")
+        endif()
+
+        file(WRITE ${FILE} "${MAKEFILE}")
+    endif()
+endfunction()
+
 function(configure_openssl)
     cmake_parse_arguments(
         CONFIGURE
@@ -159,17 +186,23 @@ function(configure_openssl)
     list(APPEND CONFIGURE_COMMAND ${CONFIGURE_TOOL} ${CONFIGURE_FILE} ${CONFIGURE_OPTIONS})
 
     if(CONFIGURE_VERBOSE)
-        execute_process(
-            COMMAND ${CONFIGURE_COMMAND}
-            WORKING_DIRECTORY ${CONFIGURE_BUILD_DIR}
-            COMMAND_ERROR_IS_FATAL ANY
-        )
+        set(VERBOSE_OPTION "")
     else()
-        execute_process(
-            COMMAND ${CONFIGURE_COMMAND}
-            WORKING_DIRECTORY ${CONFIGURE_BUILD_DIR}
-            OUTPUT_QUIET
-            COMMAND_ERROR_IS_FATAL ANY
-        )
+        set(VERBOSE_OPTION OUTPUT_QUIET)
     endif()
+
+    execute_process(
+        COMMAND ${CONFIGURE_COMMAND}
+        WORKING_DIRECTORY ${CONFIGURE_BUILD_DIR}
+        ${VERBOSE_OPTION}
+        COMMAND_ERROR_IS_FATAL ANY
+    )
+    find_file(
+        OPENSSL_MAKEFILE
+        NAMES makefile Makefile
+        PATHS ${CONFIGURE_BUILD_DIR}
+        REQUIRED
+        NO_DEFAULT_PATH
+    )
+    modify_makefile(${OPENSSL_MAKEFILE})
 endfunction()

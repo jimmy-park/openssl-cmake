@@ -160,13 +160,6 @@ if(NOT "no-shared" IN_LIST FULL_CONFIGURE_OPTIONS)
 endif()
 
 # Parse Makefile
-find_file(
-    OPENSSL_MAKEFILE
-    NAMES makefile Makefile
-    PATHS ${openssl_BINARY_DIR}
-    REQUIRED
-    NO_DEFAULT_PATH
-)
 parse_makefile(${OPENSSL_MAKEFILE} "INSTALL_LIBS" OPENSSL_STATIC_LIBS)
 parse_makefile(${OPENSSL_MAKEFILE} "INSTALL_SHLIBS" OPENSSL_SHARED_LIBS)
 list(TRANSFORM OPENSSL_STATIC_LIBS PREPEND "${openssl_BINARY_DIR}/")
@@ -196,28 +189,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT OPENSSL_BUILD_SHARED_LIBS)
     endif()
 
     list(APPEND OPENSSL_DEPENDENCIES ${CMAKE_DL_LIBS})
-endif()
-
-# Modify Makefile
-if(OPENSSL_USE_CCACHE)
-    find_program(CCACHE ccache REQUIRED)
-else()
-    find_program(CCACHE ccache)
-endif()
-
-if(CCACHE)
-    file(READ ${OPENSSL_MAKEFILE} MAKEFILE)
-
-    if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-        string(REGEX REPLACE "\nCC=[^\n]*" "CC=ccache cl" MAKEFILE "${MAKEFILE}")
-        string(REPLACE "/Zi /Fdossl_static.pdb " "" MAKEFILE "${MAKEFILE}")
-    else()
-        parse_makefile(${OPENSSL_MAKEFILE} "CC" OPENSSL_C_COMPILER)
-        string(REPLACE ";" " " OPENSSL_C_COMPILER "${OPENSSL_C_COMPILER}")
-        string(REGEX REPLACE "\nCC=[^\n]*" "\nCC=${CCACHE} ${OPENSSL_C_COMPILER}" MAKEFILE "${MAKEFILE}")
-    endif()
-
-    file(WRITE ${OPENSSL_MAKEFILE} "${MAKEFILE}")
 endif()
 
 # Provide result variables of FindOpenSSL module
