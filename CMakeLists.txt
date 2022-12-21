@@ -8,6 +8,9 @@ project(
     LANGUAGES C
 )
 
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
+
 include(ProcessorCount)
 include(cmake/ConfigureOpenSSL.cmake)
 include(cmake/FindVcvarsall.cmake)
@@ -49,6 +52,8 @@ endif()
 
 if(OPENSSL_TARGET_VERSION STREQUAL OPENSSL_LATEST_VERSION)
     set(CPM_HASH_OPTION URL_HASH SHA256=${OPENSSL_LATEST_SHA256})
+else()
+    set(CPM_HASH_OPTION "")
 endif()
 
 # Download OpenSSL source
@@ -72,7 +77,9 @@ endif()
 # Run vcvarsall.bat with target architecture
 find_vcvarsall(VCVARSALL)
 
-if(NOT "${VCVARSALL}" STREQUAL "")
+if("${VCVARSALL}" STREQUAL "")
+    set(VCVARSALL_COMMAND "")
+else()
     if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86")
         if(OPENSSL_TARGET_PLATFORM STREQUAL "VC-WIN32")
             set(VCVARSALL_ARCH "x86")
