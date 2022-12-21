@@ -8,6 +8,7 @@
         "cmake/preset/linux.json",
         "cmake/preset/macos.json",
         "cmake/preset/windows.json",
-        "cmake/preset/ios.json"
+        "cmake/preset/ios.json",
+        "cmake/preset/android.json"
     ]
 }

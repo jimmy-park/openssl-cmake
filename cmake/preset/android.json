@@ -1,0 +1,98 @@
+{
+    "version": 5,
+    "include": [
+        "base.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "android-arm",
+            "inherits": [
+                "base",
+                "host-macos",
+                "target-android-arm"
+            ]
+        },
+        {
+            "name": "android-arm64",
+            "inherits": [
+                "base",
+                "host-macos",
+                "target-android-arm64"
+            ]
+        },
+        {
+            "name": "android-x86",
+            "inherits": [
+                "base",
+                "host-macos",
+                "target-android-x86"
+            ]
+        },
+        {
+            "name": "android-x86_64",
+            "inherits": [
+                "base",
+                "host-macos",
+                "target-android-x86_64"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "android-arm",
+            "configurePreset": "android-arm"
+        },
+        {
+            "name": "android-arm-clean",
+            "inherits": "clean",
+            "configurePreset": "android-arm"
+        },
+        {
+            "name": "android-arm-install",
+            "inherits": "install",
+            "configurePreset": "android-arm"
+        },
+        {
+            "name": "android-arm64",
+            "configurePreset": "android-arm64"
+        },
+        {
+            "name": "android-arm64-clean",
+            "inherits": "clean",
+            "configurePreset": "android-arm64"
+        },
+        {
+            "name": "android-arm64-install",
+            "inherits": "install",
+            "configurePreset": "android-arm64"
+        },
+        {
+            "name": "android-x86",
+            "configurePreset": "android-x86"
+        },
+        {
+            "name": "android-x86-clean",
+            "inherits": "clean",
+            "configurePreset": "android-x86"
+        },
+        {
+            "name": "android-x86-install",
+            "inherits": "install",
+            "configurePreset": "android-x86"
+        },
+        {
+            "name": "android-x86_64",
+            "configurePreset": "android-x86_64"
+        },
+        {
+            "name": "android-x86_64-clean",
+            "inherits": "clean",
+            "configurePreset": "android-x86_64"
+        },
+        {
+            "name": "android-x86_64-install",
+            "inherits": "install",
+            "configurePreset": "android-x86_64"
+        }
+    ]
+}
