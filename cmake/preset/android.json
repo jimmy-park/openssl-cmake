@@ -9,6 +9,7 @@
             "inherits": [
                 "base",
                 "host-macos",
+                "ninja",
                 "target-android-arm"
             ]
         },
@@ -17,6 +18,7 @@
             "inherits": [
                 "base",
                 "host-macos",
+                "ninja",
                 "target-android-arm64"
             ]
         },
@@ -25,6 +27,7 @@
             "inherits": [
                 "base",
                 "host-macos",
+                "ninja",
                 "target-android-x86"
             ]
         },
@@ -33,66 +36,219 @@
             "inherits": [
                 "base",
                 "host-macos",
+                "ninja",
                 "target-android-x86_64"
             ]
         }
     ],
     "buildPresets": [
         {
-            "name": "android-arm",
-            "configurePreset": "android-arm"
+            "name": "android-arm-debug",
+            "configurePreset": "android-arm",
+            "inherits": [
+                "host-macos",
+                "debug"
+            ]
         },
         {
-            "name": "android-arm-clean",
-            "inherits": "clean",
-            "configurePreset": "android-arm"
+            "name": "android-arm-debug-clean",
+            "configurePreset": "android-arm",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "clean"
+            ]
         },
         {
-            "name": "android-arm-install",
-            "inherits": "install",
-            "configurePreset": "android-arm"
+            "name": "android-arm-debug-install",
+            "configurePreset": "android-arm",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "install"
+            ]
         },
         {
-            "name": "android-arm64",
-            "configurePreset": "android-arm64"
+            "name": "android-arm-release",
+            "configurePreset": "android-arm",
+            "inherits": [
+                "host-macos",
+                "release"
+            ]
         },
         {
-            "name": "android-arm64-clean",
-            "inherits": "clean",
-            "configurePreset": "android-arm64"
+            "name": "android-arm-release-clean",
+            "configurePreset": "android-arm",
+            "inherits": [
+                "host-macos",
+                "release",
+                "clean"
+            ]
         },
         {
-            "name": "android-arm64-install",
-            "inherits": "install",
-            "configurePreset": "android-arm64"
+            "name": "android-arm-release-install",
+            "configurePreset": "android-arm",
+            "inherits": [
+                "host-macos",
+                "release",
+                "install"
+            ]
         },
         {
-            "name": "android-x86",
-            "configurePreset": "android-x86"
+            "name": "android-arm64-debug",
+            "configurePreset": "android-arm64",
+            "inherits": [
+                "host-macos",
+                "debug"
+            ]
         },
         {
-            "name": "android-x86-clean",
-            "inherits": "clean",
-            "configurePreset": "android-x86"
+            "name": "android-arm64-debug-clean",
+            "configurePreset": "android-arm64",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "clean"
+            ]
         },
         {
-            "name": "android-x86-install",
-            "inherits": "install",
-            "configurePreset": "android-x86"
+            "name": "android-arm64-debug-install",
+            "configurePreset": "android-arm64",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "install"
+            ]
         },
         {
-            "name": "android-x86_64",
-            "configurePreset": "android-x86_64"
+            "name": "android-arm64-release",
+            "configurePreset": "android-arm64",
+            "inherits": [
+                "host-macos",
+                "release"
+            ]
         },
         {
-            "name": "android-x86_64-clean",
-            "inherits": "clean",
-            "configurePreset": "android-x86_64"
+            "name": "android-arm64-release-clean",
+            "configurePreset": "android-arm64",
+            "inherits": [
+                "host-macos",
+                "release",
+                "clean"
+            ]
         },
         {
-            "name": "android-x86_64-install",
-            "inherits": "install",
-            "configurePreset": "android-x86_64"
+            "name": "android-arm64-release-install",
+            "configurePreset": "android-arm64",
+            "inherits": [
+                "host-macos",
+                "release",
+                "install"
+            ]
+        },
+        {
+            "name": "android-x86-debug",
+            "configurePreset": "android-x86",
+            "inherits": [
+                "host-macos",
+                "debug"
+            ]
+        },
+        {
+            "name": "android-x86-debug-clean",
+            "configurePreset": "android-x86",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "clean"
+            ]
+        },
+        {
+            "name": "android-x86-debug-install",
+            "configurePreset": "android-x86",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "install"
+            ]
+        },
+        {
+            "name": "android-x86-release",
+            "configurePreset": "android-x86",
+            "inherits": [
+                "host-macos",
+                "release"
+            ]
+        },
+        {
+            "name": "android-x86-release-clean",
+            "configurePreset": "android-x86",
+            "inherits": [
+                "host-macos",
+                "release",
+                "clean"
+            ]
+        },
+        {
+            "name": "android-x86-release-install",
+            "configurePreset": "android-x86",
+            "inherits": [
+                "host-macos",
+                "release",
+                "install"
+            ]
+        },
+        {
+            "name": "android-x86_64-debug",
+            "configurePreset": "android-x86_64",
+            "inherits": [
+                "host-macos",
+                "debug"
+            ]
+        },
+        {
+            "name": "android-x86_64-debug-clean",
+            "configurePreset": "android-x86_64",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "clean"
+            ]
+        },
+        {
+            "name": "android-x86_64-debug-install",
+            "configurePreset": "android-x86_64",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "install"
+            ]
+        },
+        {
+            "name": "android-x86_64-release",
+            "configurePreset": "android-x86_64",
+            "inherits": [
+                "host-macos",
+                "release"
+            ]
+        },
+        {
+            "name": "android-x86_64-release-clean",
+            "configurePreset": "android-x86_64",
+            "inherits": [
+                "host-macos",
+                "release",
+                "clean"
+            ]
+        },
+        {
+            "name": "android-x86_64-release-install",
+            "configurePreset": "android-x86_64",
+            "inherits": [
+                "host-macos",
+                "release",
+                "install"
+            ]
         }
     ]
 }

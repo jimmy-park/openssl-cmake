@@ -137,7 +137,6 @@
         {
             "name": "target-android",
             "hidden": true,
-            "generator": "Ninja",
             "toolchainFile": "$env{HOME}/Library/Android/sdk/ndk/25.1.8937393/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
                 "ANDROID_NDK": "$env{HOME}/Library/Android/sdk/ndk/25.1.8937393",
