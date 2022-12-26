@@ -58,14 +58,31 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 
 ## Configure Options
 
-| Option                        | Type      | Default value or behavior | Mandatory?                                  |
-| ---                           | ---       | ---                       | ---                                         |
-| `OPENSSL_CONFIGURE_OPTIONS`   | list      | no-tests                  | maybe (1.1.0 series don't support no-tests) |
-| `OPENSSL_CONFIGURE_VERBOSE`   | bool      | OFF                       | no                                          |
-| `OPENSSL_USE_CCACHE`          | bool      | OFF                       | no                                          |
-| `OPENSSL_PARALLEL_BUILD`      | bool      | ON                        | no                                          |
-| `OPENSSL_TARGET_PLATFORM`     | string    | detect target platform    | maybe (detection may fail)                  |
-| `OPENSSL_TARGET_VERSION`      | string    | latest 3.0 series         | no                                          |
+| Option                        | Type      | Default       | Description                                |
+| ---                           | ---       | ---           | ---                                        |
+| `OPENSSL_BUILD_PARALLEL`      | bool      | `ON`          | Enable parallel build                      |
+| `OPENSSL_CONFIGURE_OPTIONS`   | list      | `no-tests`    | Use OpenSSL's Configure options            |
+| `OPENSSL_CONFIGURE_VERBOSE`   | bool      | `OFF`         | Print configuration logs                   |
+| `OPENSSL_INSTALL_LIBS`        | bool      | `OFF`         | Run `make install`-like command internally |
+| `OPENSSL_USE_CCACHE`          | bool      | `OFF`         | Force to check ccache installation         |
+| `OPENSSL_TARGET_PLATFORM`     | string    | `(undefined)` | Use OpenSSL's Configure target             |
+| `OPENSSL_TARGET_VERSION`      | string    | `3.0.7`       | Use the latest 3.0 series                  |
+
+### Notes
+
+- `OPENSSL_BUILD_PARALLEL`
+  - Detect the number of processors using `ProcessorCount` module
+- `OPENSSL_CONFIGURE_OPTIONS`
+  - `--prefix` is used internally (set to `${CMAKE_INSTALL_PREFIX}/OpenSSL-${OPENSSL_TARGET_VERSION}`)
+  - `no-shared` determines the type of library (`SHARED|STATIC`)
+  - `no-tests` isn't supported in the 1.1.0 series
+- `OPENSSL_USE_CCACHE`
+  - When ccache is installed correctly, it will be used even if `OPENSSL_USE_CCACHE` is `OFF`
+- `OPENSSL_TARGET_PLATFORM`
+  - Detect target platform if `OPENSSL_TARGET_PLATFORM` isn't defined
+  - It is needed to set `OPENSSL_TARGET_PLATFORM` explicitly on some platforms
+- `CPM_SOURCE_CACHE`
+  - Set to `/path/to/cache` to reuse downloaded source code
 
 ## Usage
 
@@ -117,6 +134,8 @@ target_link_libraries(main PRIVATE
 #### Using [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake)
 
 ```CMake
+set(CPM_SOURCE_CACHE /path/to/cache)
+
 CPMAddPackage(
     NAME openssl-cmake
     URL https://github.com/jimmy-park/openssl-cmake/archive/main.zip
@@ -127,9 +146,3 @@ CPMAddPackage(
     "OPENSSL_USE_CCACHE ON"
 )
 ```
-
-### Caveats
-
-- `--prefix` option in `OPENSSL_CONFIGURE_OPTIONS` will be ignored and used internally
-  - `--prefix` is set to `${CMAKE_INSTALL_PREFIX}/OpenSSL-${OPENSSL_TARGET_VERSION}`
-  - `cmake --build --target install` or `cmake --build --preset <preset>-install` will use this path
