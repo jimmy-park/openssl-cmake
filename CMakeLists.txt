@@ -21,12 +21,13 @@ set(OPENSSL_LATEST_VERSION 3.0.7 CACHE INTERNAL "OpenSSL version of latest relea
 set(OPENSSL_LATEST_SHA256 83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e9ed95c396e CACHE INTERNAL "Hash of archived OpenSSL release")
 
 # Custom options
-option(OPENSSL_PARALLEL_BUILD "Enable parallel build" ON)
+option(OPENSSL_BUILD_PARALLEL "Enable parallel build" ON)
 option(OPENSSL_CONFIGURE_VERBOSE "Print configure message to the standard output" OFF)
+option(OPENSSL_INSTALL_LIBS "Copy headers and libraries to the install directory" OFF)
 option(OPENSSL_USE_CCACHE "Use ccache if available" OFF)
 
 if(NOT DEFINED OPENSSL_TARGET_VERSION)
-    set(OPENSSL_TARGET_VERSION ${OPENSSL_LATEST_VERSION} CACHE INTERNAL "Set OpenSSL version to latest release")
+    set(OPENSSL_TARGET_VERSION ${OPENSSL_LATEST_VERSION})
 endif()
 
 if(NOT DEFINED OPENSSL_TARGET_PLATFORM)
@@ -34,10 +35,7 @@ if(NOT DEFINED OPENSSL_TARGET_PLATFORM)
 endif()
 
 if(NOT DEFINED OPENSSL_CONFIGURE_OPTIONS)
-    set(OPENSSL_CONFIGURE_OPTIONS
-        no-tests
-        CACHE INTERNAL "OpenSSL configure options except target platform and prefix"
-    )
+    set(OPENSSL_CONFIGURE_OPTIONS no-tests)
 endif()
 
 # Validate OpenSSL version
@@ -132,7 +130,7 @@ list(FILTER OPENSSL_CONFIGURE_OPTIONS EXCLUDE REGEX "--prefix")
 list(APPEND OPENSSL_CONFIGURE_OPTIONS "--prefix=${CMAKE_INSTALL_PREFIX}/OpenSSL-${OPENSSL_TARGET_VERSION}")
 list(PREPEND OPENSSL_CONFIGURE_OPTIONS ${OPENSSL_TARGET_PLATFORM})
 
-if(OPENSSL_PARALLEL_BUILD)
+if(OPENSSL_BUILD_PARALLEL)
     ProcessorCount(NUMBER_OF_THREADS)
 endif()
 
@@ -301,25 +299,34 @@ add_custom_command(
     OUTPUT ${OPENSSL_BUILD_OUTPUT}
     COMMAND ${OPENSSL_BUILD_COMMAND}
     WORKING_DIRECTORY ${openssl_BINARY_DIR}
+    USES_TERMINAL
 )
-add_custom_target(openssl-build DEPENDS ${OPENSSL_BUILD_OUTPUT})
+
+if(OPENSSL_INSTALL_LIBS)
+    add_custom_target(openssl-build ALL DEPENDS ${OPENSSL_BUILD_OUTPUT})
+else()
+    add_custom_target(openssl-build DEPENDS ${OPENSSL_BUILD_OUTPUT})
+endif()
+
 add_dependencies(OpenSSL::Crypto openssl-build)
 add_dependencies(OpenSSL::SSL openssl-build)
 
 # Install OpenSSL
-set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} install_dev)
+if(OPENSSL_INSTALL_LIBS)
+    set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} install_dev)
 
-if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-    list(APPEND OPENSSL_INSTALL_COMMAND /NOLOGO)
-endif()
+    if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+        list(APPEND OPENSSL_INSTALL_COMMAND /NOLOGO)
+    endif()
 
-install(
-    CODE "execute_process(
+    install(CODE
+        "execute_process(
             COMMAND ${OPENSSL_INSTALL_COMMAND}
             WORKING_DIRECTORY ${openssl_BINARY_DIR}
             OUTPUT_QUIET
         )"
-)
+    )
+endif()
 
 if(PROJECT_IS_TOP_LEVEL)
     add_subdirectory(apps)
