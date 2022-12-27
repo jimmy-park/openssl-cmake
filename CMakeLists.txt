@@ -11,6 +11,7 @@ project(
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
 
+include(FetchContent)
 include(ProcessorCount)
 include(cmake/ConfigureOpenSSL.cmake)
 include(cmake/FindVcvarsall.cmake)
@@ -56,19 +57,26 @@ endif()
 
 # Download OpenSSL source
 CPMAddPackage(
-    NAME OpenSSL
+    NAME openssl-source
     URL https://www.openssl.org/source/openssl-${OPENSSL_TARGET_VERSION}.tar.gz
+    DOWNLOAD_ONLY ON
     ${CPM_HASH_OPTION}
+)
+FetchContent_Declare(
+    OpenSSL
+    SOURCE_DIR ${openssl-source_SOURCE_DIR}
+    BINARY_DIR ${openssl-source_BINARY_DIR}
     OVERRIDE_FIND_PACKAGE
 )
+FetchContent_MakeAvailable(OpenSSL)
 
 # Clean build directory if version is different
 if(NOT OPENSSL_TARGET_VERSION STREQUAL OPENSSL_TARGET_VERSION_OLD)
     set(OPENSSL_TARGET_VERSION_OLD ${OPENSSL_TARGET_VERSION} CACHE INTERNAL "Previously fetched OpenSSL version")
 
-    if(IS_DIRECTORY ${OpenSSL_BINARY_DIR})
-        file(REMOVE_RECURSE ${OpenSSL_BINARY_DIR})
-        file(MAKE_DIRECTORY ${OpenSSL_BINARY_DIR})
+    if(IS_DIRECTORY ${openssl_BINARY_DIR})
+        file(REMOVE_RECURSE ${openssl_BINARY_DIR})
+        file(MAKE_DIRECTORY ${openssl_BINARY_DIR})
     endif()
 endif()
 
@@ -103,12 +111,12 @@ endif()
 # Configure OpenSSL
 find_program(PERL perl REQUIRED)
 set(OPENSSL_CONFIGURE_TOOL ${PERL})
-set(OPENSSL_CONFIGURE_OUTPUT ${OpenSSL_BINARY_DIR}/configdata.pm)
+set(OPENSSL_CONFIGURE_OUTPUT ${openssl_BINARY_DIR}/configdata.pm)
 configure_openssl(
     COMMAND ${VCVARSALL_COMMAND}
     TOOL ${OPENSSL_CONFIGURE_TOOL}
-    FILE ${OpenSSL_SOURCE_DIR}/Configure
-    BUILD_DIR ${OpenSSL_BINARY_DIR}
+    FILE ${openssl_SOURCE_DIR}/Configure
+    BUILD_DIR ${openssl_BINARY_DIR}
     OPTIONS ${OPENSSL_CONFIGURE_OPTIONS}
     OUTPUT ${OPENSSL_CONFIGURE_OUTPUT}
     VERBOSE ${OPENSSL_CONFIGURE_VERBOSE}
@@ -124,8 +132,8 @@ endif()
 # Parse Makefile
 parse_makefile(${OPENSSL_MAKEFILE} "INSTALL_LIBS" OPENSSL_STATIC_LIBS)
 parse_makefile(${OPENSSL_MAKEFILE} "INSTALL_SHLIBS" OPENSSL_SHARED_LIBS)
-list(TRANSFORM OPENSSL_STATIC_LIBS PREPEND "${OpenSSL_BINARY_DIR}/")
-list(TRANSFORM OPENSSL_SHARED_LIBS PREPEND "${OpenSSL_BINARY_DIR}/")
+list(TRANSFORM OPENSSL_STATIC_LIBS PREPEND "${openssl_BINARY_DIR}/")
+list(TRANSFORM OPENSSL_SHARED_LIBS PREPEND "${openssl_BINARY_DIR}/")
 
 foreach(LIBRARY IN LISTS OPENSSL_STATIC_LIBS)
     if(LIBRARY MATCHES "crypto")
@@ -155,14 +163,14 @@ endif()
 
 # Provide result variables of FindOpenSSL module
 set(OPENSSL_FOUND ON CACHE BOOL "Override FindOpenSSL variables" FORCE)
-set(OPENSSL_INCLUDE_DIR ${OpenSSL_SOURCE_DIR}/include ${OpenSSL_BINARY_DIR}/include CACHE STRING "Override FindOpenSSL variables" FORCE)
+set(OPENSSL_INCLUDE_DIR ${openssl_SOURCE_DIR}/include ${openssl_BINARY_DIR}/include CACHE STRING "Override FindOpenSSL variables" FORCE)
 set(OPENSSL_CRYPTO_LIBRARY ${OPENSSL_STATIC_CRYPTO_LIBRARY} ${OPENSSL_SHARED_CRYPTO_LIBRARY} CACHE STRING "Override FindOpenSSL variables" FORCE)
 set(OPENSSL_CRYPTO_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_DEPENDENCIES} CACHE STRING "Override FindOpenSSL variables" FORCE)
 set(OPENSSL_SSL_LIBRARY ${OPENSSL_STATIC_SSL_LIBRARY} ${OPENSSL_SHARED_SSL_LIBRARY} CACHE STRING "Override FindOpenSSL variables" FORCE)
 set(OPENSSL_SSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_DEPENDENCIES} CACHE STRING "Override FindOpenSSL variables" FORCE)
 set(OPENSSL_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY} ${OPENSSL_DEPENDENCIES} CACHE STRING "Override FindOpenSSL variables" FORCE)
 set(OPENSSL_VERSION ${OPENSSL_TARGET_VERSION} CACHE STRING "Override FindOpenSSL variables" FORCE)
-set(OPENSSL_APPLINK_SOURCE ${OpenSSL_SOURCE_DIR}/ms/applink.c CACHE STRING "Override FindOpenSSL variables" FORCE)
+set(OPENSSL_APPLINK_SOURCE ${openssl_SOURCE_DIR}/ms/applink.c CACHE STRING "Override FindOpenSSL variables" FORCE)
 
 # Create same targets as FindOpenSSL module
 add_library(OpenSSL::applink INTERFACE IMPORTED GLOBAL)
@@ -256,7 +264,7 @@ set(OPENSSL_BUILD_OUTPUT
 add_custom_command(
     OUTPUT ${OPENSSL_BUILD_OUTPUT}
     COMMAND ${OPENSSL_BUILD_COMMAND}
-    WORKING_DIRECTORY ${OpenSSL_BINARY_DIR}
+    WORKING_DIRECTORY ${openssl_BINARY_DIR}
     USES_TERMINAL
 )
 
@@ -280,7 +288,7 @@ if(OPENSSL_INSTALL_LIBS)
     install(CODE
         "execute_process(
             COMMAND ${OPENSSL_INSTALL_COMMAND}
-            WORKING_DIRECTORY ${OpenSSL_BINARY_DIR}
+            WORKING_DIRECTORY ${openssl_BINARY_DIR}
             OUTPUT_QUIET
         )"
     )
