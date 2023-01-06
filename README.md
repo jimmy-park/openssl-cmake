@@ -11,6 +11,23 @@ Build OpenSSL in parallel within CMake
 - Automatically use the maximum number of processors
 - Reduce rebuild time using [ccache](https://github.com/ccache/ccache)
 
+## Build Performance
+
+| | Time | Speed |
+| --- | ---: | ---: |
+| Sequential                  | 486 s  | 1.00 x |
+| Sequential w/ ccache (cold) | 1368 s | 0.34 x |
+| Sequential w/ ccache (warm) | 365 s  | 1.33 x |
+| Parallel                    | 109 s  | 4.46 x |
+| Parallel w/ ccache (cold)   | 367 s  | 1.32 x |
+| Parallel w/ ccache (warm)   | 87 s   | **5.59 x** |
+
+- **OS** : Windows 10 22H2
+- **CPU** : AMD Ryzen 5 3600 6-Core Processor 3.60 GHz
+- **RAM** : 16 GB
+- **Disk** : Samsung SSD 860 EVO
+- **Compiler** : MSVC 14.34
+
 ## Prerequisites
 
 ### Requirements
@@ -119,7 +136,7 @@ FetchContent_Declare(
     URL https://github.com/jimmy-park/openssl-cmake/archive/main.zip
 )
 
-# This line must be preceded before find_package(OpenSSL REQUIRED)
+# This line must be preceded before find_package(OpenSSL)
 FetchContent_MakeAvailable(openssl-cmake)
 
 # Use same targets as FindOpenSSL module
