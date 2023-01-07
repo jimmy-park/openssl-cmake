@@ -23,7 +23,8 @@ set(OPENSSL_LATEST_SHA256 83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e
 
 # Custom options
 option(OPENSSL_BUILD_PARALLEL "Enable parallel build" ON)
-option(OPENSSL_CONFIGURE_VERBOSE "Print configure message to the standard output" OFF)
+option(OPENSSL_BUILD_VERBOSE "Enable verbose output from build" OFF)
+option(OPENSSL_CONFIGURE_VERBOSE "Enable verbose output from configuration" OFF)
 option(OPENSSL_INSTALL_LIBS "Copy headers and libraries to the install directory" OFF)
 option(OPENSSL_USE_CCACHE "Use ccache if available" OFF)
 
@@ -96,6 +97,23 @@ list(PREPEND OPENSSL_CONFIGURE_OPTIONS ${OPENSSL_TARGET_PLATFORM})
 
 if(NOT OPENSSL_CONFIGURE_OPTIONS MATCHES "--prefix")
     list(APPEND OPENSSL_CONFIGURE_OPTIONS "--prefix=${CMAKE_INSTALL_PREFIX}/OpenSSL-${OPENSSL_TARGET_VERSION}")
+endif()
+
+if(NOT OPENSSL_BUILD_VERBOSE)
+    set(OPENSSL_BUILD_OPTIONS -s)
+
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        list(APPEND OPENSSL_BUILD_OPTIONS -nologo)
+
+        # Suppress warnings
+        list(APPEND OPENSSL_CONFIGURE_OPTIONS
+            -wd4005 # 'identifier' : macro redefinition
+            -wd4133 # 'type' : incompatible types - from 'type1' to 'type2'
+            -wd4244 # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+            -wd4267 # 'var' : conversion from 'size_t' to 'type', possible loss of data
+            -wd4819 # The file contains a character that cannot be represented in the current code page
+        )
+    endif()
 endif()
 
 if(OPENSSL_BUILD_PARALLEL)
