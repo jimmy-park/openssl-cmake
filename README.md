@@ -11,22 +11,23 @@ Build OpenSSL in parallel within CMake
 - Automatically use the maximum number of processors
 - Reduce rebuild time using [ccache](https://github.com/ccache/ccache)
 
-## Build Performance
+## Benchmark Results
 
 | | Time | Speed |
 | --- | ---: | ---: |
-| Sequential                  | 486 s  | 1.00 x |
-| Sequential w/ ccache (cold) | 1368 s | 0.34 x |
-| Sequential w/ ccache (warm) | 365 s  | 1.33 x |
-| Parallel                    | 109 s  | 4.46 x |
-| Parallel w/ ccache (cold)   | 367 s  | 1.32 x |
-| Parallel w/ ccache (warm)   | 87 s   | **5.59 x** |
+| Sequential                  | 135 s  | 1.00 x |
+| Sequential w/ ccache (cold) | 580 s  | 0.23 x |
+| Sequential w/ ccache (warm) | 95 s   | 1.42 x |
+| Parallel                    | 26 s   | 5.19 x |
+| Parallel w/ ccache (cold)   | 126 s  | 1.07 x |
+| Parallel w/ ccache (warm)   | 16 s   | **8.44 x** |
 
 - **OS** : Windows 10 22H2
 - **CPU** : AMD Ryzen 5 3600 6-Core Processor 3.60 GHz
 - **RAM** : 16 GB
-- **Disk** : Samsung SSD 860 EVO
+- **Storage** : Samsung SSD 860 EVO
 - **Compiler** : MSVC 14.34
+- **Configuration** : `VC-WIN64A`, `no-tests`, `no-asm`, `no-makedepend`, `no-shared`, `no-fips`
 
 ## Prerequisites
 
@@ -78,8 +79,9 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 | Option                        | Type      | Default       | Description                                |
 | ---                           | ---       | ---           | ---                                        |
 | `OPENSSL_BUILD_PARALLEL`      | bool      | `ON`          | Enable parallel build                      |
+| `OPENSSL_BUILD_VERBOSE`       | bool      | `OFF`         | Enable verbose output from build           |
 | `OPENSSL_CONFIGURE_OPTIONS`   | list      | `no-tests`    | Use OpenSSL's Configure options            |
-| `OPENSSL_CONFIGURE_VERBOSE`   | bool      | `OFF`         | Print configuration logs                   |
+| `OPENSSL_CONFIGURE_VERBOSE`   | bool      | `OFF`         | Enable verbose output from configuration   |
 | `OPENSSL_INSTALL_LIBS`        | bool      | `OFF`         | Run `make install`-like command internally |
 | `OPENSSL_USE_CCACHE`          | bool      | `OFF`         | Force to check ccache installation         |
 | `OPENSSL_TARGET_PLATFORM`     | string    | `(undefined)` | Use OpenSSL's Configure target             |
