@@ -114,12 +114,12 @@ function(modify_makefile FILE)
     endif()
 
     if(OPENSSL_USE_CCACHE)
-        find_program(CCACHE ccache REQUIRED)
-    else()
         find_program(CCACHE ccache)
-    endif()
 
-    if(CCACHE)
+        if(NOT CCACHE)
+            return()
+        endif()
+
         file(READ ${FILE} MAKEFILE)
 
         if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")

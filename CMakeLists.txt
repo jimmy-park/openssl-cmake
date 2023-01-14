@@ -26,7 +26,7 @@ option(OPENSSL_BUILD_PARALLEL "Enable parallel build" ON)
 option(OPENSSL_BUILD_VERBOSE "Enable verbose output from build" OFF)
 option(OPENSSL_CONFIGURE_VERBOSE "Enable verbose output from configuration" OFF)
 option(OPENSSL_INSTALL_LIBS "Copy headers and libraries to the install directory" OFF)
-option(OPENSSL_USE_CCACHE "Use ccache if available" OFF)
+option(OPENSSL_USE_CCACHE "Use ccache if available" ON)
 
 if(NOT DEFINED OPENSSL_TARGET_VERSION)
     set(OPENSSL_TARGET_VERSION ${OPENSSL_LATEST_VERSION})
