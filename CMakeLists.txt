@@ -119,6 +119,7 @@ if(NOT OPENSSL_BUILD_VERBOSE)
             -wd4133 # 'type' : incompatible types - from 'type1' to 'type2'
             -wd4244 # 'argument' : conversion from 'type1' to 'type2', possible loss of data
             -wd4267 # 'var' : conversion from 'size_t' to 'type', possible loss of data
+            -wd4311 # 'variable' : pointer truncation from 'type' to 'type'
             -wd4819 # The file contains a character that cannot be represented in the current code page
         )
     endif()

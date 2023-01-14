@@ -52,7 +52,11 @@
         {
             "name": "ninja",
             "hidden": true,
-            "generator": "Ninja Multi-Config"
+            "generator": "Ninja Multi-Config",
+            "cacheVariables": {
+                "CMAKE_COLOR_DIAGNOSTICS": true,
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            }
         },
         {
             "name": "xcode",
