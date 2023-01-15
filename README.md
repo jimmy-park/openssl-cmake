@@ -10,7 +10,7 @@ Build OpenSSL in parallel within CMake
 - Don't reconfigure if same options are used
 - Automatically use the maximum number of processors
 - Reduce rebuild time using [ccache](https://github.com/ccache/ccache)
-- Override `find_package(OpenSSL)` and use same targets (`OpenSSL::SSL`, `OpenSSL::Crypto` and `OpenSSL::applink`)
+- Override the `FindOpenSSL` module (no need to change CMake code)
 
 ## Benchmarks
 
@@ -28,7 +28,11 @@ Build OpenSSL in parallel within CMake
 - **RAM** : 16 GB
 - **Storage** : Samsung SSD 860 EVO
 - **Compiler** : MSVC 14.34
-- **Configuration** : `VC-WIN64A`, `no-tests`, `no-asm`, `no-makedepend`, `no-shared`
+- **Configuration**
+  - OpenSSL 3.0.7 (`VC-WIN64A`, `no-tests`, `no-asm`, `no-makedepend`, `no-shared`)
+  - ccache 4.7.4 (default options)
+- **Note**
+  - MSVC with ccache has much longer build time on first build
 
 ## Prerequisites
 
@@ -96,6 +100,8 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
   - `--prefix` is used internally (set to `${CMAKE_INSTALL_PREFIX}/OpenSSL-${OPENSSL_TARGET_VERSION}`)
   - `no-shared` determines the type of library (`SHARED|STATIC`)
   - `no-tests` isn't supported in the 1.1.0 series
+- `OPENSSL_INSTALL_LIBS`
+  - Also install `cert.pem` to the [`openssldir`](https://github.com/openssl/openssl/blob/master/INSTALL.md#additional-directories) directory (typically `<prefix>/ssl`)
 - `OPENSSL_USE_CCACHE`
   - Whenever you change this option, you need to perform a fresh configuration (or just delete `CMakeCache.txt`)
 - `OPENSSL_TARGET_PLATFORM`
