@@ -7,19 +7,19 @@
         {
             "name": "ios",
             "inherits": [
-                "base",
                 "host-macos",
                 "xcode",
-                "target-ios"
+                "target-ios",
+                "default"
             ]
         },
         {
             "name": "ios_sim",
             "inherits": [
-                "base",
                 "host-macos",
                 "xcode",
-                "target-ios_sim"
+                "target-ios_sim",
+                "default"
             ]
         }
     ],

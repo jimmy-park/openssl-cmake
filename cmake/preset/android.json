@@ -7,37 +7,37 @@
         {
             "name": "android-arm",
             "inherits": [
-                "base",
                 "host-macos",
                 "ninja",
-                "target-android-arm"
+                "target-android-arm",
+                "default"
             ]
         },
         {
             "name": "android-arm64",
             "inherits": [
-                "base",
                 "host-macos",
                 "ninja",
-                "target-android-arm64"
+                "target-android-arm64",
+                "default"
             ]
         },
         {
             "name": "android-x86",
             "inherits": [
-                "base",
                 "host-macos",
                 "ninja",
-                "target-android-x86"
+                "target-android-x86",
+                "default"
             ]
         },
         {
             "name": "android-x86_64",
             "inherits": [
-                "base",
                 "host-macos",
                 "ninja",
-                "target-android-x86_64"
+                "target-android-x86_64",
+                "default"
             ]
         }
     ],

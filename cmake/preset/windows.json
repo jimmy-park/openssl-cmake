@@ -7,37 +7,37 @@
         {
             "name": "windows-x86",
             "inherits": [
-                "base",
                 "host-windows",
                 "vs2022",
-                "target-windows-x86"
+                "target-windows-x86",
+                "default"
             ]
         },
         {
             "name": "windows-x64",
             "inherits": [
-                "base",
                 "host-windows",
                 "vs2022",
-                "target-windows-x64"
+                "target-windows-x64",
+                "default"
             ]
         },
         {
             "name": "windows-arm",
             "inherits": [
-                "base",
                 "host-windows",
                 "vs2022",
-                "target-windows-arm"
+                "target-windows-arm",
+                "default"
             ]
         },
         {
             "name": "windows-arm64",
             "inherits": [
-                "base",
                 "host-windows",
                 "vs2022",
-                "target-windows-arm64"
+                "target-windows-arm64",
+                "default"
             ]
         }
     ],

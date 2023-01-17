@@ -7,19 +7,19 @@
         {
             "name": "linux-x86_64",
             "inherits": [
-                "base",
                 "host-linux",
                 "ninja",
-                "target-linux-x86_64"
+                "target-linux-x86_64",
+                "default"
             ]
         },
         {
             "name": "linux-aarch64",
             "inherits": [
-                "base",
                 "host-linux",
                 "ninja",
-                "target-linux-aarch64"
+                "target-linux-aarch64",
+                "default"
             ]
         }
     ],

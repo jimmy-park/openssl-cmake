@@ -2,7 +2,7 @@
     "version": 5,
     "configurePresets": [
         {
-            "name": "base",
+            "name": "default",
             "hidden": true,
             "binaryDir": "${sourceDir}/build/${presetName}",
             "installDir": "${sourceDir}/install/${presetName}",
@@ -145,7 +145,8 @@
             "toolchainFile": "$env{HOME}/Library/Android/sdk/ndk/25.1.8937393/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
                 "ANDROID_NDK": "$env{HOME}/Library/Android/sdk/ndk/25.1.8937393",
-                "ANDROID_PLATFORM": "android-33"
+                "ANDROID_PLATFORM": "android-33",
+                "OPENSSL_CONFIGURE_OPTIONS": "--openssldir=/system/etc/security/cacerts"
             }
         },
         {
