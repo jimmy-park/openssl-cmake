@@ -48,13 +48,8 @@ if(NOT DEFINED OPENSSL_TARGET_PLATFORM)
 endif()
 
 # Validate OpenSSL version
-if(OPENSSL_TARGET_VERSION MATCHES "^3\.[0-9]\.[0-9]+$"
-    OR OPENSSL_TARGET_VERSION MATCHES "^1\.1\.[0-1][a-z]$")
-    if(OPENSSL_TARGET_VERSION STRLESS "1.1.0h")
-        message(FATAL_ERROR "OpenSSL versions below 1.1.0h aren't supported")
-    endif()
-else()
-    message(FATAL_ERROR "Invalid OpenSSL version format")
+if(NOT OPENSSL_TARGET_VERSION MATCHES "(^3\.[0-9]\.[0-9]+$)|(^1\.1\.1[a-z]$)")
+    message(FATAL_ERROR "OpenSSL ${OPENSSL_TARGET_VERSION} isn't supported")
 endif()
 
 if(OPENSSL_TARGET_VERSION STREQUAL OPENSSL_LATEST_VERSION)
