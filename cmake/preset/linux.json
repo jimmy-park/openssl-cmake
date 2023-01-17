@@ -76,5 +76,25 @@
             ],
             "configurePreset": "linux-aarch64"
         }
+    ],
+    "testPresets": [
+        {
+            "name": "linux-x86_64",
+            "configurePreset": "linux-x86_64",
+            "inherits": [
+                "host-linux",
+                "release",
+                "options"
+            ]
+        },
+        {
+            "name": "linux-aarch64",
+            "configurePreset": "linux-aarch64",
+            "inherits": [
+                "host-linux",
+                "release",
+                "options"
+            ]
+        }
     ]
 }

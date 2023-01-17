@@ -22,11 +22,12 @@ set(OPENSSL_LATEST_VERSION 3.0.7 CACHE INTERNAL "OpenSSL version of latest relea
 set(OPENSSL_LATEST_SHA256 83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e9ed95c396e CACHE INTERNAL "Hash of archived OpenSSL release")
 
 # Custom options
-option(OPENSSL_BUILD_PARALLEL "Enable parallel build" ON)
 option(OPENSSL_BUILD_VERBOSE "Enable verbose output from build" OFF)
 option(OPENSSL_CONFIGURE_VERBOSE "Enable verbose output from configuration" OFF)
+option(OPENSSL_ENABLE_PARALLEL "Enable parallel build and test" ON)
 option(OPENSSL_INSTALL "Install OpenSSL components to the <prefix> directory" OFF)
 option(OPENSSL_INSTALL_CERT "Install cert.pem to the <openssldir> directory" OFF)
+option(OPENSSL_TEST "Enable testing and build OpenSSL self tests" OFF)
 option(OPENSSL_USE_CCACHE "Use ccache if available" ON)
 
 if(NOT DEFINED OPENSSL_BUILD_TARGET)
@@ -93,9 +94,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
 endif()
 
 # Modify configure/build options
-list(SORT OPENSSL_CONFIGURE_OPTIONS)
-list(REMOVE_DUPLICATES OPENSSL_CONFIGURE_OPTIONS)
-list(PREPEND OPENSSL_CONFIGURE_OPTIONS ${OPENSSL_TARGET_PLATFORM})
+if(OPENSSL_TEST)
+    set(OPENSSL_BUILD_TARGET "")
+else()
+    list(APPEND OPENSSL_CONFIGURE_OPTIONS no-tests)
+endif()
 
 if(NOT OPENSSL_BUILD_VERBOSE)
     set(OPENSSL_BUILD_OPTIONS -s)
@@ -115,7 +118,7 @@ if(NOT OPENSSL_BUILD_VERBOSE)
     endif()
 endif()
 
-if(OPENSSL_BUILD_PARALLEL)
+if(OPENSSL_ENABLE_PARALLEL)
     ProcessorCount(NUMBER_OF_THREADS)
 endif()
 
@@ -126,6 +129,10 @@ if(NUMBER_OF_THREADS GREATER 1)
 
     list(APPEND OPENSSL_BUILD_OPTIONS "-j${NUMBER_OF_THREADS}")
 endif()
+
+list(SORT OPENSSL_CONFIGURE_OPTIONS)
+list(REMOVE_DUPLICATES OPENSSL_CONFIGURE_OPTIONS)
+list(PREPEND OPENSSL_CONFIGURE_OPTIONS ${OPENSSL_TARGET_PLATFORM})
 
 # Configure OpenSSL
 find_program(PERL perl REQUIRED)
@@ -295,6 +302,16 @@ endif()
 
 add_dependencies(OpenSSL::Crypto openssl-build)
 add_dependencies(OpenSSL::SSL openssl-build)
+
+# Test OpenSSL using CTest
+if(OPENSSL_TEST)
+    include(CTest)
+    add_test(
+        NAME openssl-test
+        COMMAND ${OPENSSL_BUILD_TOOL} test VERBOSE_FAILURE=yes HARNESS_JOBS=${NUMBER_OF_THREADS}
+        WORKING_DIRECTORY ${openssl_BINARY_DIR}
+    )
+endif()
 
 # Install OpenSSL
 if(OPENSSL_INSTALL)
