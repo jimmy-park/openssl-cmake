@@ -10,7 +10,7 @@
             "cacheVariables": {
                 "CMAKE_MODULE_PATH": "${sourceDir}/cmake",
                 "CPM_SOURCE_CACHE": "${sourceDir}/build/.cache",
-                "OPENSSL_INSTALL_LIBS": true
+                "OPENSSL_INSTALL": true
             }
         },
         {

@@ -25,7 +25,8 @@ set(OPENSSL_LATEST_SHA256 83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e
 option(OPENSSL_BUILD_PARALLEL "Enable parallel build" ON)
 option(OPENSSL_BUILD_VERBOSE "Enable verbose output from build" OFF)
 option(OPENSSL_CONFIGURE_VERBOSE "Enable verbose output from configuration" OFF)
-option(OPENSSL_INSTALL_LIBS "Copy headers and libraries to the install directory" OFF)
+option(OPENSSL_INSTALL "Install OpenSSL components to the <prefix> directory" OFF)
+option(OPENSSL_INSTALL_CERT "Install cert.pem to the <openssldir> directory" OFF)
 option(OPENSSL_USE_CCACHE "Use ccache if available" ON)
 
 if(NOT DEFINED OPENSSL_TARGET_VERSION)
@@ -281,7 +282,7 @@ add_custom_command(
     USES_TERMINAL
 )
 
-if(OPENSSL_INSTALL_LIBS)
+if(OPENSSL_INSTALL)
     add_custom_target(openssl-build ALL DEPENDS ${OPENSSL_BUILD_OUTPUT})
 else()
     add_custom_target(openssl-build DEPENDS ${OPENSSL_BUILD_OUTPUT})
@@ -291,7 +292,7 @@ add_dependencies(OpenSSL::Crypto openssl-build)
 add_dependencies(OpenSSL::SSL openssl-build)
 
 # Install OpenSSL
-if(OPENSSL_INSTALL_LIBS)
+if(OPENSSL_INSTALL)
     set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} install_dev)
 
     if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
@@ -305,9 +306,9 @@ if(OPENSSL_INSTALL_LIBS)
             OUTPUT_QUIET
         )"
     )
+endif()
 
-    # Download CA certificates
-    # https://curl.se/docs/caextract.html
+if(OPENSSL_INSTALL_CERT)
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         parse_makefile(${OPENSSL_MAKEFILE} "OPENSSLDIR_dev" OPENSSL_OPENSSLDIR_DEV)
         parse_makefile(${OPENSSL_MAKEFILE} "OPENSSLDIR_dir" OPENSSL_OPENSSLDIR_DIR)
@@ -317,6 +318,8 @@ if(OPENSSL_INSTALL_LIBS)
         parse_makefile(${OPENSSL_MAKEFILE} "OPENSSLDIR" OPENSSL_OPENSSLDIR)
     endif()
 
+    # Download latest CA certificates
+    # https://curl.se/docs/caextract.html
     install(CODE
         "file(
             DOWNLOAD https://curl.se/ca/cacert-2023-01-10.pem ${OPENSSL_OPENSSLDIR}/cert.pem
