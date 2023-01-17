@@ -104,17 +104,18 @@ if(NOT OPENSSL_BUILD_VERBOSE)
     set(OPENSSL_BUILD_OPTIONS -s)
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        list(APPEND OPENSSL_BUILD_OPTIONS -nologo)
+        list(APPEND OPENSSL_BUILD_OPTIONS /nologo)
 
         # Suppress warnings
         list(APPEND OPENSSL_CONFIGURE_OPTIONS
-            -wd4005 # 'identifier' : macro redefinition
-            -wd4133 # 'type' : incompatible types - from 'type1' to 'type2'
-            -wd4244 # 'argument' : conversion from 'type1' to 'type2', possible loss of data
-            -wd4267 # 'var' : conversion from 'size_t' to 'type', possible loss of data
-            -wd4311 # 'variable' : pointer truncation from 'type' to 'type'
-            -wd4819 # The file contains a character that cannot be represented in the current code page
+            /wd4005 # 'identifier' : macro redefinition
+            /wd4133 # 'type' : incompatible types - from 'type1' to 'type2'
+            /wd4244 # 'argument' : conversion from 'type1' to 'type2', possible loss of data
+            /wd4267 # 'var' : conversion from 'size_t' to 'type', possible loss of data
+            /wd4311 # 'variable' : pointer truncation from 'type' to 'type'
+            /wd4819 # The file contains a character that cannot be represented in the current code page
         )
+        set(ENV{LDFLAGS} "/NOLOGO /DEBUG /IGNORE:4099") # PDB 'filename' was not found with 'object/library' or at 'path'
     endif()
 endif()
 
@@ -124,7 +125,7 @@ endif()
 
 if(NUMBER_OF_THREADS GREATER 1)
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        list(APPEND OPENSSL_CONFIGURE_OPTIONS "-FS")
+        list(APPEND OPENSSL_CONFIGURE_OPTIONS "/FS")
     endif()
 
     list(APPEND OPENSSL_BUILD_OPTIONS "-j${NUMBER_OF_THREADS}")
