@@ -29,6 +29,16 @@ option(OPENSSL_INSTALL "Install OpenSSL components to the <prefix> directory" OF
 option(OPENSSL_INSTALL_CERT "Install cert.pem to the <openssldir> directory" OFF)
 option(OPENSSL_USE_CCACHE "Use ccache if available" ON)
 
+if(NOT DEFINED OPENSSL_BUILD_TARGET)
+    # Build only libraries by default
+    set(OPENSSL_BUILD_TARGET build_libs)
+endif()
+
+if(NOT DEFINED OPENSSL_INSTALL_TARGET)
+    # Install only libraries by default
+    set(OPENSSL_INSTALL_TARGET install_dev)
+endif()
+
 if(NOT DEFINED OPENSSL_TARGET_VERSION)
     set(OPENSSL_TARGET_VERSION ${OPENSSL_LATEST_VERSION})
 endif()
@@ -267,7 +277,7 @@ endif()
 string(REPLACE ";" "\\;" PATH_ENV "$ENV{PATH}")
 set(OPENSSL_BUILD_COMMAND
     ${CMAKE_COMMAND} -E env "PATH=${PATH_ENV}" --
-    ${VCVARSALL_COMMAND} ${OPENSSL_BUILD_TOOL} ${OPENSSL_BUILD_OPTIONS} build_libs
+    ${VCVARSALL_COMMAND} ${OPENSSL_BUILD_TOOL} ${OPENSSL_BUILD_OPTIONS} ${OPENSSL_BUILD_TARGET}
 )
 set(OPENSSL_BUILD_OUTPUT
     ${OPENSSL_STATIC_CRYPTO_LIBRARY}
@@ -293,7 +303,7 @@ add_dependencies(OpenSSL::SSL openssl-build)
 
 # Install OpenSSL
 if(OPENSSL_INSTALL)
-    set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} install_dev)
+    set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} ${OPENSSL_INSTALL_TARGET})
 
     if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
         list(APPEND OPENSSL_INSTALL_COMMAND /NOLOGO)
