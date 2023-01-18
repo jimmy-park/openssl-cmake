@@ -129,7 +129,8 @@
             "hidden": true,
             "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
             "cacheVariables": {
-                "CMAKE_OSX_SYSROOT": "iphoneos"
+                "CMAKE_OSX_SYSROOT": "iphoneos",
+                "OPENSSL_TEST": false
             }
         },
         {
@@ -137,7 +138,8 @@
             "hidden": true,
             "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
             "cacheVariables": {
-                "CMAKE_OSX_SYSROOT": "iphonesimulator"
+                "CMAKE_OSX_SYSROOT": "iphonesimulator",
+                "OPENSSL_TEST": false
             }
         },
         {
@@ -147,7 +149,8 @@
             "cacheVariables": {
                 "ANDROID_NDK": "$env{HOME}/Library/Android/sdk/ndk/25.1.8937393",
                 "ANDROID_PLATFORM": "android-33",
-                "OPENSSL_CONFIGURE_OPTIONS": "--openssldir=/system/etc/security/cacerts"
+                "OPENSSL_CONFIGURE_OPTIONS": "--openssldir=/system/etc/security/cacerts",
+                "OPENSSL_TEST": false
             }
         },
         {
