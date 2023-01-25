@@ -91,6 +91,7 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 | `OPENSSL_INSTALL`           | bool   | `OFF`         | Install OpenSSL components                       |
 | `OPENSSL_INSTALL_CERT`      | bool   | `OFF`         | Install `cert.pem` to the `openssldir` directory |
 | `OPENSSL_INSTALL_TARGET`    | string | `install_dev` | Makefile target for install                      |
+| `OPENSSL_PATCH`             | file   | `(undefined)` | Apply a patch to OpenSSL source                  |
 | `OPENSSL_TARGET_PLATFORM`   | string | `(undefined)` | Use OpenSSL's Configure target                   |
 | `OPENSSL_TARGET_VERSION`    | string | `3.0.7`       | Use the latest 3.0 series                        |
 | `OPENSSL_TEST`              | bool   | `OFF`         | Enable testing and build OpenSSL self tests      |
@@ -103,6 +104,8 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
   - `no-tests` is added when `OPENSSL_TEST` is `OFF`
 - `OPENSSL_ENABLE_PARALLEL`
   - Detect the number of processors using `ProcessorCount` module
+- `OPENSSL_PATCH`
+  - Since OpenSSL source is distributed with `LF`, the patch file must also be `LF`
 - `OPENSSL_TARGET_PLATFORM`
   - Detect target platform if `OPENSSL_TARGET_PLATFORM` isn't defined
   - It is needed to set `OPENSSL_TARGET_PLATFORM` explicitly on some platforms

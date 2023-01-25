@@ -74,6 +74,22 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(OpenSSL)
 
+# Apply a patch
+if(EXISTS "${OPENSSL_PATCH}" AND NOT IS_DIRECTORY "${OPENSSL_PATCH}")
+    execute_process(
+        COMMAND git init
+        WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+        OUTPUT_QUIET
+        ERROR_QUIET
+    )
+    execute_process(
+        COMMAND git apply ${OPENSSL_PATCH}
+        WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+        OUTPUT_QUIET
+        ERROR_QUIET
+    )
+endif()
+
 # Clean build directory if version is different
 if(NOT OPENSSL_TARGET_VERSION STREQUAL OPENSSL_TARGET_VERSION_OLD)
     set(OPENSSL_TARGET_VERSION_OLD ${OPENSSL_TARGET_VERSION} CACHE INTERNAL "Previously fetched OpenSSL version")
