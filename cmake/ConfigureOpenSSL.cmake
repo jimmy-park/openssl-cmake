@@ -108,7 +108,7 @@ function(parse_makefile FILE KEY VALUES)
     set(${VALUES} ${OUTPUT} PARENT_SCOPE)
 endfunction()
 
-function(modify_makefile FILE)
+function(apply_ccache FILE)
     if(NOT EXISTS ${FILE})
         message(FATAL_ERROR "Couldn't find Makefile")
     endif()
@@ -125,6 +125,8 @@ function(modify_makefile FILE)
         if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
             string(REGEX REPLACE "\nCC=[^\n]*" "CC=ccache cl" MAKEFILE "${MAKEFILE}")
             string(REPLACE "/Zi /Fdossl_static.pdb " "" MAKEFILE "${MAKEFILE}")
+            string(REPLACE "/Zi /Fddso.pdb " "" MAKEFILE "${MAKEFILE}")
+            string(REPLACE "/Zi /Fdapp.pdb " "" MAKEFILE "${MAKEFILE}")
         else()
             parse_makefile(${FILE} "CC" OPENSSL_C_COMPILER)
             string(REPLACE ";" " " OPENSSL_C_COMPILER "${OPENSSL_C_COMPILER}")
@@ -139,7 +141,7 @@ function(configure_openssl)
     cmake_parse_arguments(
         CONFIGURE
         "" # options
-        "TOOL;FILE;BUILD_DIR;OUTPUT;VERBOSE" # one_value_keywords
+        "TOOL;FILE;BUILD_DIR;OUTPUT" # one_value_keywords
         "COMMAND;OPTIONS" # multi_value_keywords
         ${ARGN}
     )
@@ -182,7 +184,7 @@ function(configure_openssl)
     message(STATUS "Configure OpenSSL")
     list(APPEND CONFIGURE_COMMAND ${CONFIGURE_TOOL} ${CONFIGURE_FILE} ${CONFIGURE_OPTIONS})
 
-    if(CONFIGURE_VERBOSE)
+    if(OPENSSL_CONFIGURE_VERBOSE)
         set(VERBOSE_OPTION "")
     else()
         set(VERBOSE_OPTION OUTPUT_QUIET)
@@ -194,6 +196,8 @@ function(configure_openssl)
         ${VERBOSE_OPTION}
         COMMAND_ERROR_IS_FATAL ANY
     )
+
+    # Modify Makefile
     find_file(
         OPENSSL_MAKEFILE
         NAMES makefile Makefile
@@ -201,5 +205,11 @@ function(configure_openssl)
         REQUIRED
         NO_DEFAULT_PATH
     )
-    modify_makefile(${OPENSSL_MAKEFILE})
+    apply_ccache(${OPENSSL_MAKEFILE})
+
+    if(NOT OPENSSL_BUILD_VERBOSE AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        file(READ ${OPENSSL_MAKEFILE} MAKEFILE)
+        string(REPLACE "/W3" "/W0" MAKEFILE "${MAKEFILE}")
+        file(WRITE ${OPENSSL_MAKEFILE} "${MAKEFILE}")
+    endif()
 endfunction()

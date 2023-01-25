@@ -121,16 +121,6 @@ if(NOT OPENSSL_BUILD_VERBOSE)
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         list(APPEND OPENSSL_BUILD_OPTIONS /nologo)
-
-        # Suppress warnings
-        list(APPEND OPENSSL_CONFIGURE_OPTIONS
-            /wd4005 # 'identifier' : macro redefinition
-            /wd4133 # 'type' : incompatible types - from 'type1' to 'type2'
-            /wd4244 # 'argument' : conversion from 'type1' to 'type2', possible loss of data
-            /wd4267 # 'var' : conversion from 'size_t' to 'type', possible loss of data
-            /wd4311 # 'variable' : pointer truncation from 'type' to 'type'
-            /wd4819 # The file contains a character that cannot be represented in the current code page
-        )
         set(ENV{LDFLAGS} "/NOLOGO /DEBUG /IGNORE:4099") # PDB 'filename' was not found with 'object/library' or at 'path'
     endif()
 endif()
@@ -162,7 +152,6 @@ configure_openssl(
     BUILD_DIR ${openssl_BINARY_DIR}
     OPTIONS ${OPENSSL_CONFIGURE_OPTIONS}
     OUTPUT ${OPENSSL_CONFIGURE_OUTPUT}
-    VERBOSE ${OPENSSL_CONFIGURE_VERBOSE}
 )
 
 # Parse configdata.pm
