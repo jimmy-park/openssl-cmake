@@ -149,7 +149,7 @@ set(OPENSSL_CONFIGURE_OPTIONS no-shared no-tests)
 
 FetchContent_Declare(
     openssl-cmake
-    URL https://github.com/jimmy-park/openssl-cmake/archive/0.4.0.tar.gz
+    URL https://github.com/jimmy-park/openssl-cmake/archive/0.5.0.tar.gz
 )
 
 # This line must be preceded before find_package(OpenSSL)
@@ -171,7 +171,7 @@ set(CPM_SOURCE_CACHE /path/to/cache)
 
 CPMAddPackage(
     NAME openssl-cmake
-    URL https://github.com/jimmy-park/openssl-cmake/archive/0.4.0.tar.gz
+    URL https://github.com/jimmy-park/openssl-cmake/archive/0.5.0.tar.gz
     OPTIONS
     "OPENSSL_TARGET_VERSION 3.0.7"
     "OPENSSL_TARGET_PLATFORM VC-WIN64A"
