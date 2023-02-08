@@ -93,7 +93,7 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 | `OPENSSL_INSTALL_TARGET`    | string | `install_dev` | Makefile target for install                      |
 | `OPENSSL_PATCH`             | file   | `(undefined)` | Apply a patch to OpenSSL source                  |
 | `OPENSSL_TARGET_PLATFORM`   | string | `(undefined)` | Use OpenSSL's Configure target                   |
-| `OPENSSL_TARGET_VERSION`    | string | `3.0.7`       | Use the latest 3.0 series                        |
+| `OPENSSL_TARGET_VERSION`    | string | `3.0.8`       | Use the latest 3.0 series                        |
 | `OPENSSL_TEST`              | bool   | `OFF`         | Enable testing and build OpenSSL self tests      |
 | `OPENSSL_USE_CCACHE`        | bool   | `ON`          | Use ccache if available                          |
 
@@ -143,7 +143,7 @@ cmake --build --preset windows-x64-install
 include(FetchContent)
 
 # Set options before FetchContent_MakeAvailable()
-set(OPENSSL_TARGET_VERSION 3.0.7)
+set(OPENSSL_TARGET_VERSION 3.0.8)
 set(OPENSSL_TARGET_PLATFORM VC-WIN64A)
 set(OPENSSL_CONFIGURE_OPTIONS no-shared no-tests)
 
@@ -173,7 +173,7 @@ CPMAddPackage(
     NAME openssl-cmake
     URL https://github.com/jimmy-park/openssl-cmake/archive/0.5.0.tar.gz
     OPTIONS
-    "OPENSSL_TARGET_VERSION 3.0.7"
+    "OPENSSL_TARGET_VERSION 3.0.8"
     "OPENSSL_TARGET_PLATFORM VC-WIN64A"
     "OPENSSL_CONFIGURE_OPTIONS no-shared\\\\;no-tests"
 )
