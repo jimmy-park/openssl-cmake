@@ -1,10 +1,12 @@
 # openssl-cmake
 
+[![CI](https://github.com/jimmy-park/openssl-cmake/actions/workflows/ci.yaml/badge.svg)](https://github.com/jimmy-park/openssl-cmake/actions/workflows/ci.yaml) [![CI-mobile](https://github.com/jimmy-park/openssl-cmake/actions/workflows/ci-mobile.yaml/badge.svg)](https://github.com/jimmy-park/openssl-cmake/actions/workflows/ci-mobile.yaml)
+
 Build OpenSSL in parallel within CMake
 
 ## Features
 
-- Support both `1.1.1` and `3.0` series of OpenSSL
+- Support OpenSSL versions from `1.1.1` to `3.1.x`
 - Detect major platforms
 - Download the source code only once (thanks [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake)!)
 - Don't reconfigure if same options are used
@@ -93,7 +95,7 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 | `OPENSSL_INSTALL_TARGET`    | string | `install_dev` | Makefile target for install                      |
 | `OPENSSL_PATCH`             | file   | `(undefined)` | Apply a patch to OpenSSL source                  |
 | `OPENSSL_TARGET_PLATFORM`   | string | `(undefined)` | Use OpenSSL's Configure target                   |
-| `OPENSSL_TARGET_VERSION`    | string | `3.0.8`       | Use the latest 3.0 series                        |
+| `OPENSSL_TARGET_VERSION`    | string | `3.1.0`       | Use the latest OpenSSL version                   |
 | `OPENSSL_TEST`              | bool   | `OFF`         | Enable testing and build OpenSSL self tests      |
 | `OPENSSL_USE_CCACHE`        | bool   | `ON`          | Use ccache if available                          |
 
@@ -143,13 +145,13 @@ cmake --build --preset windows-x64-install
 include(FetchContent)
 
 # Set options before FetchContent_MakeAvailable()
-set(OPENSSL_TARGET_VERSION 3.0.8)
+set(OPENSSL_TARGET_VERSION 3.1.0)
 set(OPENSSL_TARGET_PLATFORM VC-WIN64A)
 set(OPENSSL_CONFIGURE_OPTIONS no-shared no-tests)
 
 FetchContent_Declare(
     openssl-cmake
-    URL https://github.com/jimmy-park/openssl-cmake/archive/0.5.0.tar.gz
+    URL https://github.com/jimmy-park/openssl-cmake/archive/main.tar.gz
 )
 
 # This line must be preceded before find_package(OpenSSL)
@@ -171,9 +173,9 @@ set(CPM_SOURCE_CACHE /path/to/cache)
 
 CPMAddPackage(
     NAME openssl-cmake
-    URL https://github.com/jimmy-park/openssl-cmake/archive/0.5.0.tar.gz
+    URL https://github.com/jimmy-park/openssl-cmake/archive/main.tar.gz
     OPTIONS
-    "OPENSSL_TARGET_VERSION 3.0.8"
+    "OPENSSL_TARGET_VERSION 3.1.0"
     "OPENSSL_TARGET_PLATFORM VC-WIN64A"
     "OPENSSL_CONFIGURE_OPTIONS no-shared\\\\;no-tests"
 )
