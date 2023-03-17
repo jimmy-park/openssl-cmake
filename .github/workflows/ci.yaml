@@ -26,7 +26,8 @@ jobs:
           path: |
             ${{ github.workspace }}/.cpm
             ${{ github.workspace }}/.ccache
-          key: openssl-${{ matrix.version }}-${{ matrix.preset }}
+          key: openssl-${{ matrix.version }}-${{ matrix.preset }}-${{ github.run_id }}
+          restore-keys: openssl-${{ matrix.version }}-${{ matrix.preset }}
 
       - name: Install dependencies on Linux
         if: runner.os == 'Linux'
