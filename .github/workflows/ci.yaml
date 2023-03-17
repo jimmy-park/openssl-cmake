@@ -19,8 +19,8 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: |
-            ~/.cpm
-            ~/.ccache
+            ${{ github.workspace }}/.cpm
+            ${{ github.workspace }}/.ccache
           key: openssl-${{ matrix.version }}-${{ matrix.preset }}
 
       - name: Install dependencies on Linux
@@ -40,12 +40,12 @@ jobs:
           echo "PATH=$ENV:PATH;C:\Program Files\NASM" >> $ENV:GITHUB_ENV
 
       - name: Set ccache path
-        run: ccache -o cache_dir=~/.ccache
+        run: ccache -o cache_dir=${{ github.workspace }}/.ccache
       - name: Reset ccache statistics
         run: ccache -z
 
       - name: Configure
-        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="~/.cpm" -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
+        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="${{ github.workspace }}/.cpm" -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }}
