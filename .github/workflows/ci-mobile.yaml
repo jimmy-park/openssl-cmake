@@ -4,7 +4,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [android-arm64, android-x86_64, ios, ios_sim]
+        preset: [android-arm64, android-x86_64, ios, ios_sim]
         version: [3.1.0, 3.0.8, 1.1.1t]
     runs-on: macos-latest
     steps:
@@ -27,13 +27,13 @@ jobs:
         run: ccache -z
 
       - name: Configure
-        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="~/.cpm"
+        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="~/.cpm" -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }}
 
       - name: Install
-        run: cmake --preset ${{ matrix.preset }}
+        run: cmake --build --preset ${{ matrix.preset }}-install
 
       - name: Show ccache statistics
         run: ccache -sv

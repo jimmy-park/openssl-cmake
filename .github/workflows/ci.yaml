@@ -45,7 +45,7 @@ jobs:
         run: ccache -z
 
       - name: Configure
-        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="~/.cpm"
+        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="~/.cpm" -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }}
@@ -54,7 +54,7 @@ jobs:
         run: ctest --preset ${{ matrix.preset }}
 
       - name: Install
-        run: cmake --preset ${{ matrix.preset }}
+        run: cmake --build --preset ${{ matrix.preset }}-install
 
       - name: Show ccache statistics
         run: ccache -sv
