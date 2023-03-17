@@ -1,6 +1,7 @@
 set(CMAKE_SYSTEM_NAME iOS)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 16.0)
 list(APPEND OPENSSL_CONFIGURE_OPTIONS
+    no-shared
     no-tests
     -fembed-bitcode
     -fvisibility=hidden
