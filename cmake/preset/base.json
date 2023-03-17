@@ -8,7 +8,6 @@
             "installDir": "${sourceDir}/install/${presetName}",
             "cmakeExecutable": "cmake",
             "cacheVariables": {
-                "CMAKE_MODULE_PATH": "${sourceDir}/cmake",
                 "CPM_SOURCE_CACHE": "${sourceDir}/build/.cache",
                 "OPENSSL_INSTALL": true,
                 "OPENSSL_TEST": true
@@ -145,10 +144,10 @@
         {
             "name": "target-android",
             "hidden": true,
-            "toolchainFile": "$env{HOME}/Library/Android/sdk/ndk/25.1.8937393/build/cmake/android.toolchain.cmake",
+            "toolchainFile": "$env{ANDROID_NDK}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "ANDROID_NDK": "$env{HOME}/Library/Android/sdk/ndk/25.1.8937393",
-                "ANDROID_PLATFORM": "android-33",
+                "ANDROID_NDK": "$env{ANDROID_NDK}",
+                "ANDROID_PLATFORM": "android-34",
                 "OPENSSL_CONFIGURE_OPTIONS": "--openssldir=/system/etc/security/cacerts",
                 "OPENSSL_TEST": false,
                 "OPENSSL_PATCH": "${sourceDir}/cmake/patch/android.patch"

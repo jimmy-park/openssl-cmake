@@ -60,7 +60,7 @@ sudo apt install -y build-essential perl ninja-build ccache
 Install packages from [Homebrew](https://brew.sh/)
 
 ```sh
-brew install cmake perl ccache
+brew install cmake perl ninja ccache
 xcode-select --install
 ```
 
