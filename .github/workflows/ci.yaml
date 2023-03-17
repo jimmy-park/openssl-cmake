@@ -4,6 +4,7 @@ jobs:
   build:
     strategy:
       matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
         version: [3.1.0, 3.0.8, 1.1.1t]
         include:
           - os: ubuntu-latest
@@ -53,7 +54,7 @@ jobs:
         run: ctest --preset ${{ matrix.preset }}
 
       - name: Install
-        run: cmake --preset ${{ matrix.preset }}-install
+        run: cmake --preset ${{ matrix.preset }}
 
       - name: Show ccache statistics
         run: ccache -sv

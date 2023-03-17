@@ -1,0 +1,39 @@
+name: CI for mobile devices
+on: push
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [android-arm64, android-x86_64, ios, ios_sim]
+        version: [3.1.0, 3.0.8, 1.1.1t]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cpm
+            ~/.ccache
+          key: ${{ runner.os }}-openssl
+
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install ccache ninja
+
+      - name: Set ccache path
+        run: ccache -o cache_dir=~/.ccache
+      - name: Reset ccache statistics
+        run: ccache -z
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="~/.cpm"
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Install
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Show ccache statistics
+        run: ccache -sv
