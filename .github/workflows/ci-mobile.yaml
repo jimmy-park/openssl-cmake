@@ -22,17 +22,17 @@ jobs:
             ${{ github.workspace }}/.cpm
             ${{ github.workspace }}/.ccache
           key: openssl-${{ matrix.version }}-${{ matrix.preset }}-${{ github.run_id }}
-          restore-keys: openssl-${{ matrix.version }}-${{ matrix.preset }}
+          restore-keys: openssl-${{ matrix.version }}-${{ matrix.preset }}-
 
       - name: Install dependencies
         run: |
           brew update
           brew install ccache ninja
 
-      - name: Set ccache path
-        run: ccache -o cache_dir=${{ github.workspace }}/.ccache
-      - name: Reset ccache statistics
-        run: ccache -z
+      - name: Configure ccache
+        run: |
+          ccache -o cache_dir=${{ github.workspace }}/.ccache
+          ccache -z
 
       - name: Configure
         run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="${{ github.workspace }}/.cpm" -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
