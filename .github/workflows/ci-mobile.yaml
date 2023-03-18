@@ -5,6 +5,8 @@ on:
       - main
     tags-ignore:
       - "**"
+    paths-ignore:
+      - "**/README.md"
 jobs:
   build:
     strategy:
