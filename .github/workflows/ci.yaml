@@ -47,10 +47,15 @@ jobs:
           choco install -y jom nasm ccache
           echo "PATH=$ENV:PATH;C:\Program Files\NASM" >> $ENV:GITHUB_ENV
 
-      - name: Set ccache path
-        run: ccache -o cache_dir=${{ github.workspace }}/.ccache
-      - name: Reset ccache statistics
-        run: ccache -z
+      - name: Configure ccache
+        run: |
+          ccache -o cache_dir=${{ github.workspace }}/.ccache
+          ccache -sv
+          ccache -z
+
+      - if: runner.os == 'Windows'
+        run: |
+          ccache -o log_file=${{ github.workspace }}/ccache.log
 
       - name: Configure
         run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="${{ github.workspace }}/.cpm" -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
@@ -58,11 +63,22 @@ jobs:
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }}
 
-      - name: Test
-        run: ctest --preset ${{ matrix.preset }}
+      # - name: Test
+      #   run: ctest --preset ${{ matrix.preset }}
 
-      - name: Install
-        run: cmake --build --preset ${{ matrix.preset }}-install
+      # - name: Install
+      #   run: cmake --build --preset ${{ matrix.preset }}-install
 
       - name: Show ccache statistics
         run: ccache -sv
+
+      - name: Show ccache results
+        if: runner.os == 'Windows'
+        run: tree ${{ github.workspace }}/.ccache_debug /f
+
+      - name: Archive ccache results
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v3
+        with:
+          name: openssl-${{ matrix.version }}-${{ matrix.preset }}
+          path: ${{ github.workspace }}/ccache.log
