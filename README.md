@@ -4,10 +4,12 @@
 
 Build OpenSSL in parallel within CMake
 
+Tested on major platforms (`Linux`, `macOS`, `Windows`, `Android`, `iOS`)
+
 ## Features
 
 - Support OpenSSL versions from `1.1.1` to `3.1.x`
-- Detect major platforms
+- Detect the target platform using CMake variables
 - Download the source code only once (thanks [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake)!)
 - Don't reconfigure if same options are used
 - Automatically use the maximum number of processors
