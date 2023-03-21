@@ -1,14 +1,11 @@
 name: CI for mobile devices
 on:
-  push:
-    branches:
-      - main
-    tags-ignore:
-      - "**"
-    paths-ignore:
-      - "**/README.md"
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
 jobs:
-  build:
+  build-mobile:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     strategy:
       matrix:
         preset: [android-arm64, android-x86_64, ios, ios_sim]

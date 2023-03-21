@@ -2,11 +2,16 @@ name: CI
 on:
   push:
     branches:
-      - main
-    tags-ignore:
       - "**"
     paths-ignore:
-      - "**/README.md"
+      - "**.md"
+    tags-ignore:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+    paths-ignore:
+      - "**.md"
 jobs:
   build:
     strategy:
