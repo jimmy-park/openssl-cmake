@@ -348,12 +348,7 @@ if(OPENSSL_INSTALL_CERT)
 
     # Download latest CA certificates
     # https://curl.se/docs/caextract.html
-    install(CODE
-        "file(
-            DOWNLOAD https://curl.se/ca/cacert-2023-01-10.pem ${OPENSSL_OPENSSLDIR}/cert.pem
-            EXPECTED_HASH SHA256=fb1ecd641d0a02c01bc9036d513cb658bbda62a75e246bedbc01764560a639f0
-        )"
-    )
+    install(CODE "file(DOWNLOAD https://curl.se/ca/cacert.pem ${OPENSSL_OPENSSLDIR}/cert.pem)")
 endif()
 
 if(PROJECT_IS_TOP_LEVEL)
