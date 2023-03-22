@@ -7,7 +7,7 @@
         {
             "name": "android-arm",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "ninja",
                 "target-android-arm",
                 "default"
@@ -16,7 +16,7 @@
         {
             "name": "android-arm64",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "ninja",
                 "target-android-arm64",
                 "default"
@@ -25,7 +25,7 @@
         {
             "name": "android-x86",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "ninja",
                 "target-android-x86",
                 "default"
@@ -34,7 +34,7 @@
         {
             "name": "android-x86_64",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "ninja",
                 "target-android-x86_64",
                 "default"
@@ -46,7 +46,7 @@
             "name": "android-arm",
             "configurePreset": "android-arm",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release"
             ]
         },
@@ -54,7 +54,7 @@
             "name": "android-arm-clean",
             "configurePreset": "android-arm",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release",
                 "clean"
             ]
@@ -63,7 +63,7 @@
             "name": "android-arm-install",
             "configurePreset": "android-arm",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release",
                 "install"
             ]
@@ -72,7 +72,7 @@
             "name": "android-arm64",
             "configurePreset": "android-arm64",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release"
             ]
         },
@@ -80,7 +80,7 @@
             "name": "android-arm64-clean",
             "configurePreset": "android-arm64",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release",
                 "clean"
             ]
@@ -89,7 +89,7 @@
             "name": "android-arm64-install",
             "configurePreset": "android-arm64",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release",
                 "install"
             ]
@@ -98,7 +98,7 @@
             "name": "android-x86",
             "configurePreset": "android-x86",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release"
             ]
         },
@@ -106,7 +106,7 @@
             "name": "android-x86-clean",
             "configurePreset": "android-x86",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release",
                 "clean"
             ]
@@ -115,7 +115,7 @@
             "name": "android-x86-install",
             "configurePreset": "android-x86",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release",
                 "install"
             ]
@@ -124,7 +124,7 @@
             "name": "android-x86_64",
             "configurePreset": "android-x86_64",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release"
             ]
         },
@@ -132,7 +132,7 @@
             "name": "android-x86_64-clean",
             "configurePreset": "android-x86_64",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release",
                 "clean"
             ]
@@ -141,7 +141,7 @@
             "name": "android-x86_64-install",
             "configurePreset": "android-x86_64",
             "inherits": [
-                "host-macos",
+                "host-not-windows",
                 "release",
                 "install"
             ]

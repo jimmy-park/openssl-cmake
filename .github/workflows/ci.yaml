@@ -1,17 +1,10 @@
 name: CI
 on:
   push:
-    branches:
-      - "**"
-    paths-ignore:
-      - "**.md"
-    tags-ignore:
-      - "**"
+    branches: ["**"]
+    tags-ignore: ["**"]
   pull_request:
-    branches:
-      - "**"
-    paths-ignore:
-      - "**.md"
+    branches: ["**"]
 jobs:
   build:
     strategy:
@@ -61,7 +54,7 @@ jobs:
           ccache -o cache_dir=${{ github.workspace }}/.ccache
           ccache -z
 
-      - name: Configure
+      - name: Configure CMake
         run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE=".cpm" -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
 
       - name: Build
@@ -72,6 +65,127 @@ jobs:
 
       - name: Install
         run: cmake --build --preset ${{ matrix.preset }}-install
+
+      - name: Show ccache statistics
+        run: ccache -sv
+  build-android:
+    strategy:
+      matrix:
+        preset: [android-arm, android-arm64, android-x86, android-x86_64]
+        version: [3.1.0, 3.0.8, 1.1.1t]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: .cpm
+          key: openssl-cpm-${{ matrix.version }}
+          enableCrossOsArchive: true
+      - uses: actions/cache@v3
+        with:
+          path: .ccache
+          key: openssl-ccache-${{ matrix.version }}-${{ matrix.preset }}-${{ github.run_id }}
+          restore-keys: openssl-ccache-${{ matrix.version }}-${{ matrix.preset }}-
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build ccache
+          ccache -o cache_dir=${{ github.workspace }}/.ccache
+          ccache -z
+
+      - name: Configure CMake
+        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE=".cpm" -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Install
+        run: cmake --build --preset ${{ matrix.preset }}-install
+
+      - name: Show ccache statistics
+        run: ccache -sv
+  build-ios:
+    strategy:
+      matrix:
+        preset: [ios, ios_sim]
+        version: [3.1.0, 3.0.8, 1.1.1t]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: .cpm
+          key: openssl-cpm-${{ matrix.version }}
+          enableCrossOsArchive: true
+      - uses: actions/cache@v3
+        with:
+          path: .ccache
+          key: openssl-ccache-${{ matrix.version }}-${{ matrix.preset }}-${{ github.run_id }}
+          restore-keys: openssl-ccache-${{ matrix.version }}-${{ matrix.preset }}-
+
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install ccache
+          ccache -o cache_dir=${{ github.workspace }}/.ccache
+          ccache -z
+
+      - name: Configure CMake
+        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE=".cpm" -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Install
+        run: cmake --build --preset ${{ matrix.preset }}-install
+
+      - name: Show ccache statistics
+        run: ccache -sv
+  analyze:
+    strategy:
+      matrix:
+        include:
+          - preset: codeql
+            version: 3.1.0
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: .cpm
+          key: openssl-cpm-${{ matrix.version }}
+          enableCrossOsArchive: true
+      - uses: actions/cache@v3
+        with:
+          path: .ccache
+          key: openssl-ccache-${{ matrix.version }}-${{ matrix.preset }}-${{ github.run_id }}
+          restore-keys: openssl-ccache-${{ matrix.version }}-${{ matrix.preset }}-
+
+      - name: Configure cache
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ccache
+          ccache -o cache_dir=${{ github.workspace }}/.ccache
+          ccache -z
+          echo "CPM_SOURCE_CACHE=.cpm" >> $GITHUB_ENV
+
+      - uses: github/codeql-action/init@v2
+      - uses: github/codeql-action/autobuild@v2
+      - uses: github/codeql-action/analyze@v2
+        with:
+          upload: false
+          output: sarif-results
+      - uses: advanced-security/filter-sarif@v1
+        with:
+          patterns: -**/*.c
+          input: sarif-results/cpp.sarif
+          output: sarif-results/cpp.sarif
+      - uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: sarif-results/cpp.sarif
 
       - name: Show ccache statistics
         run: ccache -sv

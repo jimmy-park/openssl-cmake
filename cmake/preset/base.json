@@ -41,6 +41,15 @@
             }
         },
         {
+            "name": "host-not-windows",
+            "hidden": true,
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
             "name": "vs2022",
             "hidden": true,
             "generator": "Visual Studio 17 2022",
@@ -215,6 +224,15 @@
             }
         },
         {
+            "name": "host-not-windows",
+            "hidden": true,
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
             "name": "debug",
             "hidden": true,
             "configuration": "Debug"
@@ -259,6 +277,15 @@
             "hidden": true,
             "condition": {
                 "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "host-not-windows",
+            "hidden": true,
+            "condition": {
+                "type": "notEquals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
             }

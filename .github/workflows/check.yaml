@@ -1,7 +1,7 @@
 name: Check
 on:
   workflow_run:
-    workflows: [CI for mobile devices]
+    workflows: [CI]
     types: [completed]
 jobs:
   on-success:
