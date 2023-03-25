@@ -1,6 +1,7 @@
 # openssl-cmake
 
 [![CI](https://github.com/jimmy-park/openssl-cmake/actions/workflows/ci.yaml/badge.svg)](https://github.com/jimmy-park/openssl-cmake/actions/workflows/ci.yaml)
+[![CodeQL](https://github.com/jimmy-park/openssl-cmake/actions/workflows/codeql.yaml/badge.svg)](https://github.com/jimmy-park/openssl-cmake/actions/workflows/codeql.yaml)
 
 Build OpenSSL in parallel within CMake
 

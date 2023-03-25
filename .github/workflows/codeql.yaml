@@ -1,0 +1,40 @@
+name: CodeQL
+on:
+  push:
+    branches: ["**"]
+    tags-ignore: ["**"]
+  pull_request:
+    branches: ["**"]
+  schedule:
+    - cron: "0 0 * * *"
+jobs:
+  analyze:
+    strategy:
+      matrix:
+        version: [3.1.0, 3.0.8, 1.1.1t]
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: .cpm
+          key: openssl-${{ matrix.version }}-cpm
+          enableCrossOsArchive: true
+      - run: echo "CPM_SOURCE_CACHE=.cpm" >> $GITHUB_ENV
+
+      - uses: github/codeql-action/init@v2
+      - uses: github/codeql-action/autobuild@v2
+      - uses: github/codeql-action/analyze@v2
+        with:
+          upload: false
+          output: sarif-results
+      - uses: advanced-security/filter-sarif@v1
+        with:
+          patterns: -**/*.c
+          input: sarif-results/cpp.sarif
+          output: sarif-results/cpp.sarif
+      - uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: sarif-results/cpp.sarif
