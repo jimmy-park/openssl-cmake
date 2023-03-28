@@ -1,7 +1,3 @@
-if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME)
-    return()
-endif()
-
 project(apps LANGUAGES CXX)
 
 add_executable(main main.cpp)

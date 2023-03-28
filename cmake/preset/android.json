@@ -8,8 +8,8 @@
             "name": "android-arm",
             "inherits": [
                 "host-not-windows",
-                "ninja",
                 "target-android-arm",
+                "ninja",
                 "default"
             ]
         },
@@ -17,8 +17,8 @@
             "name": "android-arm64",
             "inherits": [
                 "host-not-windows",
-                "ninja",
                 "target-android-arm64",
+                "ninja",
                 "default"
             ]
         },
@@ -26,8 +26,8 @@
             "name": "android-x86",
             "inherits": [
                 "host-not-windows",
-                "ninja",
                 "target-android-x86",
+                "ninja",
                 "default"
             ]
         },
@@ -35,8 +35,8 @@
             "name": "android-x86_64",
             "inherits": [
                 "host-not-windows",
-                "ninja",
                 "target-android-x86_64",
+                "ninja",
                 "default"
             ]
         }
@@ -46,8 +46,7 @@
             "name": "android-arm",
             "configurePreset": "android-arm",
             "inherits": [
-                "host-not-windows",
-                "release"
+                "host-not-windows"
             ]
         },
         {
@@ -55,7 +54,6 @@
             "configurePreset": "android-arm",
             "inherits": [
                 "host-not-windows",
-                "release",
                 "clean"
             ]
         },
@@ -64,7 +62,6 @@
             "configurePreset": "android-arm",
             "inherits": [
                 "host-not-windows",
-                "release",
                 "install"
             ]
         },
@@ -72,8 +69,7 @@
             "name": "android-arm64",
             "configurePreset": "android-arm64",
             "inherits": [
-                "host-not-windows",
-                "release"
+                "host-not-windows"
             ]
         },
         {
@@ -81,7 +77,6 @@
             "configurePreset": "android-arm64",
             "inherits": [
                 "host-not-windows",
-                "release",
                 "clean"
             ]
         },
@@ -90,7 +85,6 @@
             "configurePreset": "android-arm64",
             "inherits": [
                 "host-not-windows",
-                "release",
                 "install"
             ]
         },
@@ -98,8 +92,7 @@
             "name": "android-x86",
             "configurePreset": "android-x86",
             "inherits": [
-                "host-not-windows",
-                "release"
+                "host-not-windows"
             ]
         },
         {
@@ -107,7 +100,6 @@
             "configurePreset": "android-x86",
             "inherits": [
                 "host-not-windows",
-                "release",
                 "clean"
             ]
         },
@@ -116,7 +108,6 @@
             "configurePreset": "android-x86",
             "inherits": [
                 "host-not-windows",
-                "release",
                 "install"
             ]
         },
@@ -124,8 +115,7 @@
             "name": "android-x86_64",
             "configurePreset": "android-x86_64",
             "inherits": [
-                "host-not-windows",
-                "release"
+                "host-not-windows"
             ]
         },
         {
@@ -133,7 +123,6 @@
             "configurePreset": "android-x86_64",
             "inherits": [
                 "host-not-windows",
-                "release",
                 "clean"
             ]
         },
@@ -142,7 +131,6 @@
             "configurePreset": "android-x86_64",
             "inherits": [
                 "host-not-windows",
-                "release",
                 "install"
             ]
         }

@@ -8,8 +8,8 @@
             "name": "ios",
             "inherits": [
                 "host-macos",
-                "xcode",
                 "target-ios",
+                "xcode",
                 "default"
             ]
         },
@@ -17,8 +17,8 @@
             "name": "ios_sim",
             "inherits": [
                 "host-macos",
-                "xcode",
                 "target-ios_sim",
+                "xcode",
                 "default"
             ]
         }
@@ -34,59 +34,53 @@
         },
         {
             "name": "ios",
+            "configurePreset": "ios",
             "inherits": [
                 "host-macos",
-                "release",
                 "build-options"
-            ],
-            "configurePreset": "ios"
+            ]
         },
         {
             "name": "ios-clean",
+            "configurePreset": "ios",
             "inherits": [
                 "host-macos",
-                "release",
                 "clean"
-            ],
-            "configurePreset": "ios"
+            ]
         },
         {
             "name": "ios-install",
+            "configurePreset": "ios",
             "inherits": [
                 "host-macos",
-                "release",
                 "install",
                 "build-options"
-            ],
-            "configurePreset": "ios"
+            ]
         },
         {
             "name": "ios_sim",
+            "configurePreset": "ios_sim",
             "inherits": [
                 "host-macos",
-                "release",
                 "build-options"
-            ],
-            "configurePreset": "ios_sim"
+            ]
         },
         {
             "name": "ios_sim-clean",
+            "configurePreset": "ios_sim",
             "inherits": [
                 "host-macos",
-                "release",
                 "clean"
-            ],
-            "configurePreset": "ios_sim"
+            ]
         },
         {
             "name": "ios_sim-install",
+            "configurePreset": "ios_sim",
             "inherits": [
                 "host-macos",
-                "release",
                 "install",
                 "build-options"
-            ],
-            "configurePreset": "ios_sim"
+            ]
         }
     ]
 }

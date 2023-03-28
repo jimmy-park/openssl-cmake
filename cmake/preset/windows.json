@@ -5,29 +5,11 @@
     ],
     "configurePresets": [
         {
-            "name": "windows-x86",
-            "inherits": [
-                "host-windows",
-                "vs2022",
-                "target-windows-x86",
-                "default"
-            ]
-        },
-        {
-            "name": "windows-x64",
-            "inherits": [
-                "host-windows",
-                "vs2022",
-                "target-windows-x64",
-                "default"
-            ]
-        },
-        {
             "name": "windows-arm",
             "inherits": [
                 "host-windows",
-                "vs2022",
                 "target-windows-arm",
+                "vs2022",
                 "default"
             ]
         },
@@ -35,143 +17,130 @@
             "name": "windows-arm64",
             "inherits": [
                 "host-windows",
-                "vs2022",
                 "target-windows-arm64",
+                "vs2022",
+                "default"
+            ]
+        },
+        {
+            "name": "windows-x86",
+            "inherits": [
+                "host-windows",
+                "target-windows-x86",
+                "vs2022",
+                "default"
+            ]
+        },
+        {
+            "name": "windows-x86_64",
+            "inherits": [
+                "host-windows",
+                "target-windows-x86_64",
+                "vs2022",
                 "default"
             ]
         }
     ],
     "buildPresets": [
         {
-            "name": "windows-x86",
-            "inherits": [
-                "host-windows",
-                "release"
-            ],
-            "configurePreset": "windows-x86"
-        },
-        {
-            "name": "windows-x86-clean",
-            "inherits": [
-                "host-windows",
-                "release",
-                "clean"
-            ],
-            "configurePreset": "windows-x86"
-        },
-        {
-            "name": "windows-x86-install",
-            "inherits": [
-                "host-windows",
-                "release",
-                "install"
-            ],
-            "configurePreset": "windows-x86"
-        },
-        {
-            "name": "windows-x64",
-            "inherits": [
-                "host-windows",
-                "release"
-            ],
-            "configurePreset": "windows-x64"
-        },
-        {
-            "name": "windows-x64-clean",
-            "inherits": [
-                "host-windows",
-                "release",
-                "clean"
-            ],
-            "configurePreset": "windows-x64"
-        },
-        {
-            "name": "windows-x64-install",
-            "inherits": [
-                "host-windows",
-                "release",
-                "install"
-            ],
-            "configurePreset": "windows-x64"
-        },
-        {
             "name": "windows-arm",
+            "configurePreset": "windows-arm",
             "inherits": [
-                "host-windows",
-                "release"
-            ],
-            "configurePreset": "windows-arm"
+                "host-windows"
+            ]
         },
         {
             "name": "windows-arm-clean",
+            "configurePreset": "windows-arm",
             "inherits": [
                 "host-windows",
-                "release",
                 "clean"
-            ],
-            "configurePreset": "windows-arm"
+            ]
         },
         {
             "name": "windows-arm-install",
+            "configurePreset": "windows-arm",
             "inherits": [
                 "host-windows",
-                "release",
                 "install"
-            ],
-            "configurePreset": "windows-arm"
+            ]
         },
         {
             "name": "windows-arm64",
+            "configurePreset": "windows-arm64",
             "inherits": [
-                "host-windows",
-                "release"
-            ],
-            "configurePreset": "windows-arm64"
+                "host-windows"
+            ]
         },
         {
             "name": "windows-arm64-clean",
+            "configurePreset": "windows-arm64",
             "inherits": [
                 "host-windows",
-                "release",
                 "clean"
-            ],
-            "configurePreset": "windows-arm64"
+            ]
         },
         {
             "name": "windows-arm64-install",
+            "configurePreset": "windows-arm64",
             "inherits": [
                 "host-windows",
-                "release",
                 "install"
-            ],
-            "configurePreset": "windows-arm64"
-        }
-    ],
-    "testPresets": [
+            ]
+        },
         {
             "name": "windows-x86",
             "configurePreset": "windows-x86",
             "inherits": [
-                "host-windows",
-                "release",
-                "options"
+                "host-windows"
             ]
         },
         {
-            "name": "windows-x64",
-            "configurePreset": "windows-x64",
+            "name": "windows-x86-clean",
+            "configurePreset": "windows-x86",
             "inherits": [
                 "host-windows",
-                "release",
-                "options"
+                "clean"
             ]
         },
+        {
+            "name": "windows-x86-install",
+            "configurePreset": "windows-x86",
+            "inherits": [
+                "host-windows",
+                "install"
+            ]
+        },
+        {
+            "name": "windows-x86_64",
+            "configurePreset": "windows-x86_64",
+            "inherits": [
+                "host-windows"
+            ]
+        },
+        {
+            "name": "windows-x86_64-clean",
+            "configurePreset": "windows-x86_64",
+            "inherits": [
+                "host-windows",
+                "clean"
+            ]
+        },
+        {
+            "name": "windows-x86_64-install",
+            "configurePreset": "windows-x86_64",
+            "inherits": [
+                "host-windows",
+                "install"
+            ]
+        }
+    ],
+    "testPresets": [
         {
             "name": "windows-arm",
             "configurePreset": "windows-arm",
             "inherits": [
                 "host-windows",
-                "release",
                 "options"
             ]
         },
@@ -180,7 +149,22 @@
             "configurePreset": "windows-arm64",
             "inherits": [
                 "host-windows",
-                "release",
+                "options"
+            ]
+        },
+        {
+            "name": "windows-x86",
+            "configurePreset": "windows-x86",
+            "inherits": [
+                "host-windows",
+                "options"
+            ]
+        },
+        {
+            "name": "windows-x86_64",
+            "configurePreset": "windows-x86_64",
+            "inherits": [
+                "host-windows",
                 "options"
             ]
         }

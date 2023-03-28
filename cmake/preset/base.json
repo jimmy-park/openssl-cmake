@@ -50,107 +50,6 @@
             }
         },
         {
-            "name": "vs2022",
-            "hidden": true,
-            "generator": "Visual Studio 17 2022",
-            "toolset": {
-                "value": "host=x64",
-                "strategy": "set"
-            }
-        },
-        {
-            "name": "ninja",
-            "hidden": true,
-            "generator": "Ninja Multi-Config",
-            "cacheVariables": {
-                "CMAKE_COLOR_DIAGNOSTICS": true,
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            }
-        },
-        {
-            "name": "xcode",
-            "hidden": true,
-            "generator": "Xcode"
-        },
-        {
-            "name": "target-linux-x86_64",
-            "hidden": true,
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "linux-x86_64"
-            }
-        },
-        {
-            "name": "target-linux-aarch64",
-            "hidden": true,
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "linux-aarch64"
-            }
-        },
-        {
-            "name": "target-macos-x86_64",
-            "hidden": true,
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "darwin64-x86_64-cc"
-            }
-        },
-        {
-            "name": "target-macos-arm64",
-            "hidden": true,
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "darwin64-arm64-cc"
-            }
-        },
-        {
-            "name": "target-windows-x86",
-            "hidden": true,
-            "architecture": {
-                "value": "Win32",
-                "strategy": "set"
-            }
-        },
-        {
-            "name": "target-windows-x64",
-            "hidden": true,
-            "architecture": {
-                "value": "x64",
-                "strategy": "set"
-            }
-        },
-        {
-            "name": "target-windows-arm",
-            "hidden": true,
-            "architecture": {
-                "value": "ARM",
-                "strategy": "set"
-            }
-        },
-        {
-            "name": "target-windows-arm64",
-            "hidden": true,
-            "architecture": {
-                "value": "ARM64",
-                "strategy": "set"
-            }
-        },
-        {
-            "name": "target-ios",
-            "hidden": true,
-            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
-            "cacheVariables": {
-                "CMAKE_OSX_SYSROOT": "iphoneos",
-                "OPENSSL_TEST": false
-            }
-        },
-        {
-            "name": "target-ios_sim",
-            "hidden": true,
-            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
-            "cacheVariables": {
-                "CMAKE_OSX_SYSROOT": "iphonesimulator",
-                "OPENSSL_TEST": false
-            }
-        },
-        {
             "name": "target-android",
             "hidden": true,
             "toolchainFile": "$env{ANDROID_NDK}/build/cmake/android.toolchain.cmake",
@@ -193,6 +92,107 @@
             "cacheVariables": {
                 "ANDROID_ABI": "x86_64"
             }
+        },
+        {
+            "name": "target-ios",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": "iphoneos",
+                "OPENSSL_TEST": false
+            }
+        },
+        {
+            "name": "target-ios_sim",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": "iphonesimulator",
+                "OPENSSL_TEST": false
+            }
+        },
+        {
+            "name": "target-linux-aarch64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "linux-aarch64"
+            }
+        },
+        {
+            "name": "target-linux-x86_64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "linux-x86_64"
+            }
+        },
+        {
+            "name": "target-macos-arm64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "darwin64-arm64-cc"
+            }
+        },
+        {
+            "name": "target-macos-x86_64",
+            "hidden": true,
+            "cacheVariables": {
+                "OPENSSL_TARGET_PLATFORM": "darwin64-x86_64-cc"
+            }
+        },
+        {
+            "name": "target-windows-arm",
+            "hidden": true,
+            "architecture": {
+                "value": "ARM",
+                "strategy": "set"
+            }
+        },
+        {
+            "name": "target-windows-arm64",
+            "hidden": true,
+            "architecture": {
+                "value": "ARM64",
+                "strategy": "set"
+            }
+        },
+        {
+            "name": "target-windows-x86",
+            "hidden": true,
+            "architecture": {
+                "value": "Win32",
+                "strategy": "set"
+            }
+        },
+        {
+            "name": "target-windows-x86_64",
+            "hidden": true,
+            "architecture": {
+                "value": "x64",
+                "strategy": "set"
+            }
+        },
+        {
+            "name": "ninja",
+            "hidden": true,
+            "generator": "Ninja Multi-Config",
+            "cacheVariables": {
+                "CMAKE_COLOR_DIAGNOSTICS": true,
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            }
+        },
+        {
+            "name": "vs2022",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "toolset": {
+                "value": "host=x64",
+                "strategy": "set"
+            }
+        },
+        {
+            "name": "xcode",
+            "hidden": true,
+            "generator": "Xcode"
         }
     ],
     "buildPresets": [
@@ -231,16 +231,6 @@
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
             }
-        },
-        {
-            "name": "debug",
-            "hidden": true,
-            "configuration": "Debug"
-        },
-        {
-            "name": "release",
-            "hidden": true,
-            "configuration": "Release"
         },
         {
             "name": "clean",
@@ -289,16 +279,6 @@
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
             }
-        },
-        {
-            "name": "debug",
-            "hidden": true,
-            "configuration": "Debug"
-        },
-        {
-            "name": "release",
-            "hidden": true,
-            "configuration": "Release"
         },
         {
             "name": "options",
