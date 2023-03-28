@@ -1,15 +1,13 @@
 name: CI
-on:
-  push:
-    branches: ["**"]
-    tags-ignore: ["**"]
-  pull_request:
-    branches: ["**"]
+
+on: [push, pull_request]
+
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        version: [3.1.0, 3.0.8, 1.1.1t]
+        version: [1.1.1t, 3.0.8, 3.1.0]
         preset:
           - android-arm
           - android-arm64
@@ -19,7 +17,7 @@ jobs:
           - ios_sim
           - linux-x86_64
           - macos-x86_64
-          - windows-x64
+          - windows-x86_64
         include:
           - preset: android-arm
             os: ubuntu-latest
@@ -37,7 +35,7 @@ jobs:
             os: ubuntu-latest
           - preset: macos-x86_64
             os: macos-latest
-          - preset: windows-x64
+          - preset: windows-x86_64
             os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
@@ -76,17 +74,23 @@ jobs:
           ccache -z
 
       - name: Configure CMake
-        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE=".cpm" -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
+        run: >
+          cmake --preset ${{ matrix.preset }}
+          -DCPM_SOURCE_CACHE=".cpm"
+          -DOPENSSL_BUILD_VERBOSE=ON
+          -DOPENSSL_CONFIGURE_VERBOSE=ON
+          -DOPENSSL_CONFIGURE_OPTIONS="--prefix=${{ github.workspace }}/install"
+          -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
 
       - name: Build
-        run: cmake --build --preset ${{ matrix.preset }}
+        run: cmake --build --preset ${{ matrix.preset }} --config Release
 
       - name: Test
-        if: contains(fromJSON('["linux-x86_64", "macos-x86_64", "windows-x64"]'), matrix.preset)
-        run: ctest --preset ${{ matrix.preset }}
+        if: contains(fromJSON('["linux-x86_64", "macos-x86_64", "windows-x86_64"]'), matrix.preset)
+        run: ctest --preset ${{ matrix.preset }} -C Release
 
       - name: Install
-        run: cmake --build --preset ${{ matrix.preset }}-install
+        run: cmake --build --preset ${{ matrix.preset }}-install --config Release
 
       - name: Show ccache statistics
         run: ccache -sv

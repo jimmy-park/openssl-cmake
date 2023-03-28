@@ -1,28 +1,51 @@
 name: CodeQL
+
 on:
   push:
-    branches: ["**"]
-    tags-ignore: ["**"]
   pull_request:
-    branches: ["**"]
   schedule:
     - cron: "0 0 * * *"
+
 jobs:
   analyze:
     strategy:
+      fail-fast: false
       matrix:
-        version: [3.1.0, 3.0.8, 1.1.1t]
-    runs-on: ubuntu-latest
+        version: [1.1.1t, 3.0.8, 3.1.0]
+        preset: [linux-clang, linux-gcc, macos, windows]
+        include:
+          - preset: linux-clang
+            os: ubuntu-latest
+            cc: clang
+            cxx: clang++
+          - preset: linux-gcc
+            os: ubuntu-latest
+            cc: gcc
+            cxx: g++
+          - preset: macos
+            os: macos-latest
+          - preset: windows
+            os: windows-latest
+    runs-on: ${{ matrix.os }}
     permissions:
       security-events: write
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: .cpm
-          key: openssl-${{ matrix.version }}-cpm
-          enableCrossOsArchive: true
-      - run: echo "CPM_SOURCE_CACHE=.cpm" >> $GITHUB_ENV
+
+      - name: Choose the compiler on Linux
+        if: runner.os == 'Linux'
+        run: |
+          echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
+          echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
+
+      - name: Install dependencies on Windows
+        if: runner.os == 'Windows'
+        run: |
+          choco install -y jom nasm
+          echo "PATH=$ENV:PATH;C:\Program Files\NASM" >> $ENV:GITHUB_ENV
+      - name: Configure CMake on Windows
+        if: runner.os == 'Windows'
+        run: cmake --preset windows-x86_64
 
       - uses: github/codeql-action/init@v2
       - uses: github/codeql-action/autobuild@v2
