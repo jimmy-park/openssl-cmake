@@ -1,5 +1,5 @@
 set(CMAKE_SYSTEM_NAME iOS)
-set(CMAKE_OSX_DEPLOYMENT_TARGET 16.0)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 7.0)
 list(APPEND OPENSSL_CONFIGURE_OPTIONS
     no-shared
     no-tests
@@ -21,7 +21,7 @@ elseif(CMAKE_OSX_SYSROOT STREQUAL "iphonesimulator")
         no-asm
         "-arch arm64"
         "-arch x86_64"
-        -mios-simulator-version-min=16.0
+        -mios-simulator-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}
         -fno-common
         -DL_ENDIAN
     )
