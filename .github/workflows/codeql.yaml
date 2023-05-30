@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [1.1.1t, 3.0.8, 3.1.0]
+        version: [1.1.1u, 3.0.9, 3.1.1]
         preset: [linux-clang, linux-gcc, macos, windows]
         include:
           - preset: linux-clang

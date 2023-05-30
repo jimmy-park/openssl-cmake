@@ -98,7 +98,7 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 | `OPENSSL_INSTALL_TARGET`    | string | `install_dev` | Makefile target for install                      |
 | `OPENSSL_PATCH`             | file   | `(undefined)` | Apply a patch to OpenSSL source                  |
 | `OPENSSL_TARGET_PLATFORM`   | string | `(undefined)` | Use OpenSSL's Configure target                   |
-| `OPENSSL_TARGET_VERSION`    | string | `3.1.0`       | Use the latest OpenSSL version                   |
+| `OPENSSL_TARGET_VERSION`    | string | `3.1.1`       | Use the latest OpenSSL version                   |
 | `OPENSSL_TEST`              | bool   | `OFF`         | Enable testing and build OpenSSL self tests      |
 | `OPENSSL_USE_CCACHE`        | bool   | `ON`          | Use ccache if available                          |
 
