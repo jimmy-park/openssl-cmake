@@ -5,39 +5,35 @@
 
 Build OpenSSL in parallel within CMake
 
-Tested on major platforms (`Linux`, `macOS`, `Windows`, `Android`, `iOS`)
-
 ## Features
 
-- Support OpenSSL versions from `1.1.1` to `3.1.x`
-- Detect the target platform using CMake variables
+- Support OpenSSL versions from `1.1.1` to the latest `3.1.x`
+- Detect the major target platform (`Linux`, `macOS`, `Windows`, `Android`, `iOS`)
 - Download the source code only once (thanks [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake)!)
 - Don't reconfigure if same options are used
 - Automatically use the maximum number of processors
 - Reduce rebuild time using [ccache](https://github.com/ccache/ccache)
-- Override the `FindOpenSSL` module (no need to change CMake code)
+- Override the [`FindOpenSSL`](https://cmake.org/cmake/help/latest/module/FindOpenSSL.html) CMake module (no need to change existing CMake code)
 
 ## Benchmarks
 
-| | Time | Speed |
+| Configuration | Time | Speed |
 | --- | ---: | ---: |
-| Sequential                  | 135 s  | 1.00 x |
-| Sequential w/ ccache (cold) | 580 s  | 0.23 x |
-| Sequential w/ ccache (warm) | 95 s   | 1.42 x |
-| Parallel                    | 26 s   | 5.19 x |
-| Parallel w/ ccache (cold)   | 126 s  | 1.07 x |
-| Parallel w/ ccache (warm)   | 16 s   | **8.44 x** |
+| Sequential                  | 168 s  | 1.00 x |
+| Sequential w/ ccache (cold) | 460 s  | 0.37 x |
+| Sequential w/ ccache (warm) | 111 s  | 1.51 x |
+| Parallel                    | 34 s   | 4.94 x |
+| Parallel w/ ccache (cold)   | 78 s   | 2.15 x |
+| Parallel w/ ccache (warm)   | 21 s   | **8.00 x** |
 
 - **OS** : Windows 10 22H2
 - **CPU** : AMD Ryzen 5 3600 6-Core Processor 3.60 GHz
 - **RAM** : 16 GB
 - **Storage** : Samsung SSD 860 EVO
-- **Compiler** : MSVC 14.34
+- **Compiler** : MSVC 19.36
 - **Configuration**
-  - OpenSSL 3.0.7 (`VC-WIN64A`, `no-tests`, `no-asm`, `no-makedepend`, `no-shared`)
-  - ccache 4.7.4 (default options)
-- **Note**
-  - MSVC with ccache has much longer build time on first build
+  - OpenSSL 3.1.1 (`VC-WIN64A`, `no-tests`, `no-asm`, `no-makedepend`, `no-shared`)
+  - ccache 4.8.1 (default options)
 
 ## Prerequisites
 
@@ -56,8 +52,9 @@ Tested on major platforms (`Linux`, `macOS`, `Windows`, `Android`, `iOS`)
 Install CMake from [official website](https://cmake.org/download/) or [Snapcraft](https://snapcraft.io/docs/installing-snapd)
 
 ```sh
+# Debian
 sudo snap install cmake --classic
-sudo apt install -y build-essential perl ninja-build ccache
+sudo apt-get install -y build-essential perl ninja-build ccache
 ```
 
 ### macOS
@@ -71,9 +68,7 @@ xcode-select --install
 
 ### Windows
 
-You need to use Visual Studio to build OpenSSL in Windows
-
-[Chocolatey](https://chocolatey.org/install) is recommended to install required packages
+Install packages from [Chocolatey](https://chocolatey.org/install)
 
 ```sh
 # Powershell (run as administrator)
@@ -97,7 +92,7 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 | `OPENSSL_INSTALL_CERT`      | bool   | `OFF`         | Install `cert.pem` to the `openssldir` directory |
 | `OPENSSL_INSTALL_TARGET`    | string | `install_dev` | Makefile target for install                      |
 | `OPENSSL_PATCH`             | file   | `(undefined)` | Apply a patch to OpenSSL source                  |
-| `OPENSSL_TARGET_PLATFORM`   | string | `(undefined)` | Use OpenSSL's Configure target                   |
+| `OPENSSL_TARGET_PLATFORM`   | string | `(undefined)` | Use OpenSSL's Configure target (see below)       |
 | `OPENSSL_TARGET_VERSION`    | string | `3.1.1`       | Use the latest OpenSSL version                   |
 | `OPENSSL_TEST`              | bool   | `OFF`         | Enable testing and build OpenSSL self tests      |
 | `OPENSSL_USE_CCACHE`        | bool   | `ON`          | Use ccache if available                          |
@@ -109,6 +104,8 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
   - `no-tests` is added when `OPENSSL_TEST` is `OFF`
 - `OPENSSL_ENABLE_PARALLEL`
   - Detect the number of processors using `ProcessorCount` module
+- `OPENSSL_INSTALL_CERT`
+  - Download latest CA certs from <https://curl.se/docs/caextract.html>
 - `OPENSSL_PATCH`
   - Since OpenSSL source is distributed with `LF`, the patch file must also be `LF`
 - `OPENSSL_TARGET_PLATFORM`
@@ -117,7 +114,7 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 - `OPENSSL_USE_CCACHE`
   - Whenever you change this option, perform a fresh configuration (or just delete `CMakeCache.txt`)
 - `CPM_SOURCE_CACHE`
-  - Set to `/path/to/cache` to reuse downloaded source code
+  - Set path to reuse downloaded source code
 
 ## Usage
 
@@ -128,18 +125,18 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 cmake --list-presets all
 
 # Use a configure preset
-cmake --preset windows-x64
+cmake --preset windows-x86_64
 
 # Use a build preset
 # <configure-preset>-[clean|install]
-cmake --build --preset windows-x64
+cmake --build --preset windows-x86_64
 
 # Use a test preset
-ctest --preset windows-x64
+ctest --preset windows-x86_64
 
 # Use a build preset for install
-# equal to `cmake --build --preset windows-x64 --target install`
-cmake --build --preset windows-x64-install
+# equal to `cmake --build --preset windows-x86_64 --target install`
+cmake --build --preset windows-x86_64-install
 ```
 
 ### Integration
@@ -148,8 +145,6 @@ cmake --build --preset windows-x64-install
 include(FetchContent)
 
 # Set options before FetchContent_MakeAvailable()
-set(OPENSSL_TARGET_VERSION 3.1.0)
-set(OPENSSL_TARGET_PLATFORM VC-WIN64A)
 set(OPENSSL_CONFIGURE_OPTIONS no-shared no-tests)
 
 FetchContent_Declare(
@@ -178,8 +173,6 @@ CPMAddPackage(
     NAME openssl-cmake
     URL https://github.com/jimmy-park/openssl-cmake/archive/main.tar.gz
     OPTIONS
-    "OPENSSL_TARGET_VERSION 3.1.0"
-    "OPENSSL_TARGET_PLATFORM VC-WIN64A"
     "OPENSSL_CONFIGURE_OPTIONS no-shared\\\\;no-tests"
 )
 ```
