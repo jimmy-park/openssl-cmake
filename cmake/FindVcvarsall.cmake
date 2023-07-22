@@ -1,10 +1,10 @@
 # Find vcvarsall.bat using CMAKE_C_COMPILER
 function(find_vcvarsall)
-    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows" OR DEFINED CACHE{VCVARSALL})
+    if(NOT WIN32 OR DEFINED CACHE{VCVARSALL})
         return()
     endif()
 
-    if(NOT CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    if(NOT MSVC)
         message(FATAL_ERROR "Use MSVC compiler to find vcvarsall.bat")
     endif()
 
@@ -32,7 +32,7 @@ function(find_vcvarsall)
 endfunction()
 
 function(set_vcvarsall_command OUTPUT)
-    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    if(NOT WIN32)
         set(${OUTPUT} "" PARENT_SCOPE)
         return()
     endif()

@@ -104,7 +104,7 @@ endif()
 set_vcvarsall_command(VCVARSALL_COMMAND)
 
 # Set environment variables for Android NDK
-if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+if(ANDROID)
     set(ENV{PATH} ${ANDROID_TOOLCHAIN_ROOT}/bin:$ENV{PATH})
     set(ENV{ANDROID_NDK_ROOT} ${CMAKE_ANDROID_NDK})
 endif()
@@ -119,7 +119,7 @@ endif()
 if(NOT OPENSSL_BUILD_VERBOSE)
     set(OPENSSL_BUILD_OPTIONS -s)
 
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    if(WIN32)
         list(APPEND OPENSSL_BUILD_OPTIONS /nologo)
         set(ENV{LDFLAGS} "/NOLOGO /DEBUG /IGNORE:4099") # PDB 'filename' was not found with 'object/library' or at 'path'
     endif()
@@ -130,7 +130,7 @@ if(OPENSSL_ENABLE_PARALLEL)
 endif()
 
 if(NUMBER_OF_THREADS GREATER 1)
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    if(WIN32)
         list(APPEND OPENSSL_CONFIGURE_OPTIONS /FS)
     endif()
 
@@ -167,7 +167,7 @@ else()
     set(OPENSSL_BUILD_SHARED_LIBS OFF)
 endif()
 
-if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+if(MSVC)
     if(OPENSSL_MSVC_STATIC_RT AND OPENSSL_BUILD_SHARED_LIBS)
         message(WARNING "OPENSSL_MSVC_STATIC_RT is ON, but OpenSSL will be built with /MD")
     elseif(NOT OPENSSL_MSVC_STATIC_RT AND NOT OPENSSL_BUILD_SHARED_LIBS)
@@ -197,7 +197,7 @@ foreach(LIBRARY IN LISTS OPENSSL_SHARED_LIBS)
     endif()
 endforeach()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT OPENSSL_BUILD_SHARED_LIBS)
+if(LINUX AND NOT OPENSSL_BUILD_SHARED_LIBS)
     find_package(Threads)
 
     if(CMAKE_THREAD_LIBS_INIT)
@@ -231,7 +231,7 @@ if(OPENSSL_BUILD_SHARED_LIBS)
         IMPORTED_LOCATION ${OPENSSL_SHARED_SSL_LIBRARY}
     )
 
-    if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    if(MSVC)
         set_target_properties(OpenSSL::Crypto PROPERTIES
             IMPORTED_IMPLIB ${OPENSSL_STATIC_CRYPTO_LIBRARY}
         )
@@ -252,9 +252,9 @@ else()
         IMPORTED_LOCATION ${OPENSSL_STATIC_SSL_LIBRARY}
     )
 
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    if(WIN32)
         set(OPENSSL_LINK_DEPENDENCIES ws2_32 crypt32)
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    elseif(LINUX)
         if(Threads_FOUND)
             set(OPENSSL_LINK_DEPENDENCIES Threads::Threads)
         endif()
@@ -275,7 +275,7 @@ set_target_properties(OpenSSL::SSL PROPERTIES
 )
 
 # Find build tool
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if(WIN32)
     if(NUMBER_OF_THREADS GREATER 1)
         find_program(JOM jom REQUIRED)
         set(OPENSSL_BUILD_TOOL ${JOM})
@@ -337,7 +337,7 @@ endif()
 if(OPENSSL_INSTALL)
     set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} ${OPENSSL_INSTALL_TARGET})
 
-    if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    if(MSVC)
         list(APPEND OPENSSL_INSTALL_COMMAND /NOLOGO)
     endif()
 
@@ -351,7 +351,7 @@ if(OPENSSL_INSTALL)
 endif()
 
 if(OPENSSL_INSTALL_CERT)
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    if(WIN32)
         parse_makefile(${OPENSSL_MAKEFILE} "OPENSSLDIR_dev" OPENSSL_OPENSSLDIR_DEV)
         parse_makefile(${OPENSSL_MAKEFILE} "OPENSSLDIR_dir" OPENSSL_OPENSSLDIR_DIR)
         set(OPENSSL_OPENSSLDIR ${OPENSSL_OPENSSLDIR_DEV}${OPENSSL_OPENSSLDIR_DIR})
