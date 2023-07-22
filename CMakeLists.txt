@@ -163,6 +163,16 @@ parse_configdata(${OPENSSL_CONFIGURE_OUTPUT} "options" FULL_CONFIGURE_OPTIONS)
 
 if(NOT "no-shared" IN_LIST FULL_CONFIGURE_OPTIONS)
     set(OPENSSL_BUILD_SHARED_LIBS ON)
+else()
+    set(OPENSSL_BUILD_SHARED_LIBS OFF)
+endif()
+
+if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    if(OPENSSL_MSVC_STATIC_RT AND OPENSSL_BUILD_SHARED_LIBS)
+        message(WARNING "OPENSSL_MSVC_STATIC_RT is ON, but OpenSSL will be built with /MD")
+    elseif(NOT OPENSSL_MSVC_STATIC_RT AND NOT OPENSSL_BUILD_SHARED_LIBS)
+        message(WARNING "OPENSSL_MSVC_STATIC_RT is OFF, but OpenSSL will be built with /MT")
+    endif()
 endif()
 
 # Parse Makefile
