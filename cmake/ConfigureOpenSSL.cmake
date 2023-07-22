@@ -197,6 +197,14 @@ function(configure_openssl)
         COMMAND_ERROR_IS_FATAL ANY
     )
 
+    if(OPENSSL_CONFIGURE_VERBOSE)
+        execute_process(
+            COMMAND ${CONFIGURE_TOOL} ${CONFIGURE_OUTPUT} -d
+            WORKING_DIRECTORY ${CONFIGURE_BUILD_DIR}
+            COMMAND_ERROR_IS_FATAL ANY
+        )
+    endif()
+
     # Modify Makefile
     find_file(
         OPENSSL_MAKEFILE
