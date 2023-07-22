@@ -78,7 +78,6 @@ jobs:
           -DCPM_SOURCE_CACHE=".cpm"
           -DOPENSSL_BUILD_VERBOSE=ON
           -DOPENSSL_CONFIGURE_VERBOSE=ON
-          -DOPENSSL_CONFIGURE_OPTIONS="--prefix=${{ github.workspace }}/install"
           -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
 
       - name: Build
@@ -87,9 +86,6 @@ jobs:
       - name: Test
         if: contains(fromJSON('["linux-x86_64", "macos-x86_64", "windows-x86_64"]'), matrix.preset)
         run: ctest --preset ${{ matrix.preset }} -C Release
-
-      - name: Install
-        run: cmake --build --preset ${{ matrix.preset }}-install --config Release
 
       - name: Show ccache statistics
         run: ccache -sv
