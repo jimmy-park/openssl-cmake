@@ -95,20 +95,12 @@
         {
             "name": "target-ios",
             "hidden": true,
-            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
-            "cacheVariables": {
-                "CMAKE_OSX_SYSROOT": "iphoneos",
-                "OPENSSL_TEST": false
-            }
+            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake"
         },
         {
             "name": "target-ios_sim",
             "hidden": true,
-            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
-            "cacheVariables": {
-                "CMAKE_OSX_SYSROOT": "iphonesimulator",
-                "OPENSSL_TEST": false
-            }
+            "toolchainFile": "${sourceDir}/cmake/toolchain/ios_sim.cmake"
         },
         {
             "name": "target-linux-aarch64",

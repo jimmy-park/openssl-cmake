@@ -1,0 +1,12 @@
+diff --git a/Configurations/15-ios.conf b/Configurations/15-ios.conf
+--- a/Configurations/15-ios.conf
++++ b/Configurations/15-ios.conf
+@@ -25,7 +25,7 @@ my %targets = (
+     "ios64-xcrun" => {
+         inherit_from     => [ "ios-common" ],
+         CC               => "xcrun -sdk iphoneos cc",
+-        cflags           => add("-arch arm64 -mios-version-min=7.0.0 -fno-common"),
++        cflags           => add("-arch arm64 -fno-common"),
+         bn_ops           => "SIXTY_FOUR_BIT_LONG RC4_CHAR",
+         asm_arch         => 'aarch64',
+         perlasm_scheme   => "ios64",
