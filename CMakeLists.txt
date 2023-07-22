@@ -110,7 +110,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
 endif()
 
 # Modify configure/build options
-if(OPENSSL_TEST)
+if(OPENSSL_TEST AND NOT CMAKE_CROSSCOMPILING)
     set(OPENSSL_BUILD_TARGET "")
 else()
     list(APPEND OPENSSL_CONFIGURE_OPTIONS no-tests)
@@ -310,7 +310,7 @@ add_dependencies(OpenSSL::Crypto openssl-build)
 add_dependencies(OpenSSL::SSL openssl-build)
 
 # Test OpenSSL using CTest
-if(OPENSSL_TEST)
+if(OPENSSL_TEST AND NOT CMAKE_CROSSCOMPILING)
     include(CTest)
     add_test(
         NAME openssl-test
