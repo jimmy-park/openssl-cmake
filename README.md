@@ -39,7 +39,7 @@ Build OpenSSL in parallel within CMake
 
 ### Requirements
 
-- CMake 3.24+ (due to `FetchContent_Declare(OVERRIDE_FIND_PACKAGE)`)
+- CMake 3.25+ (due to `LINUX` CMake variable)
 - OpenSSL build tools [Link](https://github.com/openssl/openssl/blob/master/INSTALL.md#prerequisites)
   - Make implementation
   - Perl 5
