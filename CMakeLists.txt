@@ -14,6 +14,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
 include(FetchContent)
 include(ProcessorCount)
 include(cmake/ConfigureOpenSSL.cmake)
+include(cmake/DetectTargetPlatform.cmake)
 include(cmake/FindVcvarsall.cmake)
 include(cmake/GetCPM.cmake)
 
