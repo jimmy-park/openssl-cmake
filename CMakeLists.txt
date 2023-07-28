@@ -364,7 +364,3 @@ if(OPENSSL_INSTALL_CERT)
     # https://curl.se/docs/caextract.html
     install(CODE "file(DOWNLOAD https://curl.se/ca/cacert.pem ${OPENSSL_OPENSSLDIR}/cert.pem)")
 endif()
-
-if(PROJECT_IS_TOP_LEVEL AND NOT CMAKE_CROSSCOMPILING)
-    add_subdirectory(apps)
-endif()
