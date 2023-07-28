@@ -118,8 +118,17 @@
             }
         },
         {
+            "name": "target-macos",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_OSX_DEPLOYMENT_TARGET": "11.0",
+                "OPENSSL_CONFIGURE_OPTIONS": "--prefix=${sourceDir}/install/${presetName};-mmacos-version-min=11.0"
+            }
+        },
+        {
             "name": "target-macos-arm64",
             "hidden": true,
+            "inherits": "target-macos",
             "cacheVariables": {
                 "OPENSSL_TARGET_PLATFORM": "darwin64-arm64-cc"
             }
@@ -127,6 +136,7 @@
         {
             "name": "target-macos-x86_64",
             "hidden": true,
+            "inherits": "target-macos",
             "cacheVariables": {
                 "OPENSSL_TARGET_PLATFORM": "darwin64-x86_64-cc"
             }
