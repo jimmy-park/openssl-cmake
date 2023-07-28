@@ -9,6 +9,7 @@
             "cmakeExecutable": "cmake",
             "cacheVariables": {
                 "CPM_SOURCE_CACHE": "${sourceDir}/build/.cache",
+                "OPENSSL_CONFIGURE_OPTIONS": "--prefix=${sourceDir}/install/${presetName}",
                 "OPENSSL_INSTALL": true,
                 "OPENSSL_TEST": true
             }
@@ -56,7 +57,7 @@
             "cacheVariables": {
                 "ANDROID_NDK": "$env{ANDROID_NDK}",
                 "ANDROID_PLATFORM": "android-27",
-                "OPENSSL_CONFIGURE_OPTIONS": "-D__ANDROID_API__=27;--openssldir=/system/etc/security/cacerts",
+                "OPENSSL_CONFIGURE_OPTIONS": "-D__ANDROID_API__=27;--prefix=${sourceDir}/install/${presetName};--openssldir=/system/etc/security/cacerts",
                 "OPENSSL_PATCH": "${sourceDir}/patch/android.patch"
             }
         },

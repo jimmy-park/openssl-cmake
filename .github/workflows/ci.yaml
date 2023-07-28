@@ -87,5 +87,8 @@ jobs:
         if: contains(fromJSON('["linux-x86_64", "macos-x86_64", "windows-x86_64"]'), matrix.preset)
         run: ctest --preset ${{ matrix.preset }} -C Release
 
+      - name: Install
+        run: cmake --build --preset ${{ matrix.preset }}-install --config Release
+
       - name: Show ccache statistics
         run: ccache -sv
