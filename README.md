@@ -7,7 +7,7 @@ Build OpenSSL in parallel within CMake
 ## Features
 
 - Support OpenSSL versions from `1.1.1` to the latest `3.1.x`
-- Detect the major target platform (`Linux`, `macOS`, `Windows`, `Android`, `iOS`)
+- Detect the target platform (`Linux`, `macOS`, `Windows`, `Android`, `iOS`, and more)
 - Download the source code only once (thanks [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake)!)
 - Don't reconfigure if same options are used
 - Automatically use the maximum number of processors
@@ -38,7 +38,7 @@ Build OpenSSL in parallel within CMake
 
 ### Requirements
 
-- CMake 3.25+ (due to `LINUX` CMake variable)
+- CMake 3.25+
 - OpenSSL build tools [Link](https://github.com/openssl/openssl/blob/master/INSTALL.md#prerequisites)
   - Make implementation
   - Perl 5
@@ -103,17 +103,17 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
   - `no-tests` is added when `OPENSSL_TEST` is `OFF`
 - `OPENSSL_ENABLE_PARALLEL`
   - Detect the number of processors using `ProcessorCount` module
+- `OPENSSL_INSTALL`
+  - To change the installation path, add `--prefix=<path>` to `OPENSSL_CONFIGURE_OPTIONS`
 - `OPENSSL_INSTALL_CERT`
   - Download latest CA certs from <https://curl.se/docs/caextract.html>
 - `OPENSSL_PATCH`
   - Since OpenSSL source is distributed with `LF`, the patch file must also be `LF`
 - `OPENSSL_TARGET_PLATFORM`
   - Detect target platform if `OPENSSL_TARGET_PLATFORM` isn't defined
-  - It is needed to set `OPENSSL_TARGET_PLATFORM` explicitly on some platforms
+  - Need to set `OPENSSL_TARGET_PLATFORM` explicitly on some platforms
 - `OPENSSL_USE_CCACHE`
   - Whenever you change this option, perform a fresh configuration (or just delete `CMakeCache.txt`)
-- `CPM_SOURCE_CACHE`
-  - Set path to reuse downloaded source code
 
 ## Usage
 
@@ -124,18 +124,18 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 cmake --list-presets all
 
 # Use a configure preset
-cmake --preset windows-x86_64
+cmake --preset windows
 
 # Use a build preset
 # <configure-preset>-[clean|install]
-cmake --build --preset windows-x86_64
+cmake --build --preset windows
 
 # Use a test preset
-ctest --preset windows-x86_64
+ctest --preset windows
 
 # Use a build preset for install
-# equal to `cmake --build --preset windows-x86_64 --target install`
-cmake --build --preset windows-x86_64-install
+# equal to `cmake --build --preset windows --target install`
+cmake --build --preset windows-install
 ```
 
 ### Integration
@@ -159,7 +159,7 @@ add_executable(main main.cpp)
 target_link_libraries(main PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
-    $<$<CXX_COMPILER_ID:MSVC>:OpenSSL::applink>
+    OpenSSL::applink
 )
 ```
 
