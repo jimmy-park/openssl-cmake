@@ -5,19 +5,10 @@
     ],
     "configurePresets": [
         {
-            "name": "linux-aarch64",
+            "name": "linux",
             "inherits": [
                 "host-linux",
-                "target-linux-aarch64",
-                "ninja",
-                "default"
-            ]
-        },
-        {
-            "name": "linux-x86_64",
-            "inherits": [
-                "host-linux",
-                "target-linux-x86_64",
+                "target-linux",
                 "ninja",
                 "default"
             ]
@@ -25,46 +16,23 @@
     ],
     "buildPresets": [
         {
-            "name": "linux-aarch64",
-            "configurePreset": "linux-aarch64",
+            "name": "linux",
+            "configurePreset": "linux",
             "inherits": [
                 "host-linux"
             ]
         },
         {
-            "name": "linux-aarch64-clean",
-            "configurePreset": "linux-aarch64",
+            "name": "linux-clean",
+            "configurePreset": "linux",
             "inherits": [
                 "host-linux",
                 "clean"
             ]
         },
         {
-            "name": "linux-aarch64-install",
-            "configurePreset": "linux-aarch64",
-            "inherits": [
-                "host-linux",
-                "install"
-            ]
-        },
-        {
-            "name": "linux-x86_64",
-            "configurePreset": "linux-x86_64",
-            "inherits": [
-                "host-linux"
-            ]
-        },
-        {
-            "name": "linux-x86_64-clean",
-            "configurePreset": "linux-x86_64",
-            "inherits": [
-                "host-linux",
-                "clean"
-            ]
-        },
-        {
-            "name": "linux-x86_64-install",
-            "configurePreset": "linux-x86_64",
+            "name": "linux-install",
+            "configurePreset": "linux",
             "inherits": [
                 "host-linux",
                 "install"
@@ -73,16 +41,8 @@
     ],
     "testPresets": [
         {
-            "name": "linux-aarch64",
-            "configurePreset": "linux-aarch64",
-            "inherits": [
-                "host-linux",
-                "options"
-            ]
-        },
-        {
-            "name": "linux-x86_64",
-            "configurePreset": "linux-x86_64",
+            "name": "linux",
+            "configurePreset": "linux",
             "inherits": [
                 "host-linux",
                 "options"

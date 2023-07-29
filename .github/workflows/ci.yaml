@@ -7,37 +7,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        preset: [android, ios, linux, macos, windows]
         version: [1.1.1u, 3.0.9, 3.1.1]
-        preset:
-          - android-arm
-          - android-arm64
-          - android-x86
-          - android-x86_64
-          - ios
-          - ios_sim
-          - linux-x86_64
-          - macos-x86_64
-          - windows-x86_64
         include:
-          - preset: android-arm
-            os: ubuntu-latest
-          - preset: android-arm64
-            os: ubuntu-latest
-          - preset: android-x86
-            os: ubuntu-latest
-          - preset: android-x86_64
-            os: ubuntu-latest
-          - preset: ios
-            os: macos-latest
-          - preset: ios_sim
-            os: macos-latest
-          - preset: linux-x86_64
-            os: ubuntu-latest
-          - preset: macos-x86_64
-            os: macos-latest
-          - preset: windows-x86_64
-            os: windows-latest
-    runs-on: ${{ matrix.os }}
+          - { os: macos, preset: ios }
+          - { os: macos, preset: macos }
+          - { os: ubuntu, preset: android }
+          - { os: ubuntu, preset: linux }
+          - { os: windows, preset: windows }
+    name: ${{ matrix.preset }}-${{ matrix.version }}
+    runs-on: ${{ matrix.os }}-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
@@ -81,14 +60,11 @@ jobs:
           -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
 
       - name: Build
-        run: cmake --build --preset ${{ matrix.preset }} --config Release
+        run: cmake --build --preset ${{ matrix.preset }}
 
       - name: Test
-        if: contains(fromJSON('["linux-x86_64", "macos-x86_64", "windows-x86_64"]'), matrix.preset)
-        run: ctest --preset ${{ matrix.preset }} -C Release
-
-      - name: Install
-        run: cmake --build --preset ${{ matrix.preset }}-install --config Release
+        if: contains(fromJSON('["linux", "macos", "windows"]'), matrix.preset)
+        run: ctest --preset ${{ matrix.preset }}
 
       - name: Show ccache statistics
         run: ccache -sv

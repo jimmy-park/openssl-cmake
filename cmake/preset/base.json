@@ -9,7 +9,6 @@
             "cmakeExecutable": "cmake",
             "cacheVariables": {
                 "CPM_SOURCE_CACHE": "${sourceDir}/build/.cache",
-                "OPENSSL_CONFIGURE_OPTIONS": "--prefix=${sourceDir}/install/${presetName}",
                 "OPENSSL_INSTALL": true,
                 "OPENSSL_TEST": true
             }
@@ -57,40 +56,9 @@
             "cacheVariables": {
                 "ANDROID_NDK": "$env{ANDROID_NDK}",
                 "ANDROID_PLATFORM": "android-27",
-                "OPENSSL_CONFIGURE_OPTIONS": "-D__ANDROID_API__=27;--prefix=${sourceDir}/install/${presetName};--openssldir=/system/etc/security/cacerts",
+                "ANDROID_USE_LEGACY_TOOLCHAIN_FILE": false,
+                "OPENSSL_CONFIGURE_OPTIONS": "-D__ANDROID_API__=27;--openssldir=/system/etc/security/cacerts",
                 "OPENSSL_PATCH": "${sourceDir}/patch/android.patch"
-            }
-        },
-        {
-            "name": "target-android-arm",
-            "hidden": true,
-            "inherits": "target-android",
-            "cacheVariables": {
-                "ANDROID_ABI": "armeabi-v7a"
-            }
-        },
-        {
-            "name": "target-android-arm64",
-            "hidden": true,
-            "inherits": "target-android",
-            "cacheVariables": {
-                "ANDROID_ABI": "arm64-v8a"
-            }
-        },
-        {
-            "name": "target-android-x86",
-            "hidden": true,
-            "inherits": "target-android",
-            "cacheVariables": {
-                "ANDROID_ABI": "x86"
-            }
-        },
-        {
-            "name": "target-android-x86_64",
-            "hidden": true,
-            "inherits": "target-android",
-            "cacheVariables": {
-                "ANDROID_ABI": "x86_64"
             }
         },
         {
@@ -104,74 +72,20 @@
             "toolchainFile": "${sourceDir}/cmake/toolchain/ios_sim.cmake"
         },
         {
-            "name": "target-linux-aarch64",
-            "hidden": true,
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "linux-aarch64"
-            }
-        },
-        {
-            "name": "target-linux-x86_64",
-            "hidden": true,
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "linux-x86_64"
-            }
+            "name": "target-linux",
+            "hidden": true
         },
         {
             "name": "target-macos",
             "hidden": true,
             "cacheVariables": {
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "11.0",
-                "OPENSSL_CONFIGURE_OPTIONS": "--prefix=${sourceDir}/install/${presetName};-mmacos-version-min=11.0"
+                "OPENSSL_CONFIGURE_OPTIONS": "-mmacos-version-min=11.0"
             }
         },
         {
-            "name": "target-macos-arm64",
-            "hidden": true,
-            "inherits": "target-macos",
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "darwin64-arm64-cc"
-            }
-        },
-        {
-            "name": "target-macos-x86_64",
-            "hidden": true,
-            "inherits": "target-macos",
-            "cacheVariables": {
-                "OPENSSL_TARGET_PLATFORM": "darwin64-x86_64-cc"
-            }
-        },
-        {
-            "name": "target-windows-arm",
-            "hidden": true,
-            "architecture": {
-                "value": "ARM",
-                "strategy": "set"
-            }
-        },
-        {
-            "name": "target-windows-arm64",
-            "hidden": true,
-            "architecture": {
-                "value": "ARM64",
-                "strategy": "set"
-            }
-        },
-        {
-            "name": "target-windows-x86",
-            "hidden": true,
-            "architecture": {
-                "value": "Win32",
-                "strategy": "set"
-            }
-        },
-        {
-            "name": "target-windows-x86_64",
-            "hidden": true,
-            "architecture": {
-                "value": "x64",
-                "strategy": "set"
-            }
+            "name": "target-windows",
+            "hidden": true
         },
         {
             "name": "ninja",
@@ -285,6 +199,7 @@
         {
             "name": "options",
             "hidden": true,
+            "configuration": "Debug",
             "output": {
                 "verbosity": "verbose"
             }
