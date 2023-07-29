@@ -5,7 +5,7 @@ function(detect_target_platform TARGET)
         set(PREFIX 64)
     endif()
 
-    if(WIN32)
+    if(MSVC)
         if(CMAKE_GENERATOR_PLATFORM STREQUAL "")
             set(CMAKE_GENERATOR_PLATFORM ${CMAKE_VS_PLATFORM_NAME_DEFAULT})
         endif()

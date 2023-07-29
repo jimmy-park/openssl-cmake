@@ -120,7 +120,7 @@ endif()
 if(NOT OPENSSL_BUILD_VERBOSE)
     set(OPENSSL_BUILD_OPTIONS -s)
 
-    if(WIN32)
+    if(MSVC)
         list(APPEND OPENSSL_BUILD_OPTIONS /nologo)
         set(ENV{LDFLAGS} "/NOLOGO /DEBUG /IGNORE:4099") # PDB 'filename' was not found with 'object/library' or at 'path'
     endif()
@@ -131,7 +131,7 @@ if(OPENSSL_ENABLE_PARALLEL)
 endif()
 
 if(NUMBER_OF_THREADS GREATER 1)
-    if(WIN32)
+    if(MSVC)
         list(APPEND OPENSSL_CONFIGURE_OPTIONS /FS)
     endif()
 
@@ -276,7 +276,7 @@ set_target_properties(OpenSSL::SSL PROPERTIES
 )
 
 # Find build tool
-if(WIN32)
+if(MSVC)
     if(NUMBER_OF_THREADS GREATER 1)
         find_program(JOM jom REQUIRED)
         set(OPENSSL_BUILD_TOOL ${JOM})
@@ -291,6 +291,9 @@ if(WIN32)
         )
         set(OPENSSL_BUILD_TOOL ${NMAKE})
     endif()
+elseif(MINGW)
+    find_program(MAKE mingw32-make REQUIRED)
+    set(OPENSSL_BUILD_TOOL ${MAKE})
 else()
     find_program(MAKE make REQUIRED)
     set(OPENSSL_BUILD_TOOL ${MAKE})
@@ -320,7 +323,7 @@ add_custom_command(
     VERBATIM
 )
 
-if(OPENSSL_INSTALL)
+if(PROJECT_IS_TOP_LEVEL)
     add_custom_target(openssl-build ALL DEPENDS ${OPENSSL_BUILD_OUTPUT})
 else()
     add_custom_target(openssl-build DEPENDS ${OPENSSL_BUILD_OUTPUT})
