@@ -118,11 +118,13 @@ else()
 endif()
 
 if(NOT OPENSSL_BUILD_VERBOSE)
-    set(OPENSSL_BUILD_OPTIONS -s)
-
     if(MSVC)
-        list(APPEND OPENSSL_BUILD_OPTIONS /nologo)
-        set(ENV{LDFLAGS} "/NOLOGO /DEBUG /IGNORE:4099") # PDB 'filename' was not found with 'object/library' or at 'path'
+        list(APPEND OPENSSL_BUILD_OPTIONS /NOLOGO /S)
+
+        # LNK4099 : PDB 'filename' was not found with 'object/library' or at 'path'
+        set(ENV{LDFLAGS} "/NOLOGO /DEBUG /IGNORE:4099")
+    else()
+        list(APPEND OPENSSL_BUILD_OPTIONS -s)
     endif()
 endif()
 
@@ -133,9 +135,10 @@ endif()
 if(NUMBER_OF_THREADS GREATER 1)
     if(MSVC)
         list(APPEND OPENSSL_CONFIGURE_OPTIONS /FS)
+        list(APPEND OPENSSL_BUILD_OPTIONS /J ${NUMBER_OF_THREADS})
+    else()
+        list(APPEND OPENSSL_BUILD_OPTIONS -j ${NUMBER_OF_THREADS})
     endif()
-
-    list(APPEND OPENSSL_BUILD_OPTIONS "-j${NUMBER_OF_THREADS}")
 endif()
 
 if(OPENSSL_USE_STATIC_LIBS)
@@ -168,7 +171,7 @@ else()
     set(OPENSSL_BUILD_SHARED_LIBS OFF)
 endif()
 
-if(MSVC)
+if(MSVC AND DEFINED OPENSSL_MSVC_STATIC_RT)
     if(OPENSSL_MSVC_STATIC_RT AND OPENSSL_BUILD_SHARED_LIBS)
         message(WARNING "OPENSSL_MSVC_STATIC_RT is ON, but OpenSSL will be built with /MD")
     elseif(NOT OPENSSL_MSVC_STATIC_RT AND NOT OPENSSL_BUILD_SHARED_LIBS)

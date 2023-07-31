@@ -82,6 +82,7 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 
 | Option                      | Type   | Default       | Description                                      |
 | ---                         | ---    | ---           | ---                                              |
+| `OPENSSL_BUILD_OPTIONS`     | list   | `(undefined)` | `make`-compatible options                        |
 | `OPENSSL_BUILD_TARGET`      | string | `build_libs`  | Makefile target for build                        |
 | `OPENSSL_BUILD_VERBOSE`     | bool   | `OFF`         | Enable verbose output from build                 |
 | `OPENSSL_CONFIGURE_OPTIONS` | list   | `(undefined)` | Use OpenSSL's Configure options                  |
