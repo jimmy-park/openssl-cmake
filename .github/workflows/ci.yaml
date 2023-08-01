@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         preset: [android, ios, linux, macos, windows]
-        version: [1.1.1u, 3.0.9, 3.1.1]
+        version: [1.1.1v, 3.0.10, 3.1.2]
         include:
           - { os: macos, preset: ios }
           - { os: macos, preset: macos }

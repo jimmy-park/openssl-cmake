@@ -19,8 +19,8 @@ include(cmake/FindVcvarsall.cmake)
 include(cmake/GetCPM.cmake)
 
 # Information of latest OpenSSL release
-set(OPENSSL_LATEST_VERSION 3.1.1 CACHE INTERNAL "OpenSSL version of latest release")
-set(OPENSSL_LATEST_SHA256 b3aa61334233b852b63ddb048df181177c2c659eb9d4376008118f9c08d07674 CACHE INTERNAL "Hash of archived OpenSSL release")
+set(OPENSSL_LATEST_VERSION 3.1.2 CACHE INTERNAL "OpenSSL version of latest release")
+set(OPENSSL_LATEST_SHA256 a0ce69b8b97ea6a35b96875235aa453b966ba3cba8af2de23657d8b6767d6539 CACHE INTERNAL "Hash of archived OpenSSL release")
 
 # Custom options
 option(OPENSSL_BUILD_VERBOSE "Enable verbose output from build" OFF)
