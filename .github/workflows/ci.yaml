@@ -69,6 +69,42 @@ jobs:
       - name: Show ccache statistics
         run: ccache -sv
 
+  build-bsd:
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [1.1.1v, 3.0.10, 3.1.2]
+    name: freebsd-${{ matrix.version }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: .cpm
+          key: openssl-${{ matrix.version }}-cpm
+          enableCrossOsArchive: true
+      - uses: actions/cache@v3
+        with:
+          path: .ccache
+          key: openssl-${{ matrix.version }}-ccache-freebsd-${{ github.run_id }}
+          restore-keys: openssl-${{ matrix.version }}-ccache-freebsd-
+      - uses: cross-platform-actions/action@master
+        with:
+          operating_system: freebsd
+          architecture: x86_64
+          version: "13.2"
+          run: |
+            sudo pkg install -y ccache4 cmake perl5
+            ccache -o cache_dir=${{ github.workspace }}/.ccache
+            ccache -z
+            cmake -B build                                   \
+              -DCPM_SOURCE_CACHE=.cpm                        \
+              -DOPENSSL_BUILD_VERBOSE=ON                     \
+              -DOPENSSL_CONFIGURE_VERBOSE=ON                 \
+              -DOPENSSL_TARGET_VERSION=${{ matrix.version }}
+            cmake --build build
+            ccache -sv
+
   build-mingw64:
     strategy:
       fail-fast: false
