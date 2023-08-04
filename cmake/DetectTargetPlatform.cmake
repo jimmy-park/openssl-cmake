@@ -43,6 +43,10 @@ function(detect_target_platform TARGET)
         endif()
     elseif(LINUX)
         set(${TARGET} linux-${CMAKE_SYSTEM_PROCESSOR})
+
+        if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+            string(APPEND ${TARGET} -clang)
+        endif()
     elseif(BSD)
         string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} PROCESSOR)
 

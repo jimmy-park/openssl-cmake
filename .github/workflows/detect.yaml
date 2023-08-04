@@ -34,15 +34,15 @@ jobs:
       fail-fast: false
       matrix:
         os: [freebsd, netbsd, openbsd]
-        arch: [arm64, x86-64]
+        arch: [arm64, x86_64]
         exclude:
           - { os: netbsd, arch: arm64 }
         include:
           - { os: freebsd, version: "13.2", pkg: pkg install -y perl5 }
           - { os: netbsd, version: "9.3", pkg: pkgin -y install perl }
           - { os: openbsd, version: "7.3", pkg: pkg_add }
-    runs-on: ubuntu-latest
     name: ${{ matrix.os }}-${{ matrix.arch }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
@@ -57,7 +57,9 @@ jobs:
           version: ${{ matrix.version }}
           run: |
             sudo ${{ matrix.pkg }} cmake
-            cmake -B build -DCPM_SOURCE_CACHE=${{ env.cpm-path }} -DOPENSSL_CONFIGURE_VERBOSE=ON
+            cmake -B build                           \
+              -DCPM_SOURCE_CACHE=${{ env.cpm-path }} \
+              -DOPENSSL_CONFIGURE_VERBOSE=ON
 
   cygwin:
     runs-on: windows-latest
@@ -73,7 +75,10 @@ jobs:
           packages: cmake gcc-core make perl
       - name: Configure CMake
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -eo pipefail '{0}'
-        run: cmake -B build -DCPM_SOURCE_CACHE=${{ env.cpm-path }} -DOPENSSL_CONFIGURE_VERBOSE=ON
+        run: >
+          cmake -B build
+          -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
+          -DOPENSSL_CONFIGURE_VERBOSE=ON
 
   ios:
     strategy:
@@ -96,6 +101,27 @@ jobs:
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DOPENSSL_CONFIGURE_VERBOSE=ON
 
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [clang, gcc]
+    name: linux-${{ matrix.cc }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ${{ env.cpm-path }}
+          key: ${{ env.cpm-key }}
+          enableCrossOsArchive: true
+      - name: Configure CMake
+        run: >
+          cmake -B build
+          -DCMAKE_C_COMPILER=${{ matrix.cc }}
+          -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
+          -DOPENSSL_CONFIGURE_VERBOSE=ON
+
   macos:
     runs-on: macos-latest
     steps:
@@ -106,7 +132,10 @@ jobs:
           key: ${{ env.cpm-key }}
           enableCrossOsArchive: true
       - name: Configure CMake
-        run: cmake -B build -DCPM_SOURCE_CACHE=${{ env.cpm-path }} -DOPENSSL_CONFIGURE_VERBOSE=ON
+        run: >
+          cmake -B build
+          -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
+          -DOPENSSL_CONFIGURE_VERBOSE=ON
 
   mingw:
     strategy:
@@ -138,18 +167,6 @@ jobs:
           cmake -B build -G "MinGW Makefiles"
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DOPENSSL_CONFIGURE_VERBOSE=ON
-
-  ubuntu:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ${{ env.cpm-path }}
-          key: ${{ env.cpm-key }}
-          enableCrossOsArchive: true
-      - name: Configure CMake
-        run: cmake -B build -DCPM_SOURCE_CACHE=${{ env.cpm-path }} -DOPENSSL_CONFIGURE_VERBOSE=ON
 
   windows:
     strategy:
