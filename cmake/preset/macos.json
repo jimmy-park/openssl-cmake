@@ -1,5 +1,5 @@
 {
-    "version": 5,
+    "version": 4,
     "include": [
         "base.json"
     ],
@@ -20,22 +20,6 @@
             "configurePreset": "macos",
             "inherits": [
                 "host-macos"
-            ]
-        },
-        {
-            "name": "macos-clean",
-            "configurePreset": "macos",
-            "inherits": [
-                "host-macos",
-                "clean"
-            ]
-        },
-        {
-            "name": "macos-install",
-            "configurePreset": "macos",
-            "inherits": [
-                "host-macos",
-                "install"
             ]
         }
     ],

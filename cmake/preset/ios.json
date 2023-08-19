@@ -1,5 +1,5 @@
 {
-    "version": 5,
+    "version": 4,
     "include": [
         "base.json"
     ],
@@ -41,44 +41,10 @@
             ]
         },
         {
-            "name": "ios-clean",
-            "configurePreset": "ios",
-            "inherits": [
-                "host-macos",
-                "clean"
-            ]
-        },
-        {
-            "name": "ios-install",
-            "configurePreset": "ios",
-            "inherits": [
-                "host-macos",
-                "install",
-                "build-options"
-            ]
-        },
-        {
             "name": "ios_sim",
             "configurePreset": "ios_sim",
             "inherits": [
                 "host-macos",
-                "build-options"
-            ]
-        },
-        {
-            "name": "ios_sim-clean",
-            "configurePreset": "ios_sim",
-            "inherits": [
-                "host-macos",
-                "clean"
-            ]
-        },
-        {
-            "name": "ios_sim-install",
-            "configurePreset": "ios_sim",
-            "inherits": [
-                "host-macos",
-                "install",
                 "build-options"
             ]
         }

@@ -1,5 +1,5 @@
 {
-    "version": 5,
+    "version": 4,
     "include": [
         "base.json"
     ],
@@ -10,6 +10,26 @@
                 "host-linux",
                 "target-linux",
                 "ninja",
+                "default"
+            ]
+        },
+        {
+            "name": "linux-clang",
+            "inherits": [
+                "host-linux",
+                "target-linux",
+                "ninja",
+                "clang",
+                "default"
+            ]
+        },
+        {
+            "name": "linux-gcc",
+            "inherits": [
+                "host-linux",
+                "target-linux",
+                "ninja",
+                "gcc",
                 "default"
             ]
         }
@@ -23,19 +43,17 @@
             ]
         },
         {
-            "name": "linux-clean",
-            "configurePreset": "linux",
+            "name": "linux-clang",
+            "configurePreset": "linux-clang",
             "inherits": [
-                "host-linux",
-                "clean"
+                "host-linux"
             ]
         },
         {
-            "name": "linux-install",
-            "configurePreset": "linux",
+            "name": "linux-gcc",
+            "configurePreset": "linux-gcc",
             "inherits": [
-                "host-linux",
-                "install"
+                "host-linux"
             ]
         }
     ],
@@ -43,6 +61,22 @@
         {
             "name": "linux",
             "configurePreset": "linux",
+            "inherits": [
+                "host-linux",
+                "options"
+            ]
+        },
+        {
+            "name": "linux-clang",
+            "configurePreset": "linux-clang",
+            "inherits": [
+                "host-linux",
+                "options"
+            ]
+        },
+        {
+            "name": "linux-gcc",
+            "configurePreset": "linux-gcc",
             "inherits": [
                 "host-linux",
                 "options"
