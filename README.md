@@ -115,28 +115,18 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
   - Need to set `OPENSSL_TARGET_PLATFORM` explicitly on some platforms
 - `OPENSSL_USE_CCACHE`
   - Whenever you change this option, perform a fresh configuration (or just delete `CMakeCache.txt`)
+  - This option will remove `/Zi /Fd` on MSVC
 
 ## Usage
 
 ### Build
 
 ```sh
-# List all presets
-cmake --list-presets all
-
-# Use a configure preset
-cmake --preset windows
-
-# Use a build preset
-# <configure-preset>-[clean|install]
-cmake --build --preset windows
-
-# Use a test preset
-ctest --preset windows
-
-# Use a build preset for install
-# equal to `cmake --build --preset windows --target install`
-cmake --build --preset windows-install
+cmake --list-presets all                    # List all CMake presets
+cmake --preset windows                      # Configure
+cmake --build --preset windows              # Build
+ctest --preset windows                      # Test
+cmake --build --preset windows -t install   # Install
 ```
 
 ### Integration
