@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 
 project(
     openssl-cmake
-    VERSION 0.7.1
+    VERSION 3.1.2
     DESCRIPTION "Build OpenSSL in parallel within CMake"
     HOMEPAGE_URL "https://github.com/jimmy-park/openssl-cmake"
     LANGUAGES C
@@ -17,10 +17,6 @@ include(cmake/ConfigureOpenSSL.cmake)
 include(cmake/DetectTargetPlatform.cmake)
 include(cmake/FindVcvarsall.cmake)
 include(cmake/GetCPM.cmake)
-
-# Information of latest OpenSSL release
-set(OPENSSL_LATEST_VERSION 3.1.2 CACHE INTERNAL "OpenSSL version of latest release")
-set(OPENSSL_LATEST_SHA256 a0ce69b8b97ea6a35b96875235aa453b966ba3cba8af2de23657d8b6767d6539 CACHE INTERNAL "Hash of archived OpenSSL release")
 
 # Custom options
 option(OPENSSL_BUILD_VERBOSE "Enable verbose output from build" OFF)
@@ -42,7 +38,7 @@ if(NOT DEFINED OPENSSL_INSTALL_TARGET)
 endif()
 
 if(NOT DEFINED OPENSSL_TARGET_VERSION)
-    set(OPENSSL_TARGET_VERSION ${OPENSSL_LATEST_VERSION})
+    set(OPENSSL_TARGET_VERSION ${PROJECT_VERSION})
 endif()
 
 if(NOT DEFINED OPENSSL_TARGET_PLATFORM)
@@ -54,8 +50,8 @@ if(NOT OPENSSL_TARGET_VERSION MATCHES "(^3\.[0-9]\.[0-9]+$)|(^1\.1\.1[a-z]$)")
     message(FATAL_ERROR "OpenSSL ${OPENSSL_TARGET_VERSION} isn't supported")
 endif()
 
-if(OPENSSL_TARGET_VERSION STREQUAL OPENSSL_LATEST_VERSION)
-    set(CPM_HASH_OPTION URL_HASH SHA256=${OPENSSL_LATEST_SHA256})
+if(OPENSSL_TARGET_VERSION VERSION_EQUAL PROJECT_VERSION)
+    set(CPM_HASH_OPTION URL_HASH SHA256=a0ce69b8b97ea6a35b96875235aa453b966ba3cba8af2de23657d8b6767d6539)
 else()
     set(CPM_HASH_OPTION "")
 endif()
@@ -92,7 +88,7 @@ if(EXISTS "${OPENSSL_PATCH}" AND NOT IS_DIRECTORY "${OPENSSL_PATCH}")
 endif()
 
 # Clean build directory if version is different
-if(NOT OPENSSL_TARGET_VERSION STREQUAL OPENSSL_TARGET_VERSION_OLD)
+if(NOT OPENSSL_TARGET_VERSION VERSION_EQUAL OPENSSL_TARGET_VERSION_OLD)
     set(OPENSSL_TARGET_VERSION_OLD ${OPENSSL_TARGET_VERSION} CACHE INTERNAL "Previously fetched OpenSSL version")
 
     if(IS_DIRECTORY ${openssl_BINARY_DIR})
