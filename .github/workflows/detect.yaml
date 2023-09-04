@@ -15,7 +15,7 @@ jobs:
     name: android-${{ matrix.arch }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: ${{ env.cpm-path }}
@@ -44,7 +44,7 @@ jobs:
     name: ${{ matrix.os }}-${{ matrix.arch }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: ${{ env.cpm-path }}
@@ -64,7 +64,7 @@ jobs:
   cygwin:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: ${{ env.cpm-path }}
@@ -88,7 +88,7 @@ jobs:
     name: ${{ matrix.target }}
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: ${{ env.cpm-path }}
@@ -109,7 +109,7 @@ jobs:
     name: linux-${{ matrix.cc }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: ${{ env.cpm-path }}
@@ -125,7 +125,7 @@ jobs:
   macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: ${{ env.cpm-path }}
@@ -147,7 +147,7 @@ jobs:
     name: ${{ matrix.sys }}
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: ${{ env.cpm-path }}
@@ -176,7 +176,7 @@ jobs:
     name: windows-${{ matrix.arch }}
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: ${{ env.cpm-path }}
