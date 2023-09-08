@@ -21,27 +21,29 @@ include(cmake/GetCPM.cmake)
 # Custom options
 option(OPENSSL_BUILD_VERBOSE "Enable verbose output from build" OFF)
 option(OPENSSL_CONFIGURE_VERBOSE "Enable verbose output from configuration" OFF)
-option(OPENSSL_ENABLE_PARALLEL "Enable parallel build and test" ON)
+option(OPENSSL_ENABLE_PARALLEL "Build and test in parallel if possible" ON)
 option(OPENSSL_INSTALL "Install OpenSSL components to the <prefix> directory" OFF)
 option(OPENSSL_INSTALL_CERT "Install cert.pem to the <openssldir> directory" OFF)
 option(OPENSSL_TEST "Enable testing and build OpenSSL self tests" OFF)
 option(OPENSSL_USE_CCACHE "Use ccache if available" ON)
 
 if(NOT DEFINED OPENSSL_BUILD_TARGET)
-    # Build only libraries by default
+    # Makefile target for build
     set(OPENSSL_BUILD_TARGET build_libs)
 endif()
 
 if(NOT DEFINED OPENSSL_INSTALL_TARGET)
-    # Install only libraries by default
+    # Makefile target for install
     set(OPENSSL_INSTALL_TARGET install_dev)
 endif()
 
 if(NOT DEFINED OPENSSL_TARGET_VERSION)
+    # Use the latest OpenSSL version
     set(OPENSSL_TARGET_VERSION ${PROJECT_VERSION})
 endif()
 
 if(NOT DEFINED OPENSSL_TARGET_PLATFORM)
+    # Use OpenSSL's Configure target
     detect_target_platform(OPENSSL_TARGET_PLATFORM)
 endif()
 
@@ -106,6 +108,48 @@ if(ANDROID)
     set(ENV{ANDROID_NDK_ROOT} ${CMAKE_ANDROID_NDK})
 endif()
 
+# Set the number of threads
+if(OPENSSL_ENABLE_PARALLEL)
+    ProcessorCount(NUMBER_OF_THREADS)
+
+    if(NUMBER_OF_THREADS EQUAL 0)
+        set(NUMBER_OF_THREADS 1)
+    endif()
+else()
+    set(NUMBER_OF_THREADS 1)
+endif()
+
+# Find build tool
+if(MSVC)
+    if(NUMBER_OF_THREADS GREATER 1)
+        find_program(JOM jom)
+
+        if(JOM)
+            set(OPENSSL_BUILD_TOOL ${JOM})
+        else()
+            set(NUMBER_OF_THREADS 1)
+        endif()
+    endif()
+
+    if(NUMBER_OF_THREADS EQUAL 1)
+        cmake_path(GET CMAKE_C_COMPILER PARENT_PATH NMAKE_PATH)
+        find_program(
+            NMAKE
+            NAMES nmake
+            PATHS ${NMAKE_PATH}
+            REQUIRED
+            NO_DEFAULT_PATH
+        )
+        set(OPENSSL_BUILD_TOOL ${NMAKE})
+    endif()
+elseif(MINGW)
+    find_program(MAKE mingw32-make REQUIRED)
+    set(OPENSSL_BUILD_TOOL ${MAKE})
+else()
+    find_program(MAKE make REQUIRED)
+    set(OPENSSL_BUILD_TOOL ${MAKE})
+endif()
+
 # Modify configure/build options
 if(OPENSSL_TEST AND NOT CMAKE_CROSSCOMPILING)
     set(OPENSSL_BUILD_TARGET "")
@@ -122,10 +166,6 @@ if(NOT OPENSSL_BUILD_VERBOSE)
     else()
         list(APPEND OPENSSL_BUILD_OPTIONS -s)
     endif()
-endif()
-
-if(OPENSSL_ENABLE_PARALLEL)
-    ProcessorCount(NUMBER_OF_THREADS)
 endif()
 
 if(NUMBER_OF_THREADS GREATER 1)
@@ -273,30 +313,6 @@ set_target_properties(OpenSSL::SSL PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIR}"
     INTERFACE_LINK_LIBRARIES "${OPENSSL_LINK_DEPENDENCIES};OpenSSL::Crypto"
 )
-
-# Find build tool
-if(MSVC)
-    if(NUMBER_OF_THREADS GREATER 1)
-        find_program(JOM jom REQUIRED)
-        set(OPENSSL_BUILD_TOOL ${JOM})
-    else()
-        cmake_path(GET CMAKE_C_COMPILER PARENT_PATH NMAKE_PATH)
-        find_program(
-            NMAKE
-            NAMES nmake
-            PATHS ${NMAKE_PATH}
-            REQUIRED
-            NO_DEFAULT_PATH
-        )
-        set(OPENSSL_BUILD_TOOL ${NMAKE})
-    endif()
-elseif(MINGW)
-    find_program(MAKE mingw32-make REQUIRED)
-    set(OPENSSL_BUILD_TOOL ${MAKE})
-else()
-    find_program(MAKE make REQUIRED)
-    set(OPENSSL_BUILD_TOOL ${MAKE})
-endif()
 
 # Add a custom target to build OpenSSL
 set(OPENSSL_BUILD_COMMAND

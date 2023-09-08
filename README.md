@@ -16,14 +16,14 @@ Build OpenSSL in parallel within CMake
 
 ## Benchmarks
 
-| Configuration | Time | Speed |
-| --- | ---: | ---: |
-| Sequential                  | 168 s  | 1.00 x |
-| Sequential w/ ccache (cold) | 460 s  | 0.37 x |
-| Sequential w/ ccache (warm) | 111 s  | 1.51 x |
-| Parallel                    | 34 s   | 4.94 x |
-| Parallel w/ ccache (cold)   | 78 s   | 2.15 x |
-| Parallel w/ ccache (warm)   | 21 s   | **8.00 x** |
+| Configuration               |  Time |      Speed |
+| --------------------------- | ----: | ---------: |
+| Sequential                  | 168 s |     1.00 x |
+| Sequential w/ ccache (cold) | 460 s |     0.37 x |
+| Sequential w/ ccache (warm) | 111 s |     1.51 x |
+| Parallel                    |  34 s |     4.94 x |
+| Parallel w/ ccache (cold)   |  78 s |     2.15 x |
+| Parallel w/ ccache (warm)   |  21 s | **8.00 x** |
 
 - **OS** : Windows 10 22H2
 - **CPU** : AMD Ryzen 5 3600 6-Core Processor 3.60 GHz
@@ -81,13 +81,13 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 ## CMake Options
 
 | Option                      | Type   | Default       | Description                                      |
-| ---                         | ---    | ---           | ---                                              |
+| --------------------------- | ------ | ------------- | ------------------------------------------------ |
 | `OPENSSL_BUILD_OPTIONS`     | list   | `(undefined)` | `make`-compatible options                        |
 | `OPENSSL_BUILD_TARGET`      | string | `build_libs`  | Makefile target for build                        |
 | `OPENSSL_BUILD_VERBOSE`     | bool   | `OFF`         | Enable verbose output from build                 |
 | `OPENSSL_CONFIGURE_OPTIONS` | list   | `(undefined)` | Use OpenSSL's Configure options                  |
 | `OPENSSL_CONFIGURE_VERBOSE` | bool   | `OFF`         | Enable verbose output from configuration         |
-| `OPENSSL_ENABLE_PARALLEL`   | bool   | `ON`          | Enable parallel build and test                   |
+| `OPENSSL_ENABLE_PARALLEL`   | bool   | `ON`          | Build and test in parallel if possible           |
 | `OPENSSL_INSTALL`           | bool   | `OFF`         | Install OpenSSL components                       |
 | `OPENSSL_INSTALL_CERT`      | bool   | `OFF`         | Install `cert.pem` to the `openssldir` directory |
 | `OPENSSL_INSTALL_TARGET`    | string | `install_dev` | Makefile target for install                      |
