@@ -1,7 +1,7 @@
 include(CMakeParseArguments)
 
 function(parse_configdata FILE KEY VALUES)
-    if(NOT EXISTS ${FILE})
+    if(NOT EXISTS "${FILE}")
         return()
     endif()
 
@@ -30,7 +30,7 @@ function(lookup_makefile STRING KEY VALUES)
 endfunction()
 
 function(parse_makefile FILE KEY VALUES)
-    if(NOT EXISTS ${FILE})
+    if(NOT EXISTS "${FILE}")
         message(FATAL_ERROR "Couldn't find Makefile")
     endif()
 
@@ -59,7 +59,7 @@ function(parse_makefile FILE KEY VALUES)
 endfunction()
 
 function(apply_ccache FILE)
-    if(NOT EXISTS ${FILE})
+    if(NOT EXISTS "${FILE}")
         message(FATAL_ERROR "Couldn't find Makefile")
     endif()
 
