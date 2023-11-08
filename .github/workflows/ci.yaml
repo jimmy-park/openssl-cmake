@@ -69,7 +69,7 @@ jobs:
       - name: Show ccache statistics
         run: ccache -sv
 
-  build-bsd:
+  build-freebsd:
     strategy:
       fail-fast: false
       matrix:
@@ -129,13 +129,13 @@ jobs:
           restore-keys: openssl-${{ matrix.version }}-ccache-mingw64-
       - uses: msys2/setup-msys2@v2
         with:
-          msystem: mingw64
+          msystem: MINGW64
           update: true
-          install: >-
-            mingw-w64-x86_64-ccache
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-make
+          pacboy: >-
+            ccache:p
+            cmake:p
+            gcc:p
+            make:p
 
       - name: Configure ccache
         run: |
