@@ -33,15 +33,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [freebsd, netbsd, openbsd]
+        preset: [freebsd, netbsd, openbsd]
         arch: [arm64, x86_64]
         exclude:
-          - { os: netbsd, arch: arm64 }
+          - { preset: netbsd, arch: arm64 }
         include:
-          - { os: freebsd, version: "13.2", pkg: pkg install -y perl5 }
-          - { os: netbsd, version: "9.3", pkg: pkgin -y install perl }
-          - { os: openbsd, version: "7.4", pkg: pkg_add }
-    name: ${{ matrix.os }}-${{ matrix.arch }}
+          - preset: freebsd
+            version: "13.2"
+            install: sudo pkg install -y cmake perl5
+          - preset: netbsd
+            version: "9.3"
+            install: sudo pkgin -y install cmake perl
+          - preset: openbsd
+            version: "7.4"
+            install: sudo pkg_add cmake
+    name: ${{ matrix.preset }}-${{ matrix.arch }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -52,11 +58,11 @@ jobs:
           enableCrossOsArchive: true
       - uses: cross-platform-actions/action@master
         with:
-          operating_system: ${{ matrix.os }}
+          operating_system: ${{ matrix.preset }}
           architecture: ${{ matrix.arch }}
           version: ${{ matrix.version }}
           run: |
-            sudo ${{ matrix.pkg }} cmake
+            ${{ matrix.install }}
             cmake -B build                           \
               -DCPM_SOURCE_CACHE=${{ env.cpm-path }} \
               -DOPENSSL_CONFIGURE_VERBOSE=ON
@@ -141,7 +147,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [UCRT64, CLANG64, CLANG32, MINGW64, MINGW32]
+        preset: [CLANG32, CLANG64, MINGW32, MINGW64, UCRT64]
     name: msys2-${{ matrix.preset }}
     runs-on: windows-latest
     steps:
@@ -162,7 +168,7 @@ jobs:
       - name: Configure CMake
         shell: msys2 {0}
         run: >
-          cmake -B build -G "MinGW Makefiles"
+          cmake -B build
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DOPENSSL_CONFIGURE_VERBOSE=ON
 
