@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 
 project(
     openssl-cmake
-    VERSION 3.1.4
+    VERSION 3.2.0
     DESCRIPTION "Build OpenSSL in parallel within CMake"
     HOMEPAGE_URL "https://github.com/jimmy-park/openssl-cmake"
     LANGUAGES C
@@ -53,7 +53,7 @@ if(NOT OPENSSL_TARGET_VERSION MATCHES "(^3\.[0-9]\.[0-9]+$)|(^1\.1\.1[a-z]$)")
 endif()
 
 if(OPENSSL_TARGET_VERSION VERSION_EQUAL PROJECT_VERSION)
-    set(CPM_HASH_OPTION URL_HASH SHA256=840af5366ab9b522bde525826be3ef0fb0af81c6a9ebd84caa600fea1731eee3)
+    set(CPM_HASH_OPTION URL_HASH SHA256=14c826f07c7e433706fb5c69fa9e25dab95684844b4c962a2cf1bf183eb4690e)
 else()
     set(CPM_HASH_OPTION "")
 endif()

@@ -6,7 +6,7 @@ Build OpenSSL in parallel within CMake
 
 ## Features
 
-- Support OpenSSL versions from `1.1.1` to the latest `3.1.x`
+- Support OpenSSL versions from `1.1.1` to the latest `3.2.x`
 - Detect the target platform (`Linux`, `macOS`, `Windows`, `Android`, `iOS`, and more)
 - Download the source code only once (thanks [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake)!)
 - Don't reconfigure if same options are used
@@ -93,7 +93,7 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 | `OPENSSL_INSTALL_TARGET`    | string | `install_dev` | Makefile target for install                      |
 | `OPENSSL_PATCH`             | file   | `(undefined)` | Apply a patch to OpenSSL source                  |
 | `OPENSSL_TARGET_PLATFORM`   | string | `(undefined)` | Use OpenSSL's Configure target (see below)       |
-| `OPENSSL_TARGET_VERSION`    | string | `3.1.2`       | Use the latest OpenSSL version                   |
+| `OPENSSL_TARGET_VERSION`    | string | `3.2.0`       | Use the latest OpenSSL version                   |
 | `OPENSSL_TEST`              | bool   | `OFF`         | Enable testing and build OpenSSL self tests      |
 | `OPENSSL_USE_CCACHE`        | bool   | `ON`          | Use ccache if available                          |
 
