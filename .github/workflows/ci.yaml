@@ -19,12 +19,12 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: .cpm
           key: openssl-${{ matrix.version }}-cpm
           enableCrossOsArchive: true
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: .ccache
           key: openssl-${{ matrix.version }}-ccache-${{ matrix.preset }}-${{ github.run_id }}
@@ -78,12 +78,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: .cpm
           key: openssl-${{ matrix.version }}-cpm
           enableCrossOsArchive: true
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: .ccache
           key: openssl-${{ matrix.version }}-ccache-freebsd-${{ github.run_id }}
@@ -117,7 +117,7 @@ jobs:
         shell: msys2 {0}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: .ccache
           key: openssl-${{ matrix.version }}-ccache-mingw64-${{ github.run_id }}
