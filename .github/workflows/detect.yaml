@@ -1,6 +1,6 @@
 name: Detect
 
-on: [push, pull_request]
+on: push
 
 env:
   cpm-path: .cpm
