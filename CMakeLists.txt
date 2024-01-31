@@ -75,6 +75,10 @@ FetchContent_MakeAvailable(OpenSSL)
 
 # Apply a patch
 if(EXISTS "${OPENSSL_PATCH}" AND NOT IS_DIRECTORY "${OPENSSL_PATCH}")
+    if(NOT IS_ABSOLUTE "${OPENSSL_PATCH}")
+        string(PREPEND OPENSSL_PATCH ${CMAKE_SOURCE_DIR}/)
+    endif()
+
     execute_process(
         COMMAND git init
         WORKING_DIRECTORY ${openssl_SOURCE_DIR}
