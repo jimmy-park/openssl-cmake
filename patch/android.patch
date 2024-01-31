@@ -1,9 +1,9 @@
 diff --git a/crypto/x509/by_dir.c b/crypto/x509/by_dir.c
 --- a/crypto/x509/by_dir.c
 +++ b/crypto/x509/by_dir.c
-@@ -261,9 +261,13 @@ static int get_cert_by_subject_ex(X509_LOOKUP *xl, X509_LOOKUP_TYPE type,
+@@ -257,9 +257,13 @@ static int get_cert_by_subject_ex(X509_LOOKUP *xl, X509_LOOKUP_TYPE type,
      }
- 
+
      ctx = (BY_DIR *)xl->method_data;
 +#ifndef __ANDROID__
      h = X509_NAME_hash_ex(name, libctx, propq, &i);
