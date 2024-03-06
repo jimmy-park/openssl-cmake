@@ -181,7 +181,7 @@ if(NUMBER_OF_THREADS GREATER 1)
     endif()
 endif()
 
-if(OPENSSL_USE_STATIC_LIBS)
+if(NOT BUILD_SHARED_LIBS)
     list(APPEND OPENSSL_CONFIGURE_OPTIONS no-shared)
 endif()
 
@@ -219,6 +219,20 @@ if(MSVC AND DEFINED OPENSSL_MSVC_STATIC_RT)
     elseif(NOT OPENSSL_MSVC_STATIC_RT AND NOT OPENSSL_BUILD_SHARED_LIBS)
         message(WARNING "OPENSSL_MSVC_STATIC_RT is OFF, but OpenSSL will be built with /MT")
     endif()
+endif()
+
+if(DEFINED OPENSSL_USE_STATIC_LIBS)
+    if(OPENSSL_USE_STATIC_LIBS AND OPENSSL_BUILD_SHARED_LIBS)
+        message(WARNING "OPENSSL_USE_STATIC_LIBS is ON, but OpenSSL will be built as a shared library")
+    elseif(NOT OPENSSL_USE_STATIC_LIBS AND NOT OPENSSL_BUILD_SHARED_LIBS)
+        message(WARNING "OPENSSL_USE_STATIC_LIBS is OFF, but OpenSSL will be built as a static library")
+    endif()
+endif()
+
+if(BUILD_SHARED_LIBS AND NOT OPENSSL_BUILD_SHARED_LIBS)
+    message(WARNING "BUILD_SHARED_LIBS is ON, but OpenSSL will be built as a static library")
+elseif(NOT BUILD_SHARED_LIBS AND OPENSSL_BUILD_SHARED_LIBS)
+    message(WARNING "BUILD_SHARED_LIBS is OFF, but OpenSSL will be built as a shared library")
 endif()
 
 # Parse Makefile
