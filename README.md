@@ -100,7 +100,7 @@ choco install -y cmake jom strawberryperl nasm ccache --installargs 'ADD_CMAKE_T
 ### Notes
 
 - `OPENSSL_CONFIGURE_OPTIONS`
-  - `no-shared` is added when `OPENSSL_USE_STATIC_LIBS` is `ON`
+  - `no-shared` is added when `BUILD_SHARED_LIBS` is `OFF`
   - `no-tests` is added when `OPENSSL_TEST` is `OFF`
 - `OPENSSL_ENABLE_PARALLEL`
   - Detect the number of processors using `ProcessorCount` module
