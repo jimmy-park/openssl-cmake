@@ -118,19 +118,6 @@ function(configure_openssl)
         file(MAKE_DIRECTORY ${CONFIGURE_BUILD_DIR})
     endif()
 
-    execute_process(
-        COMMAND ${CONFIGURE_TOOL} ${CONFIGURE_FILE} LIST
-        WORKING_DIRECTORY ${CONFIGURE_BUILD_DIR}
-        OUTPUT_VARIABLE PLATFORM_LIST
-        COMMAND_ERROR_IS_FATAL ANY
-    )
-    string(REPLACE "\n" ";" PLATFORM_LIST ${PLATFORM_LIST})
-    list(GET CONFIGURE_OPTIONS 0 TARGET_PLATFORM)
-
-    if(NOT TARGET_PLATFORM IN_LIST PLATFORM_LIST)
-        message(FATAL_ERROR "${TARGET_PLATFORM} isn't supported")
-    endif()
-
     message(STATUS "Configure OpenSSL")
     list(APPEND CONFIGURE_COMMAND ${CONFIGURE_TOOL} ${CONFIGURE_FILE} ${CONFIGURE_OPTIONS})
 
