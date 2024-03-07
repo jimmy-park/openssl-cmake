@@ -62,7 +62,7 @@ function(detect_target_platform TARGET)
     endif()
 
     if(${TARGET} STREQUAL "")
-        message(FATAL_ERROR "Failed to detect OpenSSL target platform")
+        message(WARNING "Failed to detect the target platform for OpenSSL")
     endif()
 
     return(PROPAGATE ${TARGET})

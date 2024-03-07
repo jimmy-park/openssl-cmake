@@ -28,6 +28,8 @@ function(find_vcvarsall)
 endfunction()
 
 function(set_vcvarsall_command COMMAND)
+    set(${COMMAND} "")
+
     if(MSVC)
         find_vcvarsall()
 
@@ -63,13 +65,9 @@ function(set_vcvarsall_command COMMAND)
             endif()
         endif()
 
-        if(NOT DEFINED VCVARSALL_ARCH)
-            message(FATAL_ERROR "Couldn't select appropriate vcvarsall.bat argument")
+        if(DEFINED VCVARSALL_ARCH)
+            set(${COMMAND} ${VCVARSALL} ${VCVARSALL_ARCH} &&)
         endif()
-
-        set(${COMMAND} ${VCVARSALL} ${VCVARSALL_ARCH} &&)
-    else()
-        set(${COMMAND} "")
     endif()
 
     return(PROPAGATE ${COMMAND})
