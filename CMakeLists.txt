@@ -27,22 +27,22 @@ option(OPENSSL_INSTALL_CERT "Install cert.pem to the <openssldir> directory" OFF
 option(OPENSSL_TEST "Enable testing and build OpenSSL self tests" OFF)
 option(OPENSSL_USE_CCACHE "Use ccache if available" ON)
 
-if(NOT DEFINED OPENSSL_BUILD_TARGET)
+if("${OPENSSL_BUILD_TARGET}" STREQUAL "")
     # Makefile target for build
     set(OPENSSL_BUILD_TARGET build_libs)
 endif()
 
-if(NOT DEFINED OPENSSL_INSTALL_TARGET)
+if("${OPENSSL_INSTALL_TARGET}" STREQUAL "")
     # Makefile target for install
     set(OPENSSL_INSTALL_TARGET install_dev)
 endif()
 
-if(NOT DEFINED OPENSSL_TARGET_VERSION)
+if("${OPENSSL_TARGET_VERSION}" STREQUAL "")
     # Use the latest OpenSSL version
     set(OPENSSL_TARGET_VERSION ${PROJECT_VERSION})
 endif()
 
-if(NOT DEFINED OPENSSL_TARGET_PLATFORM)
+if("${OPENSSL_TARGET_PLATFORM}" STREQUAL "")
     # Use OpenSSL's Configure target
     detect_target_platform(OPENSSL_TARGET_PLATFORM)
 endif()

@@ -1,6 +1,6 @@
 # Find vcvarsall.bat using CMAKE_C_COMPILER
 function(find_vcvarsall)
-    if(DEFINED CACHE{VCVARSALL})
+    if(NOT "${VCVARSALL}" STREQUAL "")
         return()
     endif()
 
@@ -65,7 +65,7 @@ function(set_vcvarsall_command COMMAND)
             endif()
         endif()
 
-        if(DEFINED VCVARSALL_ARCH)
+        if(NOT "${VCVARSALL_ARCH}" STREQUAL "")
             set(${COMMAND} ${VCVARSALL} ${VCVARSALL_ARCH} &&)
         endif()
     endif()
