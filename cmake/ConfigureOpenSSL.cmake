@@ -1,22 +1,28 @@
 include(CMakeParseArguments)
 
-function(parse_configdata FILE KEY VALUES)
-    if(NOT EXISTS "${FILE}")
+function(parse_configdata KEY VALUES)
+    if(NOT EXISTS "${OPENSSL_CONFIGDATA}")
         return()
     endif()
 
     if(KEY STREQUAL "perlargv")
-        file(READ ${FILE} CONFIGDATA)
-        string(REGEX MATCH "perlargv[^\]]*" CONFIGURE_ARGS ${CONFIGDATA})
-        string(REGEX REPLACE "perlargv[^\[]*" "" CONFIGURE_ARGS ${CONFIGURE_ARGS})
-        string(REGEX MATCHALL "\"[^\"]+\"" ${VALUES} ${CONFIGURE_ARGS})
-        list(TRANSFORM ${VALUES} REPLACE "\"" "")
-    elseif(KEY STREQUAL "options")
-        file(STRINGS ${FILE} FULL_OPTIONS REGEX "options[\" ]+=>")
-        string(REPLACE "\"options\"" "" FULL_OPTIONS ${FULL_OPTIONS})
-        string(REGEX MATCH "\"[^\"]*\"" FULL_OPTIONS ${FULL_OPTIONS})
-        string(REPLACE "\"" "" FULL_OPTIONS ${FULL_OPTIONS})
-        string(REPLACE " " ";" ${VALUES} ${FULL_OPTIONS})
+        # Process a multi-line config
+        file(READ ${OPENSSL_CONFIGDATA} CONFIGDATA)
+        string(REGEX MATCH "[\" ]${KEY}[^\]]*" OUTPUT ${CONFIGDATA})
+        string(REGEX REPLACE "[\" ]${KEY}[\" ]" "" OUTPUT ${OUTPUT})
+        string(REGEX MATCHALL "\"[^\"]+\"" OUTPUT ${OUTPUT})
+        list(TRANSFORM OUTPUT REPLACE "\"" "")
+    else()
+        file(STRINGS ${OPENSSL_CONFIGDATA} OUTPUT REGEX "[\" ]${KEY}[\" ]+=>")
+        string(REGEX REPLACE "[\" ]${KEY}[\" ]" "" OUTPUT ${OUTPUT})
+        string(REGEX MATCH "\"[^\"]*\"" OUTPUT ${OUTPUT})
+        string(REPLACE "\"" "" OUTPUT ${OUTPUT})
+    endif()
+
+    if(KEY STREQUAL "options")
+        string(REPLACE " " ";" ${VALUES} ${OUTPUT})
+    else()
+        set(${VALUES} ${OUTPUT})
     endif()
 
     return(PROPAGATE ${VALUES})
@@ -91,7 +97,7 @@ function(configure_openssl)
     cmake_parse_arguments(
         CONFIGURE
         "" # options
-        "TOOL;FILE;BUILD_DIR;OUTPUT" # one_value_keywords
+        "FILE;BUILD_DIR" # one_value_keywords
         "COMMAND;OPTIONS" # multi_value_keywords
         ${ARGN}
     )
@@ -99,7 +105,8 @@ function(configure_openssl)
     message(STATUS "Curruent configure options : ${CONFIGURE_OPTIONS}")
 
     # Find previous configure results
-    parse_configdata(${CONFIGURE_OUTPUT} "perlargv" CONFIGURE_OPTIONS_OLD)
+    set(OPENSSL_CONFIGDATA ${CONFIGURE_BUILD_DIR}/configdata.pm CACHE INTERNAL "Results of OpenSSL configuration")
+    parse_configdata("perlargv" CONFIGURE_OPTIONS_OLD)
 
     if(NOT "${CONFIGURE_OPTIONS_OLD}" STREQUAL "")
         if(CONFIGURE_OPTIONS STREQUAL CONFIGURE_OPTIONS_OLD)
@@ -119,7 +126,8 @@ function(configure_openssl)
     endif()
 
     message(STATUS "Configure OpenSSL")
-    list(APPEND CONFIGURE_COMMAND ${CONFIGURE_TOOL} ${CONFIGURE_FILE} ${CONFIGURE_OPTIONS})
+    find_program(OPENSSL_CONFIGURE_TOOL perl REQUIRED)
+    list(APPEND CONFIGURE_COMMAND ${OPENSSL_CONFIGURE_TOOL} ${CONFIGURE_FILE} ${CONFIGURE_OPTIONS})
 
     if(OPENSSL_CONFIGURE_VERBOSE)
         set(VERBOSE_OPTION "")
@@ -136,7 +144,7 @@ function(configure_openssl)
 
     if(OPENSSL_CONFIGURE_VERBOSE)
         execute_process(
-            COMMAND ${CONFIGURE_TOOL} ${CONFIGURE_OUTPUT} -d
+            COMMAND ${OPENSSL_CONFIGURE_TOOL} configdata.pm -d
             WORKING_DIRECTORY ${CONFIGURE_BUILD_DIR}
             COMMAND_ERROR_IS_FATAL ANY
         )
