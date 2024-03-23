@@ -19,6 +19,7 @@ include(FetchContent)
 include(ProcessorCount)
 include(cmake/ConfigureOpenSSL.cmake)
 include(cmake/DetectTargetPlatform.cmake)
+include(cmake/FetchOpenSSL.cmake)
 include(cmake/FindVcvarsall.cmake)
 include(cmake/GetCPM.cmake)
 
@@ -41,41 +42,13 @@ if("${OPENSSL_INSTALL_TARGET}" STREQUAL "")
     set(OPENSSL_INSTALL_TARGET install_dev)
 endif()
 
-if("${OPENSSL_TARGET_VERSION}" STREQUAL "")
-    # Use the latest OpenSSL version
-    set(OPENSSL_TARGET_VERSION ${PROJECT_VERSION})
-endif()
-
 if("${OPENSSL_TARGET_PLATFORM}" STREQUAL "")
     # Use OpenSSL's Configure target
     detect_target_platform(OPENSSL_TARGET_PLATFORM)
 endif()
 
-# Validate OpenSSL version
-if(NOT OPENSSL_TARGET_VERSION MATCHES "(^3\.[0-9]\.[0-9]+$)|(^1\.1\.1[a-z]$)")
-    message(FATAL_ERROR "OpenSSL ${OPENSSL_TARGET_VERSION} isn't supported")
-endif()
-
-if(OPENSSL_TARGET_VERSION VERSION_EQUAL PROJECT_VERSION)
-    set(CPM_HASH_OPTION URL_HASH SHA256=83c7329fe52c850677d75e5d0b0ca245309b97e8ecbcfdc1dfdc4ab9fac35b39)
-else()
-    set(CPM_HASH_OPTION "")
-endif()
-
-# Download OpenSSL source
-CPMAddPackage(
-    NAME openssl-source
-    URL https://www.openssl.org/source/openssl-${OPENSSL_TARGET_VERSION}.tar.gz
-    DOWNLOAD_ONLY ON
-    ${CPM_HASH_OPTION}
-)
-FetchContent_Declare(
-    OpenSSL
-    SOURCE_DIR ${openssl-source_SOURCE_DIR}
-    BINARY_DIR ${openssl-source_BINARY_DIR}
-    OVERRIDE_FIND_PACKAGE
-)
-FetchContent_MakeAvailable(OpenSSL)
+# Fetch OpenSSL source
+fetch_openssl()
 
 # Apply a patch
 if(EXISTS "${OPENSSL_PATCH}" AND NOT IS_DIRECTORY "${OPENSSL_PATCH}")
@@ -95,16 +68,6 @@ if(EXISTS "${OPENSSL_PATCH}" AND NOT IS_DIRECTORY "${OPENSSL_PATCH}")
         OUTPUT_QUIET
         ERROR_QUIET
     )
-endif()
-
-# Clean build directory if version is different
-if(NOT OPENSSL_TARGET_VERSION VERSION_EQUAL OPENSSL_TARGET_VERSION_OLD)
-    set(OPENSSL_TARGET_VERSION_OLD ${OPENSSL_TARGET_VERSION} CACHE INTERNAL "Previously fetched OpenSSL version")
-
-    if(IS_DIRECTORY ${openssl_BINARY_DIR})
-        file(REMOVE_RECURSE ${openssl_BINARY_DIR})
-        file(MAKE_DIRECTORY ${openssl_BINARY_DIR})
-    endif()
 endif()
 
 # Run vcvarsall.bat with target architecture
