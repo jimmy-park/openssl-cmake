@@ -77,16 +77,12 @@ function(apply_ccache FILE)
         endif()
 
         file(READ ${FILE} MAKEFILE)
+        string(REPLACE "\nCC=" "\nCC=${CCACHE} " MAKEFILE "${MAKEFILE}")
 
         if(MSVC)
-            string(REGEX REPLACE "\nCC=[^\n]*" "CC=ccache cl" MAKEFILE "${MAKEFILE}")
             string(REPLACE "/Zi /Fdossl_static.pdb " "" MAKEFILE "${MAKEFILE}")
             string(REPLACE "/Zi /Fddso.pdb " "" MAKEFILE "${MAKEFILE}")
             string(REPLACE "/Zi /Fdapp.pdb " "" MAKEFILE "${MAKEFILE}")
-        else()
-            parse_makefile(${FILE} "CC" OPENSSL_C_COMPILER)
-            string(REPLACE ";" " " OPENSSL_C_COMPILER "${OPENSSL_C_COMPILER}")
-            string(REGEX REPLACE "\nCC=[^\n]*" "\nCC=${CCACHE} ${OPENSSL_C_COMPILER}" MAKEFILE "${MAKEFILE}")
         endif()
 
         file(WRITE ${FILE} "${MAKEFILE}")
