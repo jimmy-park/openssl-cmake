@@ -35,17 +35,15 @@ jobs:
       matrix:
         preset: [freebsd, netbsd, openbsd]
         arch: [arm64, x86_64]
-        exclude:
-          - { preset: netbsd, arch: arm64 }
         include:
           - preset: freebsd
             version: "14.0"
             install: sudo pkg install -y cmake perl5
           - preset: netbsd
-            version: "9.3"
+            version: "10.0"
             install: sudo pkgin -y install cmake perl
           - preset: openbsd
-            version: "7.4"
+            version: "7.5"
             install: sudo pkg_add cmake
     name: ${{ matrix.preset }}-${{ matrix.arch }}
     runs-on: ubuntu-latest
