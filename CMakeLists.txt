@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 
 project(
     openssl-cmake
-    VERSION 3.3.0
+    VERSION 3.3.1
     DESCRIPTION "Build OpenSSL in parallel within CMake"
     HOMEPAGE_URL "https://github.com/jimmy-park/openssl-cmake"
     LANGUAGES C
