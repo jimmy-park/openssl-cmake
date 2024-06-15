@@ -27,7 +27,7 @@ Build OpenSSL in parallel within CMake
 | `OPENSSL_INSTALL`           | bool   | `OFF`         | Install OpenSSL components                           |
 | `OPENSSL_INSTALL_CERT`      | bool   | `OFF`         | Install `cert.pem` to the `openssldir` directory     |
 | `OPENSSL_INSTALL_TARGET`    | string | `install_dev` | Makefile target for install                          |
-| `OPENSSL_PATCH`             | file   | `(undefined)` | Apply a patch to OpenSSL source                      |
+| `OPENSSL_PATCH`             | list   | `(undefined)` | Apply patches to OpenSSL source                      |
 | `OPENSSL_SOURCE`            | path   | `(undefined)` | Specify the location of OpenSSL source (URL or path) |
 | `OPENSSL_TARGET_PLATFORM`   | string | `(undefined)` | Use OpenSSL's Configure target (see below)           |
 | `OPENSSL_TARGET_VERSION`    | string | `3.3.1`       | Use the latest OpenSSL version                       |
@@ -37,7 +37,7 @@ Build OpenSSL in parallel within CMake
 > [!IMPORTANT]
 >
 > - `OPENSSL_PATCH`
->   - Since OpenSSL source is distributed with `LF`, the patch file must also be `LF`
+>   - Since OpenSSL source is distributed with `LF`, patch files also should be `LF`
 > - `OPENSSL_USE_CCACHE`
 >   - Whenever you change this option, perform a fresh configuration (or just delete `CMakeCache.txt`)
 >   - This option will remove `/Zi /Fd` on MSVC
