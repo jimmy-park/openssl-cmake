@@ -50,25 +50,27 @@ endif()
 # Fetch OpenSSL source
 fetch_openssl()
 
-# Apply a patch
-if(EXISTS "${OPENSSL_PATCH}" AND NOT IS_DIRECTORY "${OPENSSL_PATCH}")
-    if(NOT IS_ABSOLUTE "${OPENSSL_PATCH}")
-        string(PREPEND OPENSSL_PATCH ${CMAKE_SOURCE_DIR}/)
-    endif()
+# Apply patches
+foreach(patch IN LISTS OPENSSL_PATCH)
+    if(EXISTS "${patch}" AND NOT IS_DIRECTORY "${patch}")
+        if(NOT IS_ABSOLUTE "${patch}")
+            string(PREPEND patch ${CMAKE_SOURCE_DIR}/)
+        endif()
 
-    execute_process(
-        COMMAND git init
-        WORKING_DIRECTORY ${openssl_SOURCE_DIR}
-        OUTPUT_QUIET
-        ERROR_QUIET
-    )
-    execute_process(
-        COMMAND git apply ${OPENSSL_PATCH}
-        WORKING_DIRECTORY ${openssl_SOURCE_DIR}
-        OUTPUT_QUIET
-        ERROR_QUIET
-    )
-endif()
+        execute_process(
+            COMMAND git init
+            WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+            OUTPUT_QUIET
+            ERROR_QUIET
+        )
+        execute_process(
+            COMMAND git apply ${patch}
+            WORKING_DIRECTORY ${openssl_SOURCE_DIR}
+            OUTPUT_QUIET
+            ERROR_QUIET
+        )
+    endif()
+endforeach()
 
 # Run vcvarsall.bat with target architecture
 set_vcvarsall_command(VCVARSALL_COMMAND)
