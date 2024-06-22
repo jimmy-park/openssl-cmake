@@ -154,3 +154,11 @@ jobs:
 
       - name: Show ccache statistics
         run: ccache -sv
+
+  create-xcframework:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create XCFramework
+        run: bash ./script/create-xcframework.sh

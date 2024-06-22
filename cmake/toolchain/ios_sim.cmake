@@ -5,12 +5,13 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 15.0)
 set(CMAKE_OSX_SYSROOT iphonesimulator)
 set(CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO)
 
-set(OPENSSL_CONFIGURE_OPTIONS
+set(OPENSSL_PATCH ${CMAKE_CURRENT_LIST_DIR}/../../patch/ios_sim.patch)
+list(APPEND OPENSSL_CONFIGURE_OPTIONS
     -mios-simulator-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}
     "-arch arm64"
     "-arch x86_64"
+    -fno-common
     no-asm
-    no-tests
 )
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
