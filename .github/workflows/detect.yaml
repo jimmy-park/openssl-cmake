@@ -190,4 +190,3 @@ jobs:
           -DCPM_SOURCE_CACHE="${{ env.cpm-path }}"
           -DOPENSSL_CONFIGURE_OPTIONS=no-asm
           -DOPENSSL_CONFIGURE_VERBOSE=ON
-          -DOPENSSL_ENABLE_PARALLEL=OFF
