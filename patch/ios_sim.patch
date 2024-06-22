@@ -1,0 +1,11 @@
+diff --git a/Configurations/15-ios.conf b/Configurations/15-ios.conf
+--- a/Configurations/15-ios.conf
++++ b/Configurations/15-ios.conf
+@@ -34,6 +34,7 @@ my %targets = (
+     "iossimulator-xcrun" => {
+         inherit_from     => [ "ios-common" ],
+         CC               => "xcrun -sdk iphonesimulator cc",
++        bn_ops           => "SIXTY_FOUR_BIT_LONG",
+     },
+     "iossimulator-arm64-xcrun" => {
+         inherit_from     => [ "ios-common" ],
