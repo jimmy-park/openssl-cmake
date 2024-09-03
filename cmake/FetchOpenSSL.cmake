@@ -21,14 +21,14 @@ function(fetch_openssl)
         endif()
 
         if(OPENSSL_TARGET_VERSION VERSION_EQUAL PROJECT_VERSION)
-            set(CPM_HASH_OPTION URL_HASH SHA256=777cd596284c883375a2a7a11bf5d2786fc5413255efab20c50d6ffe6d020b7e)
+            set(CPM_HASH_OPTION URL_HASH SHA256=2e8a40b01979afe8be0bbfb3de5dc1c6709fedb46d6c89c10da114ab5fc3d281)
         else()
             set(CPM_HASH_OPTION "")
         endif()
 
         CPMAddPackage(
             NAME openssl-source
-            URL https://www.openssl.org/source/openssl-${OPENSSL_TARGET_VERSION}.tar.gz
+            URL https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_TARGET_VERSION}/openssl-${OPENSSL_TARGET_VERSION}.tar.gz
             DOWNLOAD_ONLY ON
             ${CPM_HASH_OPTION}
         )

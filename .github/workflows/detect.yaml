@@ -4,7 +4,7 @@ on: push
 
 env:
   cpm-path: .cpm
-  cpm-key: openssl-3.3.1-cpm
+  cpm-key: openssl-3.3.2-cpm
 
 jobs:
   android:
@@ -37,7 +37,7 @@ jobs:
         arch: [arm64, x86_64]
         include:
           - preset: freebsd
-            version: "14.0"
+            version: "14.1"
             install: sudo pkg install -y cmake perl5
           - preset: netbsd
             version: "10.0"

@@ -30,7 +30,7 @@ Build OpenSSL in parallel within CMake
 | `OPENSSL_PATCH`             | list   | `(undefined)` | Apply patches to OpenSSL source                      |
 | `OPENSSL_SOURCE`            | path   | `(undefined)` | Specify the location of OpenSSL source (URL or path) |
 | `OPENSSL_TARGET_PLATFORM`   | string | `(undefined)` | Use OpenSSL's Configure target (see below)           |
-| `OPENSSL_TARGET_VERSION`    | string | `3.3.1`       | Use the latest OpenSSL version                       |
+| `OPENSSL_TARGET_VERSION`    | string | `3.3.x`       | Use the latest OpenSSL version by default            |
 | `OPENSSL_TEST`              | bool   | `OFF`         | Enable testing and build OpenSSL self tests          |
 | `OPENSSL_USE_CCACHE`        | bool   | `ON`          | Use ccache if available                              |
 
