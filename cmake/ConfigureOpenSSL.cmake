@@ -77,7 +77,7 @@ function(apply_ccache FILE)
         endif()
 
         file(READ ${FILE} MAKEFILE)
-        string(REPLACE "\nCC=" "\nCC=${CCACHE} " MAKEFILE "${MAKEFILE}")
+        string(REPLACE "\nCC=" "\nCC=ccache " MAKEFILE "${MAKEFILE}")
 
         if(MSVC)
             string(REPLACE "/Zi /Fdossl_static.pdb " "" MAKEFILE "${MAKEFILE}")
