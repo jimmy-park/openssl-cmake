@@ -1,6 +1,6 @@
 name: ccache
 
-on: push
+on: [push, pull_request]
 
 env:
   cpm-path: .cpm
