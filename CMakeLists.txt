@@ -347,17 +347,16 @@ endif()
 
 # Install OpenSSL
 if(OPENSSL_INSTALL)
-    set(OPENSSL_INSTALL_COMMAND ${OPENSSL_BUILD_TOOL} ${OPENSSL_INSTALL_TARGET})
+    set(OPENSSL_INSTALL_COMMAND "\"${OPENSSL_BUILD_TOOL}\" ${OPENSSL_INSTALL_TARGET}")
 
     if(MSVC)
-        list(APPEND OPENSSL_INSTALL_COMMAND /NOLOGO)
+        set(OPENSSL_INSTALL_COMMAND "${OPENSSL_INSTALL_COMMAND} /NOLOGO")
     endif()
 
     install(CODE
         "execute_process(
             COMMAND ${OPENSSL_INSTALL_COMMAND}
-            WORKING_DIRECTORY ${openssl_BINARY_DIR}
-            OUTPUT_QUIET
+            WORKING_DIRECTORY \"${openssl_BINARY_DIR}\"
         )"
     )
 endif()
