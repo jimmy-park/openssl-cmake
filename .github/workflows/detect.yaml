@@ -74,7 +74,7 @@ jobs:
           path: ${{ env.cpm-path }}
           key: ${{ env.cpm-key }}
           enableCrossOsArchive: true
-      - uses: cygwin/cygwin-install-action@v4
+      - uses: cygwin/cygwin-install-action@v5
         with:
           packages: cmake gcc-core make perl
       - name: Configure CMake
