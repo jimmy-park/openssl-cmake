@@ -37,13 +37,13 @@ jobs:
         arch: [arm64, x86_64]
         include:
           - preset: freebsd
-            version: "14.1"
+            version: "14.2"
             install: sudo pkg install -y cmake perl5
           - preset: netbsd
             version: "10.0"
             install: sudo pkgin -y install cmake perl
           - preset: openbsd
-            version: "7.5"
+            version: "7.6"
             install: sudo pkg_add cmake
     name: ${{ matrix.preset }}-${{ matrix.arch }}
     runs-on: ubuntu-latest
@@ -74,7 +74,7 @@ jobs:
           path: ${{ env.cpm-path }}
           key: ${{ env.cpm-key }}
           enableCrossOsArchive: true
-      - uses: cygwin/cygwin-install-action@v4
+      - uses: cygwin/cygwin-install-action@v5
         with:
           packages: cmake gcc-core make perl
       - name: Configure CMake
@@ -145,7 +145,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [CLANG32, CLANG64, MINGW32, MINGW64, UCRT64]
+        preset: [CLANG64, MINGW32, MINGW64, UCRT64]
     name: msys2-${{ matrix.preset }}
     runs-on: windows-latest
     steps:
@@ -174,7 +174,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [ARM, ARM64, Win32, x64]
+        arch: [ARM64, Win32, x64]
     name: windows-${{ matrix.arch }}
     runs-on: windows-latest
     steps:
