@@ -146,7 +146,7 @@ CPMAddPackage(
     NAME openssl-cmake
     URL https://github.com/jimmy-park/openssl-cmake/archive/main.tar.gz
     OPTIONS
-    "OPENSSL_CONFIGURE_OPTIONS no-shared\\\\;no-tests"
+    "OPENSSL_CONFIGURE_OPTIONS option1\\\\;option2"
 )
 ```
 
