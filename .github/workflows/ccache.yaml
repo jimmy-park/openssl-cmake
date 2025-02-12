@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   cpm-path: .cpm
-  cpm-key: openssl-3.4.0-cpm
+  cpm-key: openssl-3.4.1-cpm
 
 jobs:
   build:
