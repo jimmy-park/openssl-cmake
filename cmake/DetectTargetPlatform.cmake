@@ -11,7 +11,7 @@ function(detect_target_platform TARGET)
         endif()
 
         if(CMAKE_GENERATOR_PLATFORM STREQUAL "")
-            #  if it is still empty, we are falling back to the host processor
+            # if it is still empty, we are falling back to the host processor
             if(CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
                 set(${TARGET} VC-WIN64A)
             elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "i386")
@@ -21,9 +21,7 @@ function(detect_target_platform TARGET)
             elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
                 set(${TARGET} VC-WIN64-ARM)
             endif()
-           
         else()
-
             if(CMAKE_GENERATOR_PLATFORM STREQUAL "Win32")
                 set(${TARGET} VC-WIN32)
             elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "x64")
@@ -33,11 +31,7 @@ function(detect_target_platform TARGET)
             elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")
                 set(${TARGET} VC-WIN64-ARM)
             endif()
-
         endif()
-
-      
-
     elseif(MINGW)
         set(${TARGET} mingw${PREFIX})
     elseif(CYGWIN)
