@@ -1,10 +1,13 @@
 name: Detect
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 env:
   cpm-path: .cpm
-  cpm-key: openssl-3.5.0-cpm
+  cpm-key: openssl-3.5.1-cpm
 
 jobs:
   android:
@@ -43,7 +46,7 @@ jobs:
             version: "10.1"
             install: sudo pkgin -y install cmake perl
           - preset: openbsd
-            version: "7.6"
+            version: "7.7"
             install: sudo pkg_add cmake
     name: ${{ matrix.preset }}-${{ matrix.arch }}
     runs-on: ubuntu-latest
