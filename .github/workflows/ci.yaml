@@ -24,7 +24,7 @@ jobs:
     name: ${{ matrix.preset }}-${{ matrix.version }}
     runs-on: ${{ matrix.os }}-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/cache@v4
         with:
           path: ${{ env.cpm-path }}
@@ -84,7 +84,7 @@ jobs:
     name: freebsd-${{ matrix.version }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/cache@v4
         with:
           path: ${{ env.cpm-path }}
@@ -123,7 +123,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/cache@v4
         with:
           path: .ccache
@@ -161,7 +161,7 @@ jobs:
   create-xcframework:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Create XCFramework
         run: bash ./script/create-xcframework.sh
