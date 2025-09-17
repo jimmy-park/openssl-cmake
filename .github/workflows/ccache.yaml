@@ -7,7 +7,7 @@ on:
 
 env:
   cpm-path: .cpm
-  cpm-key: openssl-3.5.2-cpm
+  cpm-key: openssl-3.5.3-cpm
 
 jobs:
   build:
