@@ -131,8 +131,33 @@ function(configure_openssl)
         set(VERBOSE_OPTION OUTPUT_QUIET)
     endif()
 
+    message(STATUS "Configure command: ${CONFIGURE_COMMAND}")
+
+    # Forward environment variables to the configure process
+    set(CONFIGURE_ENV "")
+
+    if(DEFINED ENV{CC})
+        list(APPEND CONFIGURE_ENV "CC=$ENV{CC}")
+        message(STATUS "Forwarding CC environment: $ENV{CC}")
+    endif()
+
+    if(DEFINED ENV{CXX})
+        list(APPEND CONFIGURE_ENV "CXX=$ENV{CXX}")
+        message(STATUS "Forwarding CXX environment: $ENV{CXX}")
+    endif()
+
+    if(DEFINED CMAKE_C_COMPILER)
+        list(APPEND CONFIGURE_ENV "CC=${CMAKE_C_COMPILER}")
+        message(STATUS "Setting CC from CMAKE_C_COMPILER: ${CMAKE_C_COMPILER}")
+    endif()
+
+    if(DEFINED CMAKE_CXX_COMPILER)
+        list(APPEND CONFIGURE_ENV "CXX=${CMAKE_CXX_COMPILER}")
+        message(STATUS "Setting CXX from CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
+    endif()
+
     execute_process(
-        COMMAND ${CONFIGURE_COMMAND}
+        COMMAND ${CMAKE_COMMAND} -E env ${CONFIGURE_ENV} ${CONFIGURE_COMMAND}
         WORKING_DIRECTORY ${CONFIGURE_BUILD_DIR}
         ${VERBOSE_OPTION}
         COMMAND_ERROR_IS_FATAL ANY
