@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         preset: [android, ios, linux, macos, windows]
-        version: [1.1.1w, 3.0.18, 3.1.8, 3.2.6, 3.3.5, 3.4.3, 3.5.4]
+        version: [1.1.1w, 3.0.18, 3.1.8, 3.2.6, 3.3.5, 3.4.3, 3.5.4, 3.6.0]
         include:
           - { os: macos, preset: ios }
           - { os: macos, preset: macos }
@@ -80,7 +80,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [1.1.1w, 3.0.18, 3.1.8, 3.2.6, 3.3.5, 3.4.3, 3.5.4]
+        version: [1.1.1w, 3.0.18, 3.1.8, 3.2.6, 3.3.5, 3.4.3, 3.5.4, 3.6.0]
     name: freebsd-${{ matrix.version }}
     runs-on: ubuntu-latest
     steps:
@@ -116,7 +116,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [1.1.1w, 3.0.18, 3.1.8, 3.2.6, 3.3.5, 3.4.3, 3.5.4]
+        version: [1.1.1w, 3.0.18, 3.1.8, 3.2.6, 3.3.5, 3.4.3, 3.5.4, 3.6.0]
     name: mingw64-${{ matrix.version }}
     runs-on: windows-latest
     defaults:

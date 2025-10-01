@@ -27,7 +27,7 @@ function(fetch_openssl)
             endif()
 
             if(OPENSSL_TARGET_VERSION VERSION_EQUAL PROJECT_VERSION)
-                list(APPEND CPM_OPTIONS URL_HASH SHA256=967311f84955316969bdb1d8d4b983718ef42338639c621ec4c34fddef355e99)
+                list(APPEND CPM_OPTIONS URL_HASH SHA256=b6a5f44b7eb69e3fa35dbf15524405b44837a481d43d81daddde3ff21fcbb8e9)
             endif()
 
             if(OPENSSL_TARGET_VERSION MATCHES "^1\.1\.1[a-w]$")
