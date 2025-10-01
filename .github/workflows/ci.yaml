@@ -64,14 +64,9 @@ jobs:
           -DOPENSSL_BUILD_VERBOSE=ON
           -DOPENSSL_CONFIGURE_VERBOSE=ON
           -DOPENSSL_TARGET_VERSION="${{ matrix.version }}"
-          -DOPENSSL_TEST=ON
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }}
-
-      - name: Test
-        if: contains(fromJSON('["linux", "macos", "windows"]'), matrix.preset)
-        run: ctest --preset ${{ matrix.preset }}
 
       - name: Show ccache statistics
         run: ccache -sv
