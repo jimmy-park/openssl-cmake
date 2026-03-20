@@ -307,9 +307,12 @@ if(ANDROID)
     )
 endif()
 
-file(GLOB_RECURSE OPENSSL_SOURCES
-    ${openssl_SOURCE_DIR}/*.[ch]
-    ${openssl_SOURCE_DIR}/*.[ch].in
+set(OPENSSL_HASH_FILE ${openssl_BINARY_DIR}/openssl-cmake.hash)
+add_custom_target(openssl-check-hash
+    COMMAND ${CMAKE_COMMAND}
+    -DSOURCE_DIR=${openssl_SOURCE_DIR}
+    -DHASH_FILE=${OPENSSL_HASH_FILE}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckSourceHash.cmake
 )
 
 set(OPENSSL_BUILD_OUTPUT
@@ -321,7 +324,7 @@ set(OPENSSL_BUILD_OUTPUT
 add_custom_command(
     OUTPUT ${OPENSSL_BUILD_OUTPUT}
     COMMAND ${OPENSSL_BUILD_COMMAND}
-    DEPENDS ${OPENSSL_SOURCES}
+    DEPENDS ${OPENSSL_HASH_FILE}
     WORKING_DIRECTORY ${openssl_BINARY_DIR}
     VERBATIM
 )
@@ -332,6 +335,7 @@ else()
     add_custom_target(openssl-build DEPENDS ${OPENSSL_BUILD_OUTPUT})
 endif()
 
+add_dependencies(openssl-build openssl-check-hash)
 add_dependencies(OpenSSL::Crypto openssl-build)
 add_dependencies(OpenSSL::SSL openssl-build)
 
