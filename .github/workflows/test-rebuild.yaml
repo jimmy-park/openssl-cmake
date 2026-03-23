@@ -1,0 +1,60 @@
+name: Test Rebuild
+
+on:
+  push:
+    branches: [prevent-rebuild-on-ci]
+  workflow_dispatch:
+
+jobs:
+  test-rebuild:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: Linux, os: ubuntu-latest }
+          - { name: Windows, os: windows-latest }
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/cache@v5
+        id: cache
+        with:
+          path: build
+          key: test-rebuild-${{ runner.os }}-${{ github.sha }}
+          restore-keys: test-rebuild-${{ runner.os }}-
+
+      - name: Install dependencies on Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: Install dependencies on Windows
+        if: runner.os == 'Windows'
+        run: |
+          choco install -y jom nasm
+          echo "PATH=$ENV:PATH;C:\Program Files\NASM" >> $ENV:GITHUB_ENV
+
+      - name: Show cache status
+        run: echo "Cache hit = ${{ steps.cache.outputs.cache-hit }}"
+
+      - name: Show timestamps before build
+        shell: bash
+        run: |
+          echo "=== Hash file ==="
+          find build -name "openssl-cmake.hash" -exec ls -la {} \; 2>/dev/null || echo "Not found"
+          echo "=== Build outputs ==="
+          find build \( -name "*.a" -o -name "*.lib" \) | xargs ls -la 2>/dev/null || echo "Not found"
+
+      - name: Configure
+        run: cmake -B build -DOPENSSL_BUILD_VERBOSE=ON -DOPENSSL_CONFIGURE_VERBOSE=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Show timestamps after build
+        shell: bash
+        run: |
+          echo "=== Hash file ==="
+          find build -name "openssl-cmake.hash" -exec ls -la {} \; 2>/dev/null || echo "Not found"
+          echo "=== Build outputs ==="
+          find build \( -name "*.a" -o -name "*.lib" \) | xargs ls -la 2>/dev/null || echo "Not found"
