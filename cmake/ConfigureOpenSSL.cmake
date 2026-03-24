@@ -104,6 +104,15 @@ function(configure_openssl)
     set(OPENSSL_CONFIGDATA ${CONFIGURE_BUILD_DIR}/configdata.pm CACHE INTERNAL "Results of OpenSSL configuration")
     parse_configdata("perlargv" CONFIGURE_OPTIONS_OLD)
 
+    # Locate Makefile early so OPENSSL_MAKEFILE is set even on early return
+    # (find_file caches the result, so subsequent calls are free)
+    find_file(
+        OPENSSL_MAKEFILE
+        NAMES makefile Makefile
+        PATHS ${CONFIGURE_BUILD_DIR}
+        NO_DEFAULT_PATH
+    )
+
     if(NOT "${CONFIGURE_OPTIONS_OLD}" STREQUAL "")
         if(CONFIGURE_OPTIONS STREQUAL CONFIGURE_OPTIONS_OLD)
             message(STATUS "Found previous configure results. Don't perform configuration")
@@ -146,7 +155,8 @@ function(configure_openssl)
         )
     endif()
 
-    # Modify Makefile
+    # Re-locate Makefile after configure (it may have been created or recreated)
+    unset(OPENSSL_MAKEFILE CACHE)
     find_file(
         OPENSSL_MAKEFILE
         NAMES makefile Makefile
