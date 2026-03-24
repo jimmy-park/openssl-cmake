@@ -20,7 +20,7 @@ jobs:
       - uses: actions/cache@v5
         id: cache
         with:
-          path: build
+          path: build/_deps
           key: test-rebuild-${{ runner.os }}-${{ github.sha }}
           restore-keys: test-rebuild-${{ runner.os }}-
 
@@ -33,9 +33,6 @@ jobs:
         run: |
           choco install -y jom nasm
           echo "PATH=$ENV:PATH;C:\Program Files\NASM" >> $ENV:GITHUB_ENV
-
-      - name: Show cache status
-        run: echo "Cache hit = ${{ steps.cache.outputs.cache-hit }}"
 
       - name: Show timestamps before build
         shell: bash
