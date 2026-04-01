@@ -1,6 +1,6 @@
 # Find vcvarsall.bat using CMAKE_C_COMPILER
 function(find_vcvarsall)
-    if(NOT "${VCVARSALL}" STREQUAL "")
+    if(VCVARSALL)
         return()
     endif()
 
