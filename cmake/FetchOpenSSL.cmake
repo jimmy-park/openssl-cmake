@@ -42,7 +42,7 @@ function(fetch_openssl)
     endif()
 
     # Clean build directory if source directory has changed
-    if(NOT openssl-source_SOURCE_DIR STREQUAL openssl-source_SOURCE_DIR_OLD)
+    if(DEFINED CACHE{openssl-source_SOURCE_DIR_OLD} AND NOT openssl-source_SOURCE_DIR STREQUAL openssl-source_SOURCE_DIR_OLD)
         set(openssl-source_SOURCE_DIR_OLD ${openssl-source_SOURCE_DIR} CACHE INTERNAL "Previously fetched OpenSSL source")
 
         if(IS_DIRECTORY ${openssl-source_BINARY_DIR})
