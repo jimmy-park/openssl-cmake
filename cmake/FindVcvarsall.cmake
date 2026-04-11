@@ -13,7 +13,11 @@ function(find_vcvarsall)
         if(VS_PATH_LAST STREQUAL "VC")
             break()
         elseif(VS_PATH_LAST STREQUAL "")
-            message(FATAL_ERROR "Couldn't find path of vcvarsall.bat")
+            message(FATAL_ERROR
+                "Failed to derive the Visual Studio VC directory from CMAKE_C_COMPILER.\n"
+                "  CMAKE_C_COMPILER: ${CMAKE_C_COMPILER}\n"
+                "Unable to locate vcvarsall.bat automatically."
+            )
         endif()
     endwhile()
 

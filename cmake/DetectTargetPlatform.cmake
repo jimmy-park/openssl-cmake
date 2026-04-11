@@ -62,7 +62,11 @@ function(detect_target_platform TARGET)
     endif()
 
     if(${TARGET} STREQUAL "")
-        message(WARNING "Failed to detect the target platform for OpenSSL")
+        message(WARNING
+            "Failed to detect the OpenSSL Configure target automatically.\n"
+            "Set OPENSSL_TARGET_PLATFORM explicitly for CMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME} "
+            "and CMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR}."
+        )
     endif()
 
     return(PROPAGATE ${TARGET})

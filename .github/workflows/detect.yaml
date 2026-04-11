@@ -26,7 +26,7 @@ jobs:
           enableCrossOsArchive: true
       - name: Configure CMake
         run: >
-          cmake -B build
+          cmake --log-level=VERBOSE -B build
           -DANDROID_ABI=${{ matrix.arch }}
           -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
@@ -64,7 +64,7 @@ jobs:
           version: ${{ matrix.version }}
           run: |
             ${{ matrix.install }}
-            cmake -B build                           \
+            cmake --log-level=VERBOSE -B build       \
               -DCPM_SOURCE_CACHE=${{ env.cpm-path }} \
               -DOPENSSL_CONFIGURE_VERBOSE=ON
 
@@ -83,7 +83,7 @@ jobs:
       - name: Configure CMake
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -eo pipefail '{0}'
         run: >
-          cmake -B build
+          cmake --log-level=VERBOSE -B build
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DOPENSSL_CONFIGURE_VERBOSE=ON
 
@@ -103,7 +103,7 @@ jobs:
           enableCrossOsArchive: true
       - name: Configure CMake
         run: >
-          cmake -B build -G Xcode
+          cmake --log-level=VERBOSE -B build -G Xcode
           -DCMAKE_TOOLCHAIN_FILE=cmake/toolchain/${{ matrix.target }}.cmake
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DOPENSSL_CONFIGURE_VERBOSE=ON
@@ -124,7 +124,7 @@ jobs:
           enableCrossOsArchive: true
       - name: Configure CMake
         run: >
-          cmake -B build
+          cmake --log-level=VERBOSE -B build
           -DCMAKE_C_COMPILER=${{ matrix.cc }}
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DOPENSSL_CONFIGURE_VERBOSE=ON
@@ -140,7 +140,7 @@ jobs:
           enableCrossOsArchive: true
       - name: Configure CMake
         run: >
-          cmake -B build
+          cmake --log-level=VERBOSE -B build
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DOPENSSL_CONFIGURE_VERBOSE=ON
 
@@ -169,7 +169,7 @@ jobs:
       - name: Configure CMake
         shell: msys2 {0}
         run: >
-          cmake -B build
+          cmake --log-level=VERBOSE -B build
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DOPENSSL_CONFIGURE_VERBOSE=ON
 
@@ -189,7 +189,7 @@ jobs:
           enableCrossOsArchive: true
       - name: Configure CMake
         run: >
-          cmake -B build -A ${{ matrix.arch }}
+          cmake --log-level=VERBOSE -B build -A ${{ matrix.arch }}
           -DCPM_SOURCE_CACHE="${{ env.cpm-path }}"
           -DOPENSSL_CONFIGURE_OPTIONS=no-asm
           -DOPENSSL_CONFIGURE_VERBOSE=ON

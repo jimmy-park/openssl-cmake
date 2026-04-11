@@ -37,7 +37,12 @@ endfunction()
 
 function(parse_makefile FILE KEY VALUES)
     if(NOT EXISTS "${FILE}")
-        message(FATAL_ERROR "Couldn't find Makefile")
+        message(FATAL_ERROR
+            "OpenSSL Makefile was not found.\n"
+            "  expected file: ${FILE}\n"
+            "  requested key: ${KEY}\n"
+            "Configure may have failed or the build directory may be stale."
+        )
     endif()
 
     file(READ ${FILE} MAKEFILE)
@@ -66,7 +71,10 @@ endfunction()
 
 function(apply_ccache FILE)
     if(NOT EXISTS "${FILE}")
-        message(FATAL_ERROR "Couldn't find Makefile")
+        message(FATAL_ERROR
+            "Cannot apply ccache because the OpenSSL Makefile was not found.\n"
+            "  expected file: ${FILE}"
+        )
     endif()
 
     if(OPENSSL_USE_CCACHE)
@@ -98,7 +106,8 @@ function(configure_openssl)
         ${ARGN}
     )
 
-    message(STATUS "Curruent configure options : ${CONFIGURE_OPTIONS}")
+    message(STATUS "Configuring OpenSSL")
+    list(APPEND CMAKE_MESSAGE_INDENT "  ")
 
     # Find previous configure results
     set(OPENSSL_CONFIGDATA ${CONFIGURE_BUILD_DIR}/configdata.pm CACHE INTERNAL "Results of OpenSSL configuration")
@@ -115,13 +124,14 @@ function(configure_openssl)
 
     if(NOT "${CONFIGURE_OPTIONS_OLD}" STREQUAL "")
         if(CONFIGURE_OPTIONS STREQUAL CONFIGURE_OPTIONS_OLD)
-            message(STATUS "Found previous configure results. Don't perform configuration")
+            message(STATUS "Configure step skipped: existing results already match the requested options")
             return()
         endif()
 
         if(IS_DIRECTORY ${CONFIGURE_BUILD_DIR})
-            message(STATUS "Previous configure options : ${CONFIGURE_OPTIONS_OLD}")
-            message(STATUS "Configure options are changed. Clean build directory")
+            message(STATUS "Requested options changed: cleaning the OpenSSL build directory")
+            message(VERBOSE "Previous options: ${CONFIGURE_OPTIONS_OLD}")
+            message(VERBOSE "Build directory: ${CONFIGURE_BUILD_DIR}")
             file(REMOVE_RECURSE ${CONFIGURE_BUILD_DIR})
         endif()
     endif()
@@ -130,9 +140,11 @@ function(configure_openssl)
         file(MAKE_DIRECTORY ${CONFIGURE_BUILD_DIR})
     endif()
 
-    message(STATUS "Configure OpenSSL")
     find_program(OPENSSL_CONFIGURE_TOOL perl REQUIRED)
     list(APPEND CONFIGURE_COMMAND ${OPENSSL_CONFIGURE_TOOL} ${CONFIGURE_FILE} ${CONFIGURE_OPTIONS})
+    message(VERBOSE "Configure options: ${CONFIGURE_OPTIONS}")
+    message(VERBOSE "Build directory: ${CONFIGURE_BUILD_DIR}")
+    message(VERBOSE "Configure command: ${CONFIGURE_COMMAND}")
 
     if(OPENSSL_CONFIGURE_VERBOSE)
         set(VERBOSE_OPTION "")
@@ -164,6 +176,8 @@ function(configure_openssl)
         REQUIRED
         NO_DEFAULT_PATH
     )
+    message(VERBOSE "Generated Makefile: ${OPENSSL_MAKEFILE}")
+
     apply_ccache(${OPENSSL_MAKEFILE})
 
     if(WIN32 AND NOT OPENSSL_BUILD_VERBOSE)

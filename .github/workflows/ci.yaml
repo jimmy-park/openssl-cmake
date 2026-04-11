@@ -59,7 +59,7 @@ jobs:
 
       - name: Configure CMake
         run: >
-          cmake --preset ${{ matrix.preset }}
+          cmake --log-level=VERBOSE --preset ${{ matrix.preset }}
           -DCPM_SOURCE_CACHE="${{ env.cpm-path }}"
           -DOPENSSL_BUILD_VERBOSE=ON
           -DOPENSSL_CONFIGURE_VERBOSE=ON
@@ -99,7 +99,7 @@ jobs:
             sudo pkg install -y ccache4 cmake perl5 ninja
             ccache -o cache_dir=${{ github.workspace }}/.ccache
             ccache -z
-            cmake -B build -G Ninja                          \
+            cmake --log-level=VERBOSE -B build -G Ninja      \
               -DCPM_SOURCE_CACHE=${{ env.cpm-path }}         \
               -DOPENSSL_BUILD_VERBOSE=ON                     \
               -DOPENSSL_CONFIGURE_VERBOSE=ON                 \
@@ -142,7 +142,7 @@ jobs:
 
       - name: Configure CMake
         run: >
-          cmake -B build -G Ninja
+          cmake --log-level=VERBOSE -B build -G Ninja
           -DOPENSSL_BUILD_VERBOSE=ON
           -DOPENSSL_CONFIGURE_VERBOSE=ON
           -DOPENSSL_TARGET_VERSION=${{ matrix.version }}
