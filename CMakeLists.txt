@@ -22,7 +22,6 @@ include(cmake/ConfigureOpenSSL.cmake)
 include(cmake/DetectTargetPlatform.cmake)
 include(cmake/FetchOpenSSL.cmake)
 include(cmake/FindVcvarsall.cmake)
-include(cmake/GetCPM.cmake)
 
 # Custom options
 option(OPENSSL_BUILD_VERBOSE "Enable verbose output from build" OFF)
