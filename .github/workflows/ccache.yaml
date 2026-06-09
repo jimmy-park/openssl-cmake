@@ -7,7 +7,7 @@ on:
 
 env:
   cpm-path: .cpm
-  cpm-key: openssl-4.0.0-cpm
+  cpm-key: openssl-4.0.1-cpm
 
 jobs:
   build:
@@ -35,7 +35,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build ccache
+          sudo apt-get install -y ccache
       - name: Install dependencies on macOS
         if: runner.os == 'macOS'
         run: |

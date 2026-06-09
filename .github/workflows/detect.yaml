@@ -7,7 +7,7 @@ on:
 
 env:
   cpm-path: .cpm
-  cpm-key: openssl-4.0.0-cpm
+  cpm-key: openssl-4.0.1-cpm
 
 jobs:
   android:
