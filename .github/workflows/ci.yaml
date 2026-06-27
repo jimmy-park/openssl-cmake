@@ -14,7 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         preset: [android, ios, linux, macos, windows]
-        version: [1.1.1w, 3.0.20, 3.1.8, 3.2.6, 3.3.7, 3.4.5, 3.5.6, 3.6.3]
+        version:
+          [1.1.1w, 3.0.21, 3.1.8, 3.2.6, 3.3.7, 3.4.6, 3.5.7, 3.6.3, 4.0.1]
         include:
           - { os: macos, preset: ios }
           - { os: macos, preset: macos }
@@ -24,7 +25,7 @@ jobs:
     name: ${{ matrix.preset }}-${{ matrix.version }}
     runs-on: ${{ matrix.os }}-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v5
         with:
           path: ${{ env.cpm-path }}
@@ -40,7 +41,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build ccache
+          sudo apt-get install -y ccache
       - name: Install dependencies on macOS
         if: runner.os == 'macOS'
         run: |
@@ -59,7 +60,7 @@ jobs:
 
       - name: Configure CMake
         run: >
-          cmake --preset ${{ matrix.preset }}
+          cmake --log-level=VERBOSE --preset ${{ matrix.preset }}
           -DCPM_SOURCE_CACHE="${{ env.cpm-path }}"
           -DOPENSSL_BUILD_VERBOSE=ON
           -DOPENSSL_CONFIGURE_VERBOSE=ON
@@ -75,11 +76,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [1.1.1w, 3.0.19, 3.1.8, 3.2.6, 3.3.6, 3.4.4, 3.5.5, 3.6.1]
+        version:
+          [1.1.1w, 3.0.20, 3.1.8, 3.2.6, 3.3.7, 3.4.5, 3.5.6, 3.6.3, 4.0.1]
     name: freebsd-${{ matrix.version }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v5
         with:
           path: ${{ env.cpm-path }}
@@ -90,16 +92,16 @@ jobs:
           path: .ccache
           key: openssl-${{ matrix.version }}-ccache-freebsd-${{ github.run_id }}
           restore-keys: openssl-${{ matrix.version }}-ccache-freebsd-
-      - uses: cross-platform-actions/action@master
+      - uses: cross-platform-actions/action@v1
         with:
           operating_system: freebsd
           architecture: x86_64
-          version: "14.1"
+          version: "15.0"
           run: |
             sudo pkg install -y ccache4 cmake perl5 ninja
             ccache -o cache_dir=${{ github.workspace }}/.ccache
             ccache -z
-            cmake -B build -G Ninja                          \
+            cmake --log-level=VERBOSE -B build -G Ninja      \
               -DCPM_SOURCE_CACHE=${{ env.cpm-path }}         \
               -DOPENSSL_BUILD_VERBOSE=ON                     \
               -DOPENSSL_CONFIGURE_VERBOSE=ON                 \
@@ -111,14 +113,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [1.1.1w, 3.0.19, 3.1.8, 3.2.6, 3.3.6, 3.4.4, 3.5.5, 3.6.1]
+        version:
+          [1.1.1w, 3.0.20, 3.1.8, 3.2.6, 3.3.7, 3.4.5, 3.5.6, 3.6.3, 4.0.1]
     name: mingw64-${{ matrix.version }}
     runs-on: windows-latest
     defaults:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v5
         with:
           path: .ccache
@@ -142,7 +145,7 @@ jobs:
 
       - name: Configure CMake
         run: >
-          cmake -B build -G Ninja
+          cmake --log-level=VERBOSE -B build -G Ninja
           -DOPENSSL_BUILD_VERBOSE=ON
           -DOPENSSL_CONFIGURE_VERBOSE=ON
           -DOPENSSL_TARGET_VERSION=${{ matrix.version }}
@@ -156,7 +159,7 @@ jobs:
   create-xcframework:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Create XCFramework
         run: bash ./script/create-xcframework.sh

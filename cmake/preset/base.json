@@ -159,9 +159,9 @@
             }
         },
         {
-            "name": "vs2022",
+            "name": "vs-latest",
             "hidden": true,
-            "generator": "Visual Studio 17 2022",
+            "generator": "Visual Studio 18 2026",
             "toolset": {
                 "value": "host=x64",
                 "strategy": "set"

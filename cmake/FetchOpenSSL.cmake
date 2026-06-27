@@ -1,10 +1,15 @@
 function(fetch_openssl)
+    message(STATUS "Resolving OpenSSL source")
+    list(APPEND CMAKE_MESSAGE_INDENT "  ")
+
     if(EXISTS "${OPENSSL_SOURCE}" AND IS_DIRECTORY "${OPENSSL_SOURCE}")
         # Fetch the local OpenSSL source
         if(NOT IS_ABSOLUTE "${OPENSSL_SOURCE}")
             string(PREPEND OPENSSL_SOURCE ${CMAKE_SOURCE_DIR}/)
         endif()
 
+        message(STATUS "Using local OpenSSL source")
+        message(VERBOSE "Local source path: ${OPENSSL_SOURCE}")
         string(REPLACE "\\" "/" openssl-source_SOURCE_DIR "${OPENSSL_SOURCE}")
         set(openssl-source_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/openssl-source-build)
     else()
@@ -13,11 +18,10 @@ function(fetch_openssl)
             DOWNLOAD_ONLY ON
         )
 
-        if(NOT OPENSSL_CONFIGURE_VERBOSE)
-            list(APPEND CPM_OPTIONS QUIET)
-        endif()
-
         if("${OPENSSL_SOURCE}" MATCHES "^http")
+            message(STATUS "Downloading OpenSSL source from a custom URL")
+            message(VERBOSE "Source URL: ${OPENSSL_SOURCE}")
+
             # Download OpenSSL source from the internet
             list(APPEND CPM_OPTIONS URL ${OPENSSL_SOURCE})
         else()
@@ -26,16 +30,26 @@ function(fetch_openssl)
                 set(OPENSSL_TARGET_VERSION ${PROJECT_VERSION})
             endif()
 
+            set(OPENSSL_DOWNLOAD_URL https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_TARGET_VERSION}/openssl-${OPENSSL_TARGET_VERSION}.tar.gz)
+
             if(OPENSSL_TARGET_VERSION VERSION_EQUAL PROJECT_VERSION)
                 list(APPEND CPM_OPTIONS URL_HASH SHA256=243a86649cf6f23eeb6a2ff2456e09e5d77dd9018a54d3d96b0c6bdd6ba6c7f1)
+            elseif(OPENSSL_TARGET_VERSION MATCHES "^1\.1\.1[a-w]$")
+                string(REPLACE "." "_" OPENSSL_TAGGED_VERSION ${OPENSSL_TARGET_VERSION})
+                set(OPENSSL_DOWNLOAD_URL https://github.com/openssl/openssl/releases/download/OpenSSL_${OPENSSL_TAGGED_VERSION}/openssl-${OPENSSL_TARGET_VERSION}.tar.gz)
             endif()
 
-            if(OPENSSL_TARGET_VERSION MATCHES "^1\.1\.1[a-w]$")
-                string(REPLACE "." "_" OPENSSL_TAGGED_VERSION ${OPENSSL_TARGET_VERSION})
-                list(APPEND CPM_OPTIONS URL https://github.com/openssl/openssl/releases/download/OpenSSL_${OPENSSL_TAGGED_VERSION}/openssl-${OPENSSL_TARGET_VERSION}.tar.gz)
-            else()
-                list(APPEND CPM_OPTIONS URL https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_TARGET_VERSION}/openssl-${OPENSSL_TARGET_VERSION}.tar.gz)
-            endif()
+            message(STATUS "Downloading official OpenSSL release: ${OPENSSL_TARGET_VERSION}")
+            message(VERBOSE "Source URL: ${OPENSSL_DOWNLOAD_URL}")
+            list(APPEND CPM_OPTIONS URL ${OPENSSL_DOWNLOAD_URL})
+        endif()
+
+        if(NOT COMMAND CPMAddPackage)
+            file(
+                DOWNLOAD https://github.com/cpm-cmake/CPM.cmake/releases/latest/download/get_cpm.cmake
+                ${CMAKE_CURRENT_BINARY_DIR}/get_cpm.cmake
+            )
+            include(${CMAKE_CURRENT_BINARY_DIR}/get_cpm.cmake)
         endif()
 
         CPMAddPackage(${CPM_OPTIONS})
@@ -46,6 +60,8 @@ function(fetch_openssl)
         set(openssl-source_SOURCE_DIR_OLD ${openssl-source_SOURCE_DIR} CACHE INTERNAL "Previously fetched OpenSSL source")
 
         if(IS_DIRECTORY ${openssl-source_BINARY_DIR})
+            message(STATUS "OpenSSL source directory changed: cleaning the OpenSSL build directory")
+            message(VERBOSE "Build directory: ${openssl-source_BINARY_DIR}")
             file(REMOVE_RECURSE ${openssl-source_BINARY_DIR})
             file(MAKE_DIRECTORY ${openssl-source_BINARY_DIR})
         endif()
