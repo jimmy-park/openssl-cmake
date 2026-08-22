@@ -42,7 +42,18 @@ function(detect_target_platform TARGET)
             set(${TARGET} android-x86_64)
         endif()
     elseif(LINUX)
-        set(${TARGET} linux-${CMAKE_SYSTEM_PROCESSOR})
+        # linux32-riscv32 linux32-s390x linux64-loongarch64 linux64-mips64 linux64-riscv64 linux64-s390x linux64-sparcv9 
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "riscv64|loongarch64|s390x|mips64")
+            set(${TARGET} linux64-${CMAKE_SYSTEM_PROCESSOR})
+        elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "riscv32")
+            set(${TARGET} linux32-${CMAKE_SYSTEM_PROCESSOR})
+        # s390 is the 32-bit variant of s390x, the x stands for "Extended" hence why
+        # most toolchains would use s390 to signify 32 bits, odd quirk.
+        elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "s390")
+            set(${TARGET} linux32-s390x)
+        else()
+            set(${TARGET} linux-${CMAKE_SYSTEM_PROCESSOR})
+        endif()
 
         if(CMAKE_C_COMPILER_ID MATCHES "Clang")
             if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
