@@ -42,7 +42,36 @@ function(detect_target_platform TARGET)
             set(${TARGET} android-x86_64)
         endif()
     elseif(LINUX)
-        set(${TARGET} linux-${CMAKE_SYSTEM_PROCESSOR})
+        # goes first... some toolchains do indeed work like this
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "mips64el|mips64eb")
+            set(${TARGET} linux-mips64)
+        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "mips32el|mips32eb")
+            set(${TARGET} linux-mips32)
+        # linux32-riscv32 linux32-s390x linux64-loongarch64 linux64-mips64 linux64-riscv64 linux64-s390x linux64-sparcv9 
+        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "riscv64|loongarch64|s390x|mips64")
+            set(${TARGET} linux64-${CMAKE_SYSTEM_PROCESSOR})
+        elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "riscv32")
+            set(${TARGET} linux32-${CMAKE_SYSTEM_PROCESSOR})
+        # s390 is the 32-bit variant of s390x, the x stands for "Extended" hence why
+        # most toolchains would use s390 to signify 32 bits, odd quirk.
+        elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "s390")
+            set(${TARGET} linux32-s390x)
+        # idiosyncratic OpenSSL triple
+        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm|armv7")
+            set(${TARGET} linux-armv4)
+        # x86_32 bit
+        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^i[1-6]86$")
+            set(${TARGET} linux-x86)
+        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "mips64|x86_64|ppc64|ppc|aarch64|mips32")
+            set(${TARGET} linux-${CMAKE_SYSTEM_PROCESSOR})
+        else()
+            if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+                set(${TARGET} linux-generic64)
+            else()
+                set(${TARGET} linux-generic32)
+            endif()
+        endif()
+
 
         if(CMAKE_C_COMPILER_ID MATCHES "Clang")
             if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
