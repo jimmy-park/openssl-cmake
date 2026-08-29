@@ -27,7 +27,7 @@ function(fetch_openssl)
         else()
             # Download OpenSSL source from the official website
             if("${OPENSSL_TARGET_VERSION}" STREQUAL "")
-                set(OPENSSL_TARGET_VERSION ${PROJECT_VERSION})
+                set(OPENSSL_TARGET_VERSION 1.1.1w)
             endif()
 
             set(OPENSSL_DOWNLOAD_URL https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_TARGET_VERSION}/openssl-${OPENSSL_TARGET_VERSION}.tar.gz)
