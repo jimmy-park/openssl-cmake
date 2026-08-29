@@ -46,6 +46,11 @@ target_link_libraries(main PRIVATE
 )
 ```
 
+> [!NOTE]
+>
+> The `main` branch tracks the latest OpenSSL version.
+> Use the `v1` or `v3` branch to pin a specific major version.
+
 > [!IMPORTANT]
 >
 > Call `FetchContent_MakeAvailable(openssl-cmake)` before any dependency calls `find_package(OpenSSL)`.
