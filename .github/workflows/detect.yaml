@@ -7,7 +7,7 @@ on:
 
 env:
   cpm-path: .cpm
-  cpm-key: openssl-4.0.1-cpm
+  cpm-key: openssl-4.0.2-cpm
 
 jobs:
   android:
@@ -69,7 +69,7 @@ jobs:
         with:
           operating_system: freebsd
           architecture: ${{ matrix.arch }}
-          version: "15.0"
+          version: "15.1"
           run: |
             sudo pkg install -y cmake perl5
             cmake --log-level=VERBOSE -B build       \
