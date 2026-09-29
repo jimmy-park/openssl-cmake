@@ -7,7 +7,7 @@ on:
 
 env:
   cpm-path: .cpm
-  cpm-key: openssl-4.0.2-cpm
+  cpm-key: openssl-4.0.3-cpm
 
 jobs:
   android:
@@ -151,6 +151,7 @@ jobs:
         with:
           msystem: ${{ matrix.preset }}
           update: true
+          install: perl
           pacboy: >-
             cmake:p
             gcc:p
