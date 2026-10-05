@@ -152,8 +152,19 @@ function(configure_openssl)
         set(VERBOSE_OPTION OUTPUT_QUIET)
     endif()
 
+    if (DEFINED CMAKE_SYSROOT)
+        list(APPEND CONFIGURE_COMMAND "--prefix=${CMAKE_SYSROOT}")
+    endif()
+
     execute_process(
-        COMMAND ${CONFIGURE_COMMAND}
+        COMMAND ${CMAKE_COMMAND} -E env
+        "CFLAGS=${CMAKE_C_FLAGS}"
+        "CXXFLAGS=${CMAKE_CXX_FLAGS}"
+        "LDFLAGS=${CMAKE_CXX_LINK_FLAGS}"
+        "CC=${CMAKE_C_COMPILER}"
+        "CXX=${CMAKE_CXX_COMPILER}"
+        "LD=${CMAKE_LINKER}"
+        ${CONFIGURE_COMMAND}
         WORKING_DIRECTORY ${CONFIGURE_BUILD_DIR}
         ${VERBOSE_OPTION}
         COMMAND_ERROR_IS_FATAL ANY
